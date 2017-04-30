@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Terawhere</string>
+    <string name="title_activity_create_offer">Create Offer</string>
 </resources>

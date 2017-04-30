@@ -45,7 +45,7 @@
             android:layout_weight="1"
             android:text="Type" />
 
-        <sg.edu.nus.iss.se8.medipal.widgets.CustomRadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        <tech.msociety.terawhere.widgets.CustomRadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/radioGroupMedicalRecordType"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

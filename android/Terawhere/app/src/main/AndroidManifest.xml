@@ -16,6 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.CreateOfferActivity"
+            android:label="@string/title_activity_create_offer"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tech.msociety.terawhere.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
