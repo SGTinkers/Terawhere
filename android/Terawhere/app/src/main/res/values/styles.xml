@@ -9,4 +9,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="cardViewTextHeader" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/colorCardViewText</item>
+    </style>
+
+    <style name="cardViewTextTitle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="cardViewTextSubtitleRed" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/colorCardViewTextRed</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>
