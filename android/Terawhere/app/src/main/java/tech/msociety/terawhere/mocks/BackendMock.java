@@ -3,6 +3,7 @@ package tech.msociety.terawhere.mocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.utils.faker.Faker;
 
@@ -25,5 +26,21 @@ public class BackendMock {
         }
 
         return offers;
+    }
+
+    public static List<Booking> getBookings() {
+        List<Booking> bookings = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            String bookingId = String.valueOf(faker.number(3));
+            String passengerId = String.valueOf(faker.number(5));
+            Integer numberOfSeats = (int) faker.number(1);
+            String timestamp = faker.words(2);
+
+            Booking booking = new Booking(bookingId, passengerId, numberOfSeats, timestamp);
+            bookings.add(booking);
+        }
+
+        return bookings;
     }
 }
