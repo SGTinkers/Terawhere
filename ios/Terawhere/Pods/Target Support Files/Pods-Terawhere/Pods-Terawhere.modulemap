@@ -1,6 +1,0 @@
-framework module Pods_Terawhere {
-  umbrella header "Pods-Terawhere-umbrella.h"
-
-  export *
-  module * { export * }
-}
