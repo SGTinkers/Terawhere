@@ -129,7 +129,10 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
                     }
                 });
                 Toast.makeText(this, "Successfully created offer!!", Toast.LENGTH_SHORT).show();
-
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("FirstTab", 4);
+                finish();
+                startActivity(intent);
             }
         }
         else {

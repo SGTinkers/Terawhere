@@ -3,6 +3,7 @@ package tech.msociety.terawhere.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.location.LocationListener;
 
@@ -29,18 +32,31 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.activities.MainActivity;
+import tech.msociety.terawhere.adapters.OffersAdapter;
+import tech.msociety.terawhere.models.Offer;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
     private Context mContext;
     private SupportMapFragment mSupportMapFragment;
     protected GoogleMap mMap;
-
+    private ClusterMarkerLocation clickedClusterItem;
     GoogleApiClient mGoogleApiClient;
     Location mLastKnownLocation;
     Marker mCurrentLocationMarker;
@@ -72,6 +88,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             fm.beginTransaction().replace(R.id.map_container, mSupportMapFragment).commit();
         }
         mSupportMapFragment.getMapAsync(this);
+
+
     }
 
     @Override
@@ -200,28 +218,68 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     //randomised markers
     private void initMarkers() {
-        ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>( mContext, mMap );
+        final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>( mContext, mMap );
         mMap.setOnCameraIdleListener((GoogleMap.OnCameraIdleListener) clusterManager);
+        //mMap.setOnMarkerClickListener(clusterManager);
+        //mMap.setOnInfoWindowClickListener(clusterManager);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        //clusterManager.setOnClusterClickListener(this);
+        //clusterManager.setOnClusterInfoWindowClickListener(this);
+        //clusterManager.setOnClusterItemClickListener(this);
+        //clusterManager.setOnClusterItemInfoWindowClickListener(this);
 
-        double lat;
-        double lng;
-        Random generator = new Random();
-        for( int i = 0; i < 100; i++ ) {
-            lat = generator.nextDouble() / 300;
-            lng = generator.nextDouble() / 300;
-            if( generator.nextBoolean() ) {
-                lat = -lat;
+        //clusterManager.setOnClusterItemInfoWindowClickListener(this); //added
+
+        final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
+
+
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    if (objects.size() > 0) {
+                        for (ParseObject offer : objects) {
+                            ParseGeoPoint pgp = offer.getParseGeoPoint("CurrentLocation");
+                            String id = offer.getObjectId();
+                            clusterManager.addItem( new ClusterMarkerLocation( id, new LatLng( pgp.getLatitude(), pgp.getLongitude()) ) );
+                            mapLocationOffer.put(new LatLng( pgp.getLatitude(), pgp.getLongitude()), new Offer(offer.getObjectId(),offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks")));
+                        }
+
+
+                    }
+                } else {
+                    e.printStackTrace();
+                }
             }
-            if( generator.nextBoolean() ) {
-                lng = -lng;
-            }
-            double latitude = mLastKnownLocation.getLatitude();
-            double longitude = mLastKnownLocation.getLongitude();
+        });
+        clusterManager.getMarkerCollection()
+                .setOnInfoWindowAdapter(new CustomInfoViewAdapter(LayoutInflater.from(mContext),mapLocationOffer));
 
-             LatLng mCenterLocation = new LatLng( 1.4234234234233, 103.79779589937273 );
+        clusterManager.setOnClusterItemInfoWindowClickListener(
+                new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
+                    @Override public void onClusterItemInfoWindowClick(ClusterMarkerLocation stringClusterItem) {
+                        Toast.makeText(mContext, "Clicked info window: " + stringClusterItem.getId(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-            clusterManager.addItem( new ClusterMarkerLocation( new LatLng( latitude + lat, longitude + lng ) ) );
-        }
+        mMap.setOnInfoWindowClickListener(clusterManager);
+        mMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+        //mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(clusterManager);
+
+
+
+
+
     }
+
+
+
+
+
 }
 

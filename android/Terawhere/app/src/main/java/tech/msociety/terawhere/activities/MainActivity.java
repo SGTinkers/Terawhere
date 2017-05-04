@@ -1,5 +1,6 @@
 package tech.msociety.terawhere.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -80,8 +81,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        if (viewPagerPosition != -1) {
+        Intent i = getIntent();
+        int tabToOpen = i.getIntExtra("FirstTab", -1);
+        if (tabToOpen != -1) {
+            viewPager.setCurrentItem(1);
+            viewPagerPosition = -1;
+        }
+        else if (viewPagerPosition != -1) {
             viewPager.setCurrentItem(viewPagerPosition);
             viewPagerPosition = -1;
         }

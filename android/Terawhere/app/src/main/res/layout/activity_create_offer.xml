@@ -13,7 +13,8 @@
 
 
         <LinearLayout
-            android:id="@+id/createOfferLinearLayout"
+            android:id="@+id/locationLinearLayout"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -46,9 +47,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true"
-                android:layout_below="@+id/createOfferLinearLayout"
+                android:layout_below="@+id/locationLinearLayout"
                 >
                 <LinearLayout
+                    android:id="@+id/createOfferLinearLayout"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

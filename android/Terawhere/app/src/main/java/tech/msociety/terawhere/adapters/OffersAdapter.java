@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +27,19 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         Offer offer = offers.get(position);
 
-        viewHolder.textViewOfferId.setText(offer.getId());
+        viewHolder.textViewOfferId.setText(offer.getNumberOfSeats() + " Seats Available ");
         viewHolder.textViewDestination.setText(offer.getDestination());
-        String strDate = String.format("Date: %tc", offer.getTimestamp());
 
-        viewHolder.textViewTimestamp.setText(strDate);
+        SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");
+
+        if(offer.getTimestamp() != null) {
+            viewHolder.textViewTimestamp.setText(ft.format(offer.getTimestamp()));
+        }
+        else {
+            viewHolder.textViewTimestamp.setText("");
+
+        }
+
     }
 
     @Override
