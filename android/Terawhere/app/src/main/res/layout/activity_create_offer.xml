@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/createOfferRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.CreateOfferActivity">
@@ -9,86 +10,89 @@
         android:id="@+id/includeToolbar"
         layout="@layout/toolbar" />
 
-    <android.support.design.widget.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/textInputLayoutMedicalRecordName"
+    <ScrollView
+        android:id="@+id/createOfferScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/includeToolbar"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/editTextMedicalRecordName"
+        <LinearLayout
+            android:id="@+id/createOfferLinearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Name" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="80dp"
+            android:orientation="vertical">
 
-    </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayoutMedicalConditionType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textInputLayoutMedicalRecordName"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="horizontal">
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="31dp"
+                android:ems="10"
+                android:hint="Enter your name"
+                android:inputType="textPersonName" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="Type" />
 
-        <tech.msociety.terawhere.widgets.CustomRadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/radioGroupMedicalRecordType"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:orientation="horizontal" />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/editText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="31dp"
+                android:ems="10"
+                android:hint="Enter your destination"
+                android:inputType="textPersonName" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutMedicalRecordDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/linearLayoutMedicalConditionType"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="horizontal">
+            <EditText
+                android:id="@+id/editText3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:ems="10"
+                android:hint="Number of seats available"
+                android:inputType="number" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="Start Date" />
+            <TimePicker
+                android:id="@+id/timePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:timePickerMode="spinner" />
 
-        <TextView
-            android:id="@+id/textViewMedicalRecordDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_weight="4"
-            android:text="today" />
+            <EditText
+                android:id="@+id/editText5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:ems="10"
+                android:hint="Enter your remarks here"
+                android:inputType="textPersonName" />
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/editText6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:ems="10"
+                android:hint="Vehicle color"
+                android:inputType="textPersonName" />
 
-    <Button
-        android:id="@+id/buttonSaveMedicalRecord"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="Save" />
+            <EditText
+                android:id="@+id/editText7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:ems="10"
+                android:hint="Vehicle number"
+                android:inputType="textPersonName" />
 
+            <Button
+                android:id="@+id/buttonSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save" />
+
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>
