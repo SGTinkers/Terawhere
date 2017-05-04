@@ -1,14 +1,16 @@
 package tech.msociety.terawhere.models;
 
+import java.util.Date;
+
 public class Offer {
     private String id;
     private String driverId;
     private String destination;
     private Integer numberOfSeats;
-    private String timestamp;
+    private Date timestamp;
     private String remarks;
 
-    public Offer(String id, String driverId, String destination, Integer numberOfSeats, String timestamp, String remarks) {
+    public Offer(String id, String driverId, String destination, Integer numberOfSeats, Date timestamp, String remarks) {
         this.id = id;
         this.driverId = driverId;
         this.destination = destination;
@@ -33,7 +35,7 @@ public class Offer {
         return numberOfSeats;
     }
 
-    public String getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 

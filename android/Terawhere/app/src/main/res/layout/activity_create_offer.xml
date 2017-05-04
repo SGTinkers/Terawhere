@@ -24,10 +24,24 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="80dp"
             android:orientation="vertical">
+            <TextView
+                android:id="@+id/locationTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:gravity="center_horizontal"
+
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <TimePicker
+                android:id="@+id/pickUpTimePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:timePickerMode="spinner" />
 
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/nameEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="31dp"
@@ -37,7 +51,7 @@
 
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/destinationEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="31dp"
@@ -46,7 +60,7 @@
                 android:inputType="textPersonName" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/seatsAvailableEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="18dp"
@@ -54,14 +68,8 @@
                 android:hint="Number of seats available"
                 android:inputType="number" />
 
-            <TimePicker
-                android:id="@+id/timePicker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:timePickerMode="spinner" />
-
             <EditText
-                android:id="@+id/editText5"
+                android:id="@+id/remarksEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -70,7 +78,7 @@
                 android:inputType="textPersonName" />
 
             <EditText
-                android:id="@+id/editText6"
+                android:id="@+id/vehicleColorEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -79,7 +87,7 @@
                 android:inputType="textPersonName" />
 
             <EditText
-                android:id="@+id/editText7"
+                android:id="@+id/vehiclePlateNumberEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -88,10 +96,11 @@
                 android:inputType="textPersonName" />
 
             <Button
-                android:id="@+id/buttonSave"
+                android:id="@+id/createOfferButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save" />
+                android:onClick="createOffer"
+                android:text="Create offer" />
 
         </LinearLayout>
     </ScrollView>

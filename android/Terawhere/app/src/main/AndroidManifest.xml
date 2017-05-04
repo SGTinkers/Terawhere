@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+
         android:name=".activities.StarterApplication"
 
         android:allowBackup="true"
@@ -38,6 +39,7 @@
         <activity android:name=".activities.UserListActivity"></activity>
         <activity android:name=".activities.MainActivity"></activity>
 
+        <uses-library android:name="com.google.android.maps"/>
 
     </application>
 

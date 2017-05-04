@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import tech.msociety.terawhere.R;
@@ -27,13 +28,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
         viewHolder.textViewOfferId.setText(offer.getId());
         viewHolder.textViewDestination.setText(offer.getDestination());
-        viewHolder.textViewTimestamp.setText(offer.getTimestamp());
+        String strDate = String.format("Date: %tc", offer.getTimestamp());
+
+        viewHolder.textViewTimestamp.setText(strDate);
     }
 
     @Override
     public int getItemCount() {
-        return offers.size();
-    }
+        return offers == null ? 0 : offers.size();    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewOfferId;

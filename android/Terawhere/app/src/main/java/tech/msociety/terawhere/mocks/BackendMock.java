@@ -21,8 +21,8 @@ public class BackendMock {
             String timestamp = faker.words(2);
             String remarks = faker.words(2);
 
-            Offer offer = new Offer(offerId, driverId, destination, numberOfSeats, timestamp, remarks);
-            offers.add(offer);
+            //Offer offer = new Offer(offerId, driverId, destination, numberOfSeats, timestamp, remarks);
+            //offers.add(offer);
         }
 
         return offers;

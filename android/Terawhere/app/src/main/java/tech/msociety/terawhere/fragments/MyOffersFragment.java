@@ -7,16 +7,22 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.activities.CreateOfferActivity;
 import tech.msociety.terawhere.adapters.OffersAdapter;
-import tech.msociety.terawhere.mocks.BackendMock;
 import tech.msociety.terawhere.models.Offer;
 
 import static android.app.Activity.RESULT_OK;
@@ -69,13 +75,44 @@ public class MyOffersFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         adapter = new OffersAdapter();
+
         recyclerView.setAdapter(adapter);
     }
 
     private void populateListFromDatabase() {
-        List<Offer> offers = BackendMock.getOffers();
+        //List<Offer> offers = BackendMock.getOffers();
 
-        ((OffersAdapter) adapter).setOffers(offers);
-        adapter.notifyDataSetChanged();
+
+        final List<Offer> offersList = new ArrayList<>();
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
+
+        query.addAscendingOrder("PickUpTime");
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    if (objects.size() > 0) {
+                        for (ParseObject offer : objects) {
+                            Offer objOffer = new Offer(offer.getObjectId(), offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"));
+                            offersList.add(objOffer);
+                        }
+                        //Log.i("ListSize" , Integer.toString(offersList.size()));
+                        ((OffersAdapter) adapter).setOffers(offersList);
+                        adapter.notifyDataSetChanged();
+
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
     }
+
+
+
+
 }
