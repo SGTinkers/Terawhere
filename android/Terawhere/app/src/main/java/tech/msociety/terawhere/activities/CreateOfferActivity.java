@@ -1,7 +1,9 @@
 package tech.msociety.terawhere.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -27,8 +30,14 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -47,9 +56,25 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
     private static final String TOOLBAR_TITLE = "Create Offer";
     EditText nameEditText, destinationEditText, seatsAvailableEditText, remarksEditText, vehicleColorEditText, vehiclePlateNumberEditText;
     TimePicker pickUpTimePicker;
+    TextView locationTextView;
     private GoogleApiClient googleApiClient;
     private double lat,lon;
     Location currentLocation;
+
+    public void onChangeLocation(View view) {
+        try {
+            PlacePicker.IntentBuilder intentBuilder =
+                    new PlacePicker.IntentBuilder();
+            intentBuilder.setLatLngBounds(new LatLngBounds(
+                    new LatLng(lat - 0.016225, lon - 0.1043705), new LatLng(lat + 0.016225, lon + 0.1043705)));
+            Intent intent = intentBuilder.build(CreateOfferActivity.this);
+            startActivityForResult(intent, 1);
+
+        } catch (GooglePlayServicesRepairableException
+                | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
     public void createOffer(View view) {
         if (isNetworkConnected()) {
 
@@ -126,6 +151,7 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         setContentView(R.layout.activity_create_offer);
 
         initToolbar(TOOLBAR_TITLE, true);
+        locationTextView = (TextView) findViewById(R.id.locationTextView);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
@@ -218,7 +244,7 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             }
             if (addresses.size() > 0)
             {
-                TextView locationTextView = (TextView) findViewById(R.id.locationTextView);
+
                 if(addresses.get(0).getAddressLine(0) != null) {
                     Log.i("LOCATION1", addresses.get(0).getAddressLine(0));
                     locationTextView.setText("You are at: " + addresses.get(0).getAddressLine(0));
@@ -246,6 +272,27 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         Log.i(MainActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
     }
 
+    @Override
+    protected void onActivityResult(int requestCode,
+                                    int resultCode, Intent data) {
 
+        if (requestCode == 1
+                && resultCode == Activity.RESULT_OK) {
+
+            final Place place = PlacePicker.getPlace(this, data);
+            final CharSequence name = place.getName();
+            final CharSequence address = place.getAddress();
+            String attributions = (String) place.getAttributions();
+            if (attributions == null) {
+                attributions = "";
+            }
+            lat = place.getLatLng().latitude;
+            lon = place.getLatLng().longitude;
+            locationTextView.setText(address);
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
 }
