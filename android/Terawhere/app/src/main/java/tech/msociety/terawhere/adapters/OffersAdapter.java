@@ -1,7 +1,5 @@
 package tech.msociety.terawhere.adapters;
 
-
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -12,22 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,13 +26,14 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.activities.CreateOfferActivity;
 import tech.msociety.terawhere.models.Offer;
 
-public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder>  {
+public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
     private List<Offer> offers;
     ViewGroup viewGroup;
 
     String[] value = new String[]{
             "Edit", "Delete"
     };
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_child, parent, false);
@@ -49,7 +41,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
         return new ViewHolder(view);
     }
-
 
 
     @Override
@@ -63,12 +54,11 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         viewHolder.textViewVehicleColor.setText(offer.getVehicleColor());
         viewHolder.textViewVehiclePlateNumber.setText(offer.getVehiclePlateNumber());
 
-        SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");
+        SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
 
-        if(offer.getTimestamp() != null) {
+        if (offer.getTimestamp() != null) {
             viewHolder.textViewTimestamp.setText(ft.format(offer.getTimestamp()));
-        }
-        else {
+        } else {
             viewHolder.textViewTimestamp.setText("");
 
         }
@@ -124,8 +114,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                                         offers.remove(position);
                                         notifyItemRemoved(position);
                                         notifyItemRangeChanged(position, getItemCount());
-                                    }
-                                    else {
+                                    } else {
                                         // something went wrong
                                     }
                                 }
@@ -147,8 +136,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                             viewGroup.getContext().startActivity(intent);
 
 
-
-
                         }
 
                     }
@@ -163,10 +150,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
 
-
     @Override
     public int getItemCount() {
-        return offers == null ? 0 : offers.size();    }
+        return offers == null ? 0 : offers.size();
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewSeatsAvailable;
