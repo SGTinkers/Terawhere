@@ -8,7 +8,7 @@
 
     <application
 
-        android:name=".activities.StarterApplication"
+        android:name=".parse.StarterApplication"
 
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
