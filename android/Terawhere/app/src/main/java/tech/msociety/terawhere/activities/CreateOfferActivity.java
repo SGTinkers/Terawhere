@@ -40,13 +40,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -67,45 +60,33 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
     private TextView textViewLocation;
     private GoogleApiClient googleApiClient;
     private Button buttonCreateOffer;
+
     private double currentLocationLatitude, currentLocationLongitude;
     private boolean isEditOffer = false;
 
     private String offerId;
 
-    private String[] mosques = {"Yusuf Ishak", "Darul Makmur", "An-Nur", "Al-Muttaqin",
-            "As-Syafaah", "Al-Falah", "Al-Mukminin", "Al-Maarof", "Al-Iman", "Al-Mawaddah",
-            "Al-Istighfar", "Ahmad Ibrahim", "Al-Firdaus", "Al-Istiqamah", "Al-Ansar", "Al-Abrar", "Al-Huda", "Al-Amin"};
+    private String[] STRING_ARRAY_MOSQUES;
 
-    private String[] color = {"red", "blue", "black", "white", "yellow", "gray", "green", "silver", "dark blue", "dark green", "purple", "orange", "brown"};
+    private String[] STRING_ARRAY_COLORS;
+
+    private final double OFFSET_LATITUDE = 0.000225;
+    private final double OFFSET_LONGITUDE = 0.0043705;
 
     @Override
     public void onClick(View view) {
 
         if (view.getId() == R.id.createOfferLinearLayout) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            if (getCurrentFocus() != null) {
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            }
-        }
-
-        if (view.getId() == R.id.imageCurrentLocation || view.getId() == R.id.locationTextView) {
+            hideKeyboard();
+        } else if (view.getId() == R.id.imageCurrentLocation || view.getId() == R.id.locationTextView) {
             try {
-                PlacePicker.IntentBuilder intentBuilder =
-                        new PlacePicker.IntentBuilder();
-                intentBuilder.setLatLngBounds(new LatLngBounds(
-                        new LatLng(currentLocationLatitude - 0.016225, currentLocationLongitude - 0.1043705), new LatLng(currentLocationLatitude + 0.016225, currentLocationLongitude + 0.1043705)));
-                Intent intent = intentBuilder.build(CreateOfferActivity.this);
-                startActivityForResult(intent, 1);
-
-            } catch (GooglePlayServicesRepairableException
-                    | GooglePlayServicesNotAvailableException e) {
+                showPlacePickerActivity();
+            } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 e.printStackTrace();
             }
-        }
-        if (view.getId() == R.id.createOfferButton) {
+        } else if (view.getId() == R.id.createOfferButton) {
             if (isNetworkConnected()) {
 
-                final ParseGeoPoint gp = new ParseGeoPoint(currentLocationLatitude, currentLocationLongitude);
                 Calendar calendar = Calendar.getInstance();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -126,52 +107,9 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
                 } else {
                     if (!isEditOffer) {
 
-
-                        ParseObject offers = new ParseObject("Offers");
-                        offers.put("Name", ParseUser.getCurrentUser().getString("username"));
-
-                        offers.put("Destination", editTextDestination.getText().toString());
-                        offers.put("SeatsAvailable", Integer.parseInt(editTextSeatsAvailable.getText().toString()));
-                        offers.put("PickUpTime", date);
-                        offers.put("Remarks", editTextRemarks.getText().toString());
-                        offers.put("VehicleColor", editTextVehicleColor.getText().toString());
-                        offers.put("PlateNumber", editTextVehiclePlateNumber.getText().toString());
-                        offers.put("CurrentLocation", gp);
-
-
-                        offers.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    Log.i("SaveInBackground", "Successful");
-                                } else {
-                                    Log.i("SaveInBackground", "Failed Error: " + e.toString());
-                                }
-                            }
-                        });
                         Toast.makeText(this, "Successfully created offer!!", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (!offerId.isEmpty()) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
-                            query.getInBackground(offerId, new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject object, ParseException e) {
-                                    if (e == null && object != null) {
-                                        object.put("Name", ParseUser.getCurrentUser().getString("username"));
-                                        object.put("Destination", editTextDestination.getText().toString());
-                                        object.put("SeatsAvailable", Integer.parseInt(editTextSeatsAvailable.getText().toString()));
-                                        object.put("PickUpTime", date);
-                                        object.put("Remarks", editTextRemarks.getText().toString());
-                                        object.put("VehicleColor", editTextVehicleColor.getText().toString());
-                                        object.put("PlateNumber", editTextVehiclePlateNumber.getText().toString());
-                                        object.put("CurrentLocation", gp);
-                                        object.saveInBackground();
 
-                                    }
-
-                                }
-                            });
-                        }
                         Toast.makeText(this, "Successfully updated offer!!", Toast.LENGTH_SHORT).show();
 
                     }
@@ -197,12 +135,40 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
 
     }
 
+    private void showPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
+        PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+        LatLng minimumBound = new LatLng(currentLocationLatitude - OFFSET_LATITUDE, currentLocationLongitude - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(currentLocationLatitude + OFFSET_LATITUDE, currentLocationLongitude + OFFSET_LONGITUDE);
+        LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
+        intentBuilder.setLatLngBounds(placePickerMapBounds);
+
+        Intent intent = intentBuilder.build(CreateOfferActivity.this);
+        startActivityForResult(intent, 1);
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
 
         initToolbar(TOOLBAR_TITLE, true);
+
+        buttonCreateOfferListener();
+        linearLayoutCreateOfferListener();
+        textViewCurrentLocationListener();
+        imageViewCurrentLocationListener();
+
+        STRING_ARRAY_MOSQUES = getResources().getStringArray(R.array.mosques_array);
+
+        STRING_ARRAY_COLORS = getResources().getStringArray(R.array.colors_array);
+
         textViewLocation = (TextView) findViewById(R.id.locationTextView);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -213,7 +179,7 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         editTextDestination = (AutoCompleteTextView) findViewById(R.id.destinationEditText);
 
         ArrayAdapter<String> adapter = new
-                ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mosques);
+                ArrayAdapter<>(this, android.R.layout.simple_list_item_1, STRING_ARRAY_MOSQUES);
 
         editTextDestination.setAdapter(adapter);
         editTextDestination.setThreshold(1);
@@ -224,7 +190,7 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         editTextRemarks = (EditText) findViewById(R.id.remarksEditText);
         editTextVehicleColor = (AutoCompleteTextView) findViewById(R.id.vehicleColorEditText);
         ArrayAdapter<String> adapter2 = new
-                ArrayAdapter<>(this, android.R.layout.simple_list_item_1, color);
+                ArrayAdapter<>(this, android.R.layout.simple_list_item_1, STRING_ARRAY_COLORS);
 
         editTextVehicleColor.setAdapter(adapter2);
         editTextVehicleColor.setThreshold(1);
@@ -247,7 +213,6 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             }
 
 
-
             offerId = intent.getStringExtra("id");
             Log.i("OFFER ID: ", offerId);
             editTextDestination.setText(intent.getStringExtra("destination"));
@@ -255,13 +220,10 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             editTextRemarks.setText(intent.getStringExtra("remarks"));
             editTextVehicleColor.setText(intent.getStringExtra("vehicleColor"));
             editTextVehiclePlateNumber.setText(intent.getStringExtra("vehiclePlateNumber"));
-            buttonCreateOffer.setText("Edit Offer");
+            String strEditOffer = "Edit Offer";
+            buttonCreateOffer.setText(strEditOffer);
 
         }
-        buttonCreateOfferListener();
-        linearLayoutCreateOfferListener();
-        textViewCurrentLocationListener();
-        imageViewCurrentLocationListener();
 
 
     }

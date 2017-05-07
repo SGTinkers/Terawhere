@@ -13,11 +13,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -103,22 +98,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
                         if (selectedText.equals("Delete")) {
 
-
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
-                            query.whereEqualTo("ObjectId", offer.getId());
-                            query.getInBackground(offer.getId(), new GetCallback<ParseObject>() {
-                                public void done(ParseObject object, ParseException e) {
-                                    if (e == null) {
-                                        object.deleteInBackground();
-                                        Log.i("DELETING: ", Integer.toString(position));
-                                        offers.remove(position);
-                                        notifyItemRemoved(position);
-                                        notifyItemRangeChanged(position, getItemCount());
-                                    } else {
-                                        // something went wrong
-                                    }
-                                }
-                            });
                         }
 
                         if (selectedText.equals("Edit")) {

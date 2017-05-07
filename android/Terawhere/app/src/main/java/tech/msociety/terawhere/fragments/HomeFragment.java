@@ -40,12 +40,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -254,28 +248,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 //clusterManager.setOnClusterItemInfoWindowClickListener(this); //added
 
         final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
 
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null) {
-                    if (objects.size() > 0) {
-                        for (ParseObject offer : objects) {
-                            ParseGeoPoint pgp = offer.getParseGeoPoint("CurrentLocation");
-                            String id = offer.getObjectId();
-                            clusterManager.addItem(new ClusterMarkerLocation(id, new LatLng(pgp.getLatitude(), pgp.getLongitude())));
-                            mapLocationOffer.put(new LatLng(pgp.getLatitude(), pgp.getLongitude()), new Offer(offer.getObjectId(), offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"), offer.getString("VehicleColor"), offer.getString("PlateNumber")));
-                        }
-
-                        clusterManager.cluster();
-                    }
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
         clusterManager.getMarkerCollection()
                 .setOnInfoWindowAdapter(new CustomInfoViewAdapter(LayoutInflater.from(mContext), mapLocationOffer));
 
@@ -439,7 +412,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         } else if (item.getItemId() == R.id.logout) {
 
-            ParseUser.logOut();
 
             Intent intent = new Intent(mContext, LoginActivity.class);
             startActivity(intent);

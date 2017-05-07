@@ -1,4 +1,40 @@
 <resources>
     <string name="app_name">Terawhere</string>
     <string name="title_activity_create_offer">Create Offer</string>
+    <string-array name="mosques_array">
+        <item>Yusuf Ishak</item>
+        <item>Darul Makmur</item>
+        <item>An-Nur</item>
+        <item>Al-Muttaqin</item>
+        <item>As-Syafaah</item>
+        <item>Al-Falah</item>
+        <item>Al-Mukminin</item>
+        <item>Al-Maarof</item>
+        <item>Al-Iman</item>
+        <item>Al-Mawaddah</item>
+        <item>Al-Istighfar</item>
+        <item>Ahmad Ibrahim</item>
+        <item>Al-Firdaus</item>
+        <item>Al-Istiqamah</item>
+        <item>Al-Ansar</item>
+        <item>Al-Huda</item>
+        <item>Al-Amin</item>
+    </string-array>
+
+    <string-array name="colors_array">
+        <item>red</item>
+        <item>blue</item>
+        <item>black</item>
+        <item>white</item>
+        <item>yellow</item>
+        <item>gray</item>
+        <item>green</item>
+        <item>silver</item>
+        <item>dark blue</item>
+        <item>dark green</item>
+        <item>purple</item>
+        <item>orange</item>
+        <item>brown</item>
+    </string-array>
+
 </resources>

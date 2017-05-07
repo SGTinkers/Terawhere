@@ -31,11 +31,7 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
 
     @Override
     public View getInfoWindow(Marker marker) {
-    /*final View popup = mInflater.inflate(R.layout.info_window_layout, null);
 
-    ((TextView) popup.findViewById(R.id.title)).setText(marker.getSnippet());
-
-    return popup;*/
         return null;
     }
 
@@ -63,46 +59,6 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
             pickUpTimeTextView.setText(ft.format(objOffer.getTimestamp()));
         }
 
-        /*
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
-        ParseGeoPoint pgp = new ParseGeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
-        query.whereEqualTo("CurrentLocation", pgp);
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(final List<ParseObject> objects, ParseException e) {
-                if (e == null) {
-
-                    if (objects.size() > 0) {
-                        Log.i("Size", Integer.toString(objects.size()));
-                        Log.i("Size", objects.get(0).getString("Name"));
-                        Log.i("Size", objects.get(0).getString("Destination"));
-
-
-                        //name = objects.get(0).getString("Name");
-
-
-                                ((TextView) popup.findViewById(R.id.nameTextView)).setText(objects.get(0).getString("Name"));
-
-
-                        destinationTextView.setText(objects.get(0).getString("Destination"));
-                            seatsAvailableTextView.setText(Integer.toString(objects.get(0).getInt("SeatsAvailable")));
-                            SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");
-
-                            if(objects.get(0).getDate("PickUpTime") != null) {
-                                pickUpTimeTextView.setText(ft.format(objects.get(0).getDate("PickUpTime")));
-                            }
-
-
-
-
-                    }
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
-        */
         return popup;
     }
 }

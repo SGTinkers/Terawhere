@@ -33,7 +33,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tech.msociety.terawhere.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.UserListActivity" />
         <activity android:name=".activities.MainActivity" />
 
         <uses-library android:name="com.google.android.maps"/>
