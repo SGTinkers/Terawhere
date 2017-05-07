@@ -54,9 +54,11 @@ import java.util.List;
 
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.activities.LoginActivity;
+import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
+import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private Context mContext;
     private SupportMapFragment mSupportMapFragment;
@@ -84,12 +86,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         mContext = getActivity();
 
 
-        // latest version SDK after Marshmallow
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+// latest version SDK after Marshmallow
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
-        // create map in fragment
+// create map in fragment
         FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
         mSupportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map_container);
         if (mSupportMapFragment == null) {
@@ -107,7 +109,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         initMarkers();
 
-        // latest version SDK after Marshmallow
+// latest version SDK after Marshmallow
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
@@ -153,25 +155,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onLocationChanged(Location location) {
 
         mLastKnownLocation = location;
-        //if (mCurrentLocationMarker != null) {
-        //     mCurrentLocationMarker.remove();
-        // }
+//if (mCurrentLocationMarker != null) {
+//     mCurrentLocationMarker.remove();
+// }
 
-        // randomly place markers within the vicinity of current location
+// randomly place markers within the vicinity of current location
 
-        // Place current location marker
+// Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("You are here!");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        // mCurrentLocationMarker = mMap.addMarker(markerOptions);
+// mCurrentLocationMarker = mMap.addMarker(markerOptions);
 
-        // move map camera
+// move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
 
-        // stop location updates
+// stop location updates
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
@@ -187,13 +189,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            // Asking user if explanation is needed
+// Asking user if explanation is needed
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Prompt the user once explanation has been shown
+// Prompt the user once explanation has been shown
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            else {
-                // No explanation needed, we can request the permission.
+            } else {
+// No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             }
             return false;
@@ -206,9 +207,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
+// If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                     // permission was granted
+// permission was granted
 
                     if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         if (mGoogleApiClient == null) {
@@ -216,9 +217,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         }
                         mMap.setMyLocationEnabled(true);
                     }
-                }
-                else {
-                    // Permission denied, Disable the functionality that depends on this permission.
+                } else {
+// Permission denied, Disable the functionality that depends on this permission.
                     Toast.makeText(mContext, "Permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
@@ -230,31 +230,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
         if (visible) {
-            Log.i("HELLO THERE", " HEHE" );
+            Log.i("HELLO THERE", " HEHE");
 
 
         }
     }
+
     //randomised markers
     private void initMarkers() {
-        final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>( mContext, mMap );
+        final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>(mContext, mMap);
         mMap.clear();
         clusterManager.clearItems(); // calling for sure - maybe it doenst need to be here
         mMap.setOnCameraIdleListener(clusterManager);
-        //mMap.setOnMarkerClickListener(clusterManager);
-        //mMap.setOnInfoWindowClickListener(clusterManager);
+//mMap.setOnMarkerClickListener(clusterManager);
+//mMap.setOnInfoWindowClickListener(clusterManager);
         mMap.getUiSettings().setMapToolbarEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        //clusterManager.setOnClusterClickListener(this);
-        //clusterManager.setOnClusterInfoWindowClickListener(this);
-        //clusterManager.setOnClusterItemClickListener(this);
-        //clusterManager.setOnClusterItemInfoWindowClickListener(this);
+//clusterManager.setOnClusterClickListener(this);
+//clusterManager.setOnClusterInfoWindowClickListener(this);
+//clusterManager.setOnClusterItemClickListener(this);
+//clusterManager.setOnClusterItemInfoWindowClickListener(this);
 
-        //clusterManager.setOnClusterItemInfoWindowClickListener(this); //added
+//clusterManager.setOnClusterItemInfoWindowClickListener(this); //added
 
         final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
-
 
 
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -265,8 +265,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         for (ParseObject offer : objects) {
                             ParseGeoPoint pgp = offer.getParseGeoPoint("CurrentLocation");
                             String id = offer.getObjectId();
-                            clusterManager.addItem( new ClusterMarkerLocation( id, new LatLng( pgp.getLatitude(), pgp.getLongitude()) ) );
-                            mapLocationOffer.put(new LatLng( pgp.getLatitude(), pgp.getLongitude()), new Offer(offer.getObjectId(),offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"), offer.getString("VehicleColor"), offer.getString("PlateNumber")));
+                            clusterManager.addItem(new ClusterMarkerLocation(id, new LatLng(pgp.getLatitude(), pgp.getLongitude())));
+                            mapLocationOffer.put(new LatLng(pgp.getLatitude(), pgp.getLongitude()), new Offer(offer.getObjectId(), offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"), offer.getString("VehicleColor"), offer.getString("PlateNumber")));
                         }
 
                         clusterManager.cluster();
@@ -277,11 +277,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             }
         });
         clusterManager.getMarkerCollection()
-                .setOnInfoWindowAdapter(new CustomInfoViewAdapter(LayoutInflater.from(mContext),mapLocationOffer));
+                .setOnInfoWindowAdapter(new CustomInfoViewAdapter(LayoutInflater.from(mContext), mapLocationOffer));
 
         clusterManager.setOnClusterItemInfoWindowClickListener(
                 new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
-                    @Override public void onClusterItemInfoWindowClick(ClusterMarkerLocation stringClusterItem) {
+                    @Override
+                    public void onClusterItemInfoWindowClick(ClusterMarkerLocation stringClusterItem) {
                         Offer currentOffer = mapLocationOffer.get(stringClusterItem.getPosition());
 
                         final AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
@@ -301,15 +302,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                         dialogRemarks.setText(currentOffer.getRemarks());
                         dialogDestination.setText(currentOffer.getDestination());
-                        SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");
+                        SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
 
-                        if(currentOffer.getTimestamp() != null) {
+                        if (currentOffer.getTimestamp() != null) {
                             dialogTimestamp.setText(ft.format(currentOffer.getTimestamp()));
                         }
                         dialogSeatsAvailable.setText(Integer.toString(currentOffer.getNumberOfSeats()) + " LEFT");
 
 
-                        // Spinner Drop down elements
+// Spinner Drop down elements
                         List<String> categories = new ArrayList<String>();
                         stringClusterItem.getPosition();
                         int seatsAvailable = currentOffer.getNumberOfSeats();
@@ -319,7 +320,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                         }
 
 
-                        // Creating adapter for spinner
+// Creating adapter for spinner
                         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
                             @Override
                             public View getView(int position, View convertView, ViewGroup parent) {
@@ -332,16 +333,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             }
 
                             private View setCentered(View view) {
-                                view.setPadding(10,20,10,10);
+                                view.setPadding(10, 20, 10, 10);
                                 TextView textView = (TextView) view.findViewById(android.R.id.text1);
                                 textView.setTextSize(20);
                                 textView.setGravity(Gravity.CENTER);
                                 return view;
                             }
                         };
-                        // Drop down layout style - list view with radio button
+// Drop down layout style - list view with radio button
 
-                        // attaching data adapter to spinner
+// attaching data adapter to spinner
                         spinner.setAdapter(dataAdapter);
                         spinner.setOnItemSelectedListener(new OnSpinnerItemClicked());
 
@@ -349,12 +350,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             public void onClick(DialogInterface dialog, int which) {
 
 
-
-                                // CONFIRMATION BUTTON
+// CONFIRMATION BUTTON
                                 if (spinner.getSelectedItem().toString().matches("")) {
                                     Toast.makeText(mContext, "Please enter number of seats", Toast.LENGTH_SHORT).show();
-                                }
-                                else {
+                                } else {
                                     AlertDialog.Builder adb2 = new AlertDialog.Builder(mContext);
 
                                     LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -383,24 +382,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                     adb2.show();
                                 }
 
-                            } });
+                            }
+                        });
 
 
                         adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                            } });
+                            }
+                        });
                         adb.show();
                     }
                 });
 
         mMap.setOnInfoWindowClickListener(clusterManager);
         mMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
-        //mMap.setOnCameraChangeListener(mClusterManager);
+//mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnMarkerClickListener(clusterManager);
-
-
-
 
 
     }
@@ -419,7 +417,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         @Override
         public void onNothingSelected(AdapterView parent) {
-            // Do nothing.
+// Do nothing.
         }
     }
 
@@ -435,7 +433,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         if (item.getItemId() == R.id.refresh) {
 
             Toast.makeText(mContext, "Refreshing...", Toast.LENGTH_LONG).show();
-            //mMap.clear();
+//mMap.clear();
 
             initMarkers();
 
