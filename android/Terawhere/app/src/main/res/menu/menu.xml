@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:compat="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Refresh"
+        android:id="@+id/refresh" />
+
+    <item
+        android:title="Logout"
+        android:id="@+id/logout" />
+    <item
+
+        android:id="@+id/action_search"
+        android:icon="@drawable/action_button_info"
+        android:title="info"
+        compat:showAsAction="ifRoom" />
+</menu>

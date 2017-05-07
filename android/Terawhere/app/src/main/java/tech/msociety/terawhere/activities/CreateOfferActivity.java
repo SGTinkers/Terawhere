@@ -64,15 +64,6 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
     private double currentLocationLatitude, currentLocationLongitude;
     private boolean isEditOffer = false;
 
-    private String offerId;
-
-    private String[] STRING_ARRAY_MOSQUES;
-
-    private String[] STRING_ARRAY_COLORS;
-
-    private final double OFFSET_LATITUDE = 0.000225;
-    private final double OFFSET_LONGITUDE = 0.0043705;
-
     @Override
     public void onClick(View view) {
 
@@ -96,7 +87,6 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
 
                 calendar.set(Calendar.SECOND, 0);
                 calendar.set(Calendar.MILLISECOND, 0);
-                final Date date = calendar.getTime();
                 if (editTextDestination.getText().toString().matches("") ||
                         editTextSeatsAvailable.getText().toString().matches("") ||
                         editTextRemarks.getText().toString().matches("") ||
@@ -137,6 +127,8 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
 
     private void showPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+        double OFFSET_LATITUDE = 0.000225;
+        double OFFSET_LONGITUDE = 0.0043705;
         LatLng minimumBound = new LatLng(currentLocationLatitude - OFFSET_LATITUDE, currentLocationLongitude - OFFSET_LONGITUDE);
         LatLng maximumBound = new LatLng(currentLocationLatitude + OFFSET_LATITUDE, currentLocationLongitude + OFFSET_LONGITUDE);
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
@@ -165,9 +157,9 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         textViewCurrentLocationListener();
         imageViewCurrentLocationListener();
 
-        STRING_ARRAY_MOSQUES = getResources().getStringArray(R.array.mosques_array);
+        String[] STRING_ARRAY_MOSQUES = getResources().getStringArray(R.array.mosques_array);
 
-        STRING_ARRAY_COLORS = getResources().getStringArray(R.array.colors_array);
+        String[] STRING_ARRAY_COLORS = getResources().getStringArray(R.array.colors_array);
 
         textViewLocation = (TextView) findViewById(R.id.locationTextView);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -213,7 +205,7 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             }
 
 
-            offerId = intent.getStringExtra("id");
+            String offerId = intent.getStringExtra("id");
             Log.i("OFFER ID: ", offerId);
             editTextDestination.setText(intent.getStringExtra("destination"));
             editTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", intent.getExtras().getInt("seatsAvailable")));
