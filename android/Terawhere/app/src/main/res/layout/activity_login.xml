@@ -44,10 +44,9 @@
         />
 
     <Button
-        android:id="@+id/signUpButton"
+        android:id="@+id/buttonLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="signUp"
         android:text="Sign Up"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:layout_below="@+id/passwordEditText"
@@ -59,8 +58,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="or, Login"
-        android:layout_alignBaseline="@+id/signUpButton"
-        android:layout_alignBottom="@+id/signUpButton"
+        android:layout_alignBaseline="@id/buttonLogin"
+        android:layout_alignBottom="@id/buttonLogin"
         android:layout_alignRight="@+id/passwordEditText"
         android:layout_alignEnd="@+id/passwordEditText"
         android:layout_marginRight="33dp"

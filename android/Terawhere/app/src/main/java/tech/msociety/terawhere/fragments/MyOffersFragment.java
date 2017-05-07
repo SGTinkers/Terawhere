@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tech.msociety.terawhere.R;
@@ -26,7 +25,6 @@ public class MyOffersFragment extends Fragment {
     private static final int REQUEST_CODE = 1;
     private RecyclerView.Adapter adapter;
     private RecyclerView recyclerView;
-    List<Offer> offersList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,37 +77,5 @@ public class MyOffersFragment extends Fragment {
         List<Offer> offers = BackendMock.getOffers();
         ((OffersAdapter) adapter).setOffers(offers);
         adapter.notifyDataSetChanged();
-
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
-//        query.whereEqualTo("Name", ParseUser.getCurrentUser().getString("username"));
-//        query.addAscendingOrder("PickUpTime");
-//        query.findInBackground(new FindCallback<ParseObject>() {
-//            @Override
-//            public void done(List<ParseObject> objects, ParseException e) {
-
-//                if (e == null) {
-//                    if (objects.size() > 0) {
-//
-//                        for (ParseObject offer : objects) {
-//                            Offer objOffer = new Offer(offer.getObjectId(), offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"), offer.getString("VehicleColor"), offer.getString("PlateNumber"));
-//                            SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
-//
-//                            Log.i("TIME IS: ", ft.format(offer.getDate("PickUpTime")));
-//                            offersList.add(objOffer);
-//                        }
-//
-//                        ((OffersAdapter) adapter).setOffers(offersList);
-//
-//                        adapter.notifyDataSetChanged();
-//
-//                        Log.i("REFRESHING", "DATAA");
-//                    }
-//                } else {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
-
     }
 }
