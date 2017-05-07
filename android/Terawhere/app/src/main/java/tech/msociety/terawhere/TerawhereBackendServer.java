@@ -1,7 +1,6 @@
 package tech.msociety.terawhere;
 
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
@@ -41,6 +40,6 @@ public class TerawhereBackendServer {
                 "User-Agent: Retrofit-Sample-App"
         })
         @GET("api/v1/offers")
-        Call<ResponseBody> getOffers();
+        Call<GetOffers> getOffers();
     }
 }

@@ -15,14 +15,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import tech.msociety.terawhere.GetOffers;
 import tech.msociety.terawhere.R.id;
 import tech.msociety.terawhere.R.layout;
 import tech.msociety.terawhere.TerawhereBackendServer;
@@ -49,27 +48,26 @@ public class MyOffersFragment extends Fragment {
 
         initFab();
         initRecyclerView();
-        populateListFromDatabase();
+        populateListFromDatabase(BackendMock.getOffers());
 
         makeNetworkCall();
     }
 
-    private static void makeNetworkCall() {
+    private void makeNetworkCall() {
         Api api = TerawhereBackendServer.getApiInstance();
-        Call<ResponseBody> call = api.getOffers();
+        Call<GetOffers> call = api.getOffers();
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<GetOffers>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    Log.d("response: ", response.body().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {
+                GetOffers getOffers = response.body();
+                List<Offer> offers = getOffers.getOffers();
+                populateListFromDatabase(offers);
+                Log.d("response: ", getOffers.toString());
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<GetOffers> call, Throwable t) {
                 System.out.println(Arrays.toString(t.getStackTrace()));
             }
         });
@@ -81,7 +79,7 @@ public class MyOffersFragment extends Fragment {
 
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                populateListFromDatabase();
+                populateListFromDatabase(BackendMock.getOffers());
             }
         }
     }
@@ -108,8 +106,8 @@ public class MyOffersFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    private void populateListFromDatabase() {
-        List<Offer> offers = BackendMock.getOffers();
+    void populateListFromDatabase(List<Offer> offers) {
+//        List<Offer> offers = BackendMock.getOffers();
         ((OffersAdapter) adapter).setOffers(offers);
         adapter.notifyDataSetChanged();
     }

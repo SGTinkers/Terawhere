@@ -3,9 +3,9 @@ package tech.msociety.terawhere.models;
 import java.util.Date;
 
 public class Offer {
-    private String id;
+    private final String id;
     private String driverId;
-    private String destination;
+    private final String destination;
     private Integer numberOfSeats;
     private Date timestamp;
     private String remarks;
@@ -21,6 +21,11 @@ public class Offer {
         this.remarks = remarks;
         this.vehicleColor = vehicleColor;
         this.vehiclePlateNumber = vehiclePlateNumber;
+    }
+
+    public Offer(String id, String endName) {
+        this.id = id;
+        destination = endName;
     }
 
     public String getId() {
