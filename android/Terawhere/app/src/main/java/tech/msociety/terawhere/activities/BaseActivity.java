@@ -5,10 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.R.id;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    protected final String TAG = this.getClass().getSimpleName();
+    protected final String TAG = getClass().getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -16,7 +16,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void initToolbar(String toolbarTitle, boolean displayHomeAsUpEnabled) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle(toolbarTitle);

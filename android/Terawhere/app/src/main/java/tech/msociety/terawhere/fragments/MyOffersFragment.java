@@ -7,13 +7,26 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.v7.widget.RecyclerView.LayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
-import tech.msociety.terawhere.R;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tech.msociety.terawhere.R.id;
+import tech.msociety.terawhere.R.layout;
+import tech.msociety.terawhere.TerawhereBackendServer;
+import tech.msociety.terawhere.TerawhereBackendServer.Api;
 import tech.msociety.terawhere.activities.CreateOfferActivity;
 import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.mocks.BackendMock;
@@ -23,12 +36,11 @@ import static android.app.Activity.RESULT_OK;
 
 public class MyOffersFragment extends Fragment {
     private static final int REQUEST_CODE = 1;
-    private RecyclerView.Adapter adapter;
-    private RecyclerView recyclerView;
+    private Adapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_my_offers, container, false);
+        return inflater.inflate(layout.fragment_my_offers, container, false);
     }
 
     @Override
@@ -38,6 +50,29 @@ public class MyOffersFragment extends Fragment {
         initFab();
         initRecyclerView();
         populateListFromDatabase();
+
+        makeNetworkCall();
+    }
+
+    private static void makeNetworkCall() {
+        Api api = TerawhereBackendServer.getApiInstance();
+        Call<ResponseBody> call = api.getOffers();
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    Log.d("response: ", response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                System.out.println(Arrays.toString(t.getStackTrace()));
+            }
+        });
     }
 
     @Override
@@ -52,19 +87,19 @@ public class MyOffersFragment extends Fragment {
     }
 
     private void initFab() {
-        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fabAddRecord);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(id.fabAddRecord);
+        fab.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(view.getContext(), CreateOfferActivity.class), REQUEST_CODE);
+            public void onClick(View v) {
+                startActivityForResult(new Intent(v.getContext(), CreateOfferActivity.class), REQUEST_CODE);
             }
         });
     }
 
     private void initRecyclerView() {
-        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyOffers);
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(id.recyclerViewMyOffers);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        LayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
