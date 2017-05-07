@@ -10,10 +10,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -52,9 +54,16 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter{
         final TextView seatsAvailableTextView = (TextView) popup.findViewById(R.id.seatsAvailableTextView);
         final TextView pickUpTimeTextView = (TextView) popup.findViewById(R.id.pickUpTimeTextView);
         Offer objOffer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude,marker.getPosition().longitude));
-        nameTextView.setText(objOffer.getDriverId());
+
+        if(ParseUser.getCurrentUser().getString("username").equals(objOffer.getDriverId())) {
+            nameTextView.setText("Me");
+        }
+        else {
+            nameTextView.setText(objOffer.getDriverId());
+        }
+
         destinationTextView.setText(objOffer.getDestination());
-        seatsAvailableTextView.setText(Integer.toString(objOffer.getNumberOfSeats()) + " seats available");
+        seatsAvailableTextView.setText(Integer.toString(objOffer.getNumberOfSeats()) + " LEFT");
         SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");
 
         if(objOffer.getTimestamp() != null) {

@@ -9,14 +9,18 @@ public class Offer {
     private Integer numberOfSeats;
     private Date timestamp;
     private String remarks;
+    private String vehicleColor;
+    private String vehiclePlateNumber;
 
-    public Offer(String id, String driverId, String destination, Integer numberOfSeats, Date timestamp, String remarks) {
+    public Offer(String id, String driverId, String destination, Integer numberOfSeats, Date timestamp, String remarks, String vehicleColor, String vehiclePlateNumber) {
         this.id = id;
         this.driverId = driverId;
         this.destination = destination;
         this.numberOfSeats = numberOfSeats;
         this.timestamp = timestamp;
         this.remarks = remarks;
+        this.vehicleColor = vehicleColor;
+        this.vehiclePlateNumber = vehiclePlateNumber;
     }
 
     public String getId() {
@@ -41,5 +45,13 @@ public class Offer {
 
     public String getRemarks() {
         return remarks;
+    }
+
+    public String getVehicleColor() {
+        return vehicleColor;
+    }
+
+    public String getVehiclePlateNumber() {
+        return vehiclePlateNumber;
     }
 }

@@ -2,6 +2,7 @@ package tech.msociety.terawhere.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -10,11 +11,22 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.location.LocationListener;
@@ -41,6 +53,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,12 +74,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     Location mLastKnownLocation;
     Marker mCurrentLocationMarker;
     LocationRequest mLocationRequest;
-
+    ClusterManager<ClusterMarkerLocation> clusterManager;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = getActivity();
+
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -75,6 +90,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
 
+        Button button = (Button) getActivity().findViewById(R.id.refreshButton);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Toast.makeText(mContext, "Refreshing...", Toast.LENGTH_LONG).show();
+                //mMap.clear();
+
+                initMarkers();
+            }
+        });
         // latest version SDK after Marshmallow
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -95,6 +122,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        initMarkers();
 
         // latest version SDK after Marshmallow
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -147,7 +176,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
 
         // randomly place markers within the vicinity of current location
-        initMarkers();
 
         // Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -216,9 +244,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible) {
+            Log.i("HELLO THERE", " HEHE" );
+
+
+        }
+    }
     //randomised markers
     private void initMarkers() {
         final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>( mContext, mMap );
+        mMap.clear();
+        clusterManager.clearItems(); // calling for sure - maybe it doenst need to be here
         mMap.setOnCameraIdleListener((GoogleMap.OnCameraIdleListener) clusterManager);
         //mMap.setOnMarkerClickListener(clusterManager);
         //mMap.setOnInfoWindowClickListener(clusterManager);
@@ -245,10 +284,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                             ParseGeoPoint pgp = offer.getParseGeoPoint("CurrentLocation");
                             String id = offer.getObjectId();
                             clusterManager.addItem( new ClusterMarkerLocation( id, new LatLng( pgp.getLatitude(), pgp.getLongitude()) ) );
-                            mapLocationOffer.put(new LatLng( pgp.getLatitude(), pgp.getLongitude()), new Offer(offer.getObjectId(),offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks")));
+                            mapLocationOffer.put(new LatLng( pgp.getLatitude(), pgp.getLongitude()), new Offer(offer.getObjectId(),offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"), offer.getString("VehicleColor"), offer.getString("PlateNumber")));
                         }
 
-
+                        clusterManager.cluster();
                     }
                 } else {
                     e.printStackTrace();
@@ -261,8 +300,115 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         clusterManager.setOnClusterItemInfoWindowClickListener(
                 new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
                     @Override public void onClusterItemInfoWindowClick(ClusterMarkerLocation stringClusterItem) {
-                        Toast.makeText(mContext, "Clicked info window: " + stringClusterItem.getId(),
-                                Toast.LENGTH_SHORT).show();
+                        Offer currentOffer = mapLocationOffer.get(stringClusterItem.getPosition());
+
+                        final AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+
+                        final LayoutInflater inflater = getActivity().getLayoutInflater();
+                        final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
+                        adb.setView(dialogView);
+
+                        adb.setTitle(currentOffer.getDriverId());
+
+
+                        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
+                        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogDestination);
+                        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogRemarks);
+                        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTimestamp);
+                        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogSeatsAvailable);
+
+                        dialogRemarks.setText(currentOffer.getRemarks());
+                        dialogDestination.setText(currentOffer.getDestination());
+                        SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");
+
+                        if(currentOffer.getTimestamp() != null) {
+                            dialogTimestamp.setText(ft.format(currentOffer.getTimestamp()));
+                        }
+                        dialogSeatsAvailable.setText(Integer.toString(currentOffer.getNumberOfSeats()) + " LEFT");
+
+
+                        // Spinner Drop down elements
+                        List<String> categories = new ArrayList<String>();
+                        stringClusterItem.getPosition();
+                        int seatsAvailable = currentOffer.getNumberOfSeats();
+                        for (int i = 1; i <= seatsAvailable; i++) {
+                            categories.add(Integer.toString(i));
+
+                        }
+
+
+                        // Creating adapter for spinner
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
+                            @Override
+                            public View getView(int position, View convertView, ViewGroup parent) {
+                                return setCentered(super.getView(position, convertView, parent));
+                            }
+
+                            @Override
+                            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                                return setCentered(super.getDropDownView(position, convertView, parent));
+                            }
+
+                            private View setCentered(View view) {
+                                view.setPadding(10,20,10,10);
+                                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                                textView.setTextSize(20);
+                                textView.setGravity(Gravity.CENTER);
+                                return view;
+                            }
+                        };
+                        // Drop down layout style - list view with radio button
+
+                        // attaching data adapter to spinner
+                        spinner.setAdapter(dataAdapter);
+                        spinner.setOnItemSelectedListener(new OnSpinnerItemClicked());
+
+                        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+
+
+                                // CONFIRMATION BUTTON
+                                if (spinner.getSelectedItem().toString().matches("")) {
+                                    Toast.makeText(mContext, "Please enter number of seats", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    AlertDialog.Builder adb2 = new AlertDialog.Builder(mContext);
+
+                                    LayoutInflater inflater = getActivity().getLayoutInflater();
+
+
+                                    adb2.setTitle("Are you sure you want to book " + spinner.getSelectedItem().toString() + " seats?");
+
+
+                                    adb2.setIcon(android.R.drawable.ic_dialog_alert);
+
+
+                                    adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+
+
+                                            Toast.makeText(mContext, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+
+                                    adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    adb2.show();
+                                }
+
+                            } });
+
+
+                        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            } });
+                        adb.show();
                     }
                 });
 
@@ -278,6 +424,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
+    public class OnSpinnerItemClicked implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent,
+                                   View view, int pos, long id) {
+            Toast.makeText(parent.getContext(), "Clicked : " +
+                    parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView parent) {
+            // Do nothing.
+        }
+    }
 
 
 

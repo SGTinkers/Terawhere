@@ -2,6 +2,7 @@ package tech.msociety.terawhere.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,18 +18,18 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private int viewPagerPosition = -1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initToolbar();
         initTabLayout();
         initPagerView();
 
         Toast.makeText(this, "Hello Terawhere!", Toast.LENGTH_SHORT).show();
     }
+
+
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         Intent i = getIntent();
         int tabToOpen = i.getIntExtra("FirstTab", -1);
         if (tabToOpen != -1) {
-            viewPager.setCurrentItem(1);
             viewPagerPosition = -1;
+            viewPager.setCurrentItem(1);
         }
         else if (viewPagerPosition != -1) {
             viewPager.setCurrentItem(viewPagerPosition);

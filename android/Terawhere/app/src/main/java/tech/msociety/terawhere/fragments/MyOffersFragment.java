@@ -2,21 +2,27 @@ package tech.msociety.terawhere.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +37,15 @@ public class MyOffersFragment extends Fragment {
     private static final int REQUEST_CODE = 1;
     private RecyclerView.Adapter adapter;
     private RecyclerView recyclerView;
+     List<Offer> offersList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_my_offers, container, false);
     }
+
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -69,39 +79,42 @@ public class MyOffersFragment extends Fragment {
 
     private void initRecyclerView() {
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyOffers);
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
         adapter = new OffersAdapter();
-
         recyclerView.setAdapter(adapter);
     }
 
     private void populateListFromDatabase() {
         //List<Offer> offers = BackendMock.getOffers();
 
-
-        final List<Offer> offersList = new ArrayList<>();
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Offers");
-
+        query.whereEqualTo("Name", ParseUser.getCurrentUser().getString("username"));
         query.addAscendingOrder("PickUpTime");
-
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
+
                 if (e == null) {
                     if (objects.size() > 0) {
+
                         for (ParseObject offer : objects) {
-                            Offer objOffer = new Offer(offer.getObjectId(), offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"));
+                            Offer objOffer = new Offer(offer.getObjectId(), offer.getString("Name"), offer.getString("Destination"), offer.getInt("SeatsAvailable"), offer.getDate("PickUpTime"), offer.getString("Remarks"), offer.getString("VehicleColor"), offer.getString("PlateNumber"));
+                            SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");
+
+                            Log.i("TIME IS: ", ft.format(offer.getDate("PickUpTime")));
                             offersList.add(objOffer);
                         }
-                        //Log.i("ListSize" , Integer.toString(offersList.size()));
+
                         ((OffersAdapter) adapter).setOffers(offersList);
+
                         adapter.notifyDataSetChanged();
 
+                        Log.i("REFRESHING", "DATAA");
                     }
                 } else {
                     e.printStackTrace();
