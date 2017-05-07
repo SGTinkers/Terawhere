@@ -3,37 +3,33 @@ package tech.msociety.terawhere.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.location.LocationListener;
-
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,26 +38,22 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.activities.MainActivity;
-import tech.msociety.terawhere.adapters.OffersAdapter;
+import tech.msociety.terawhere.activities.LoginActivity;
 import tech.msociety.terawhere.models.Offer;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
@@ -72,7 +64,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private ClusterMarkerLocation clickedClusterItem;
     GoogleApiClient mGoogleApiClient;
     Location mLastKnownLocation;
-    Marker mCurrentLocationMarker;
+    //Marker mCurrentLocationMarker;
     LocationRequest mLocationRequest;
     ClusterManager<ClusterMarkerLocation> clusterManager;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -81,6 +73,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = getActivity();
+        setHasOptionsMenu(true);
 
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
@@ -90,18 +83,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
 
-        Button button = (Button) getActivity().findViewById(R.id.refreshButton);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Toast.makeText(mContext, "Refreshing...", Toast.LENGTH_LONG).show();
-                //mMap.clear();
 
-                initMarkers();
-            }
-        });
         // latest version SDK after Marshmallow
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -171,9 +153,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onLocationChanged(Location location) {
 
         mLastKnownLocation = location;
-        if (mCurrentLocationMarker != null) {
-            mCurrentLocationMarker.remove();
-        }
+        //if (mCurrentLocationMarker != null) {
+        //     mCurrentLocationMarker.remove();
+        // }
 
         // randomly place markers within the vicinity of current location
 
@@ -183,7 +165,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         markerOptions.position(latLng);
         markerOptions.title("You are here!");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        mCurrentLocationMarker = mMap.addMarker(markerOptions);
+        // mCurrentLocationMarker = mMap.addMarker(markerOptions);
 
         // move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -258,7 +240,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>( mContext, mMap );
         mMap.clear();
         clusterManager.clearItems(); // calling for sure - maybe it doenst need to be here
-        mMap.setOnCameraIdleListener((GoogleMap.OnCameraIdleListener) clusterManager);
+        mMap.setOnCameraIdleListener(clusterManager);
         //mMap.setOnMarkerClickListener(clusterManager);
         //mMap.setOnInfoWindowClickListener(clusterManager);
         mMap.getUiSettings().setMapToolbarEnabled(true);
@@ -441,7 +423,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        if (item.getItemId() == R.id.refresh) {
+
+            Toast.makeText(mContext, "Refreshing...", Toast.LENGTH_LONG).show();
+            //mMap.clear();
+
+            initMarkers();
+
+        } else if (item.getItemId() == R.id.logout) {
+
+            ParseUser.logOut();
+
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            startActivity(intent);
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
 
