@@ -1,6 +1,7 @@
 package tech.msociety.terawhere.mocks;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import tech.msociety.terawhere.models.Booking;
@@ -18,11 +19,13 @@ public class BackendMock {
             String driverId = String.valueOf(faker.number(5));
             String destination = faker.words(2);
             Integer numberOfSeats = (int) faker.number(1);
-            String timestamp = faker.words(2);
+            Date timestamp = new Date();
             String remarks = faker.words(2);
+            String vehicleColor = faker.words(1);
+            String vehiclePlateNumber = faker.words(1);
 
-            //Offer offer = new Offer(offerId, driverId, destination, numberOfSeats, timestamp, remarks);
-            //offers.add(offer);
+            Offer offer = new Offer(offerId, driverId, destination, numberOfSeats, timestamp, remarks, vehicleColor, vehiclePlateNumber);
+            offers.add(offer);
         }
 
         return offers;
