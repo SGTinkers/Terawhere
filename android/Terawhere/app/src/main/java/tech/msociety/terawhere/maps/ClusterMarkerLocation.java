@@ -11,8 +11,9 @@ import com.google.maps.android.clustering.ClusterItem;
 public class ClusterMarkerLocation implements ClusterItem {
 
     private LatLng mPosition;
-    private String mId;
-    public ClusterMarkerLocation( String id, LatLng latLng) {
+    private int mId;
+
+    public ClusterMarkerLocation(int id, LatLng latLng) {
         mPosition = latLng;
         mId = id;
     }
@@ -22,7 +23,7 @@ public class ClusterMarkerLocation implements ClusterItem {
         return mPosition;
     }
 
-    public String getId() {
+    public int getId() {
         return mId;
     }
     public void setmPosition(LatLng mPosition) {

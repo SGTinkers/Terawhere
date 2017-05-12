@@ -7,9 +7,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.parse.ParseUser;
 
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import tech.msociety.terawhere.R;
@@ -45,12 +43,7 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         final TextView pickUpTimeTextView = (TextView) popup.findViewById(R.id.pickUpTimeTextView);
         Offer objOffer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
-        if (ParseUser.getCurrentUser().getString("username").equals(objOffer.getDriverId())) {
-            nameTextView.setText("Me");
-        } else {
-            nameTextView.setText(objOffer.getDriverId());
-        }
-
+        /*
         destinationTextView.setText(objOffer.getDestination());
         seatsAvailableTextView.setText(Integer.toString(objOffer.getNumberOfSeats()) + " LEFT");
         SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
@@ -58,7 +51,7 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         if (objOffer.getTimestamp() != null) {
             pickUpTimeTextView.setText(ft.format(objOffer.getTimestamp()));
         }
-
+        */
         return popup;
     }
 }

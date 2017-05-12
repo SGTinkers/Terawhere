@@ -53,6 +53,9 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.2.4'
     compile 'com.google.maps.android:android-maps-utils:0.4.4'
 
+    //  Facebook stuff
+    compile 'com.facebook.android:facebook-android-sdk:4.18.0'
+    //compile 'com.android.support:design:25.0.1'
 //    Commented these out because their omission doesn't break the build - likely superfluous
 //    compile 'com.android.support:appcompat-v7:25.2.0'
 //    compile 'com.android.support.constraint:constraint-layout:1.0.2'

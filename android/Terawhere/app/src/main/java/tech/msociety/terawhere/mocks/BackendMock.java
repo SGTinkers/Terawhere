@@ -24,7 +24,7 @@ public class BackendMock {
             String vehicleColor = faker.words(1);
             String vehiclePlateNumber = faker.words(1);
 
-            Offer offer = new Offer(offerId, driverId, destination, numberOfSeats, timestamp, remarks, vehicleColor, vehiclePlateNumber);
+            Offer offer = new Offer(i, driverId, destination, numberOfSeats, timestamp, remarks, vehicleColor, vehiclePlateNumber);
             offers.add(offer);
         }
 

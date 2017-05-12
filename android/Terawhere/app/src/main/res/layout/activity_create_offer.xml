@@ -69,18 +69,20 @@
                 android:src="@drawable/destination" />
 
 
-            <AutoCompleteTextView
-                android:id="@+id/destinationEditText"
-                android:layout_width="400dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-                android:ems="10"
-                android:hint="Which mosque do you want to go?"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:layout_weight="4.13">
+            <TextView
+                android:id="@+id/endingLocationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:inputType="textMultiLine"
+                android:lines="3"
+                android:text="Where do you want to go?"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="#191970"
+                android:textStyle="bold" />
 
-            </AutoCompleteTextView>
 
         </LinearLayout>
 
@@ -113,6 +115,111 @@
 
             <requestFocus />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView10"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/malefemale" />
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="1"
+                    android:orientation="horizontal"
+                    android:id="@+id/radioGroupGender"
+                    android:layout_gravity="center">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Male"
+                        android:id="@+id/radioButton"
+                        android:checked="false" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="Female" />
+
+                </RadioGroup>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/current_location" />
+
+                <EditText
+                    android:id="@+id/startingLocationNameEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="18dp"
+                    android:ems="10"
+                    android:hint="E.g Carpark of Blk 58"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+
+
+                    />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/destination" />
+
+
+                <EditText
+                    android:id="@+id/endingLocationNameEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="18dp"
+                    android:ems="10"
+                    android:hint="E.g Foyer of Assyafaah Mosque"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+
+                    />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -138,6 +245,8 @@
                     android:layout_marginBottom="18dp"
                     android:ems="10"
                     android:hint="Number of seats available"
+                    android:imeOptions="actionNext"
+
                     android:inputType="number"
                     android:maxLength="1" />
 
@@ -158,7 +267,7 @@
                     android:src="@drawable/color" />
 
                 <AutoCompleteTextView
-                    android:id="@+id/vehicleColorEditText"
+                    android:id="@+id/vehicleDescriptionEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
@@ -179,11 +288,35 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/imageView5"
+                    android:id="@+id/imageView9"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_margin="10dp"
                     android:src="@drawable/car" />
+
+                <EditText
+                    android:id="@+id/vehicleModelEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:ems="10"
+                    android:hint="Vehicle Model"
+                    android:inputType="textPersonName" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/img123" />
 
                 <EditText
                     android:id="@+id/vehiclePlateNumberEditText"
@@ -192,6 +325,8 @@
                     android:layout_marginTop="15dp"
                     android:ems="10"
                     android:hint="Vehicle number"
+                    android:imeOptions="actionNext"
+
                     android:inputType="textPersonName" />
 
             </LinearLayout>
@@ -217,6 +352,8 @@
                     android:layout_marginTop="15dp"
                     android:ems="10"
                     android:hint="Enter your remarks here"
+                    android:imeOptions="actionNext"
+
                     android:inputType="textPersonName" />
 
             </LinearLayout>
