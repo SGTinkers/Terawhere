@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,6 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.GetOffers;
+import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
@@ -68,6 +70,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     Location currentLocation;
     LocationRequest locationRequest;
 
+    ViewPager viewPager;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +84,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initializeContext();
+        viewPager = (ViewPager) getActivity().findViewById(R.id.pager);
 
         if (isMinimumSdkMarshmallow()) {
             checkLocationPermission();
@@ -108,7 +113,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        initMarkers();
+        getUserId();
 
         if (isMinimumSdkMarshmallow()) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -210,7 +215,44 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
-    private void initMarkers() {
+    private void getUserId() {
+        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
+
+        callUser.enqueue(new Callback<GetUser>() {
+            @Override
+            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
+
+                if (response.isSuccessful()) {
+                    Log.i("RESPONSE", response.body().toString());
+                    Log.i("user id", response.body().getUser().getId());
+                    initMarkers(response.body().getUser().getId());
+
+                } else {
+                    Log.i("RESPONSE", response.errorBody().toString());
+
+                   /* try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Log.i("ERROR", ":" + jObjError.getString("error"));
+                        if (jObjError.getString("error").equals("token_expired")) {
+                            //refresh token
+                        }
+
+                    } catch (Exception e) {
+                    }*/
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUser> call, Throwable t) {
+                Log.i("FAILURE", Arrays.toString(t.getStackTrace()));
+
+                System.out.println(Arrays.toString(t.getStackTrace()));
+
+            }
+        });
+    }
+
+    private void initMarkers(final String userId) {
 
         Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getOffers();
         callGetOffers.enqueue(new Callback<GetOffers>() {
@@ -246,104 +288,108 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 @Override
                                 public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
                                     Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+                                    //if (currentOffer.getDriverId().equals())
+                                    if (userId.equals(currentOffer.getDriverId())) {
+                                        viewPager.setCurrentItem(1);
+                                    } else {
+                                        final AlertDialog.Builder adb = new AlertDialog.Builder(context);
 
-                                    final AlertDialog.Builder adb = new AlertDialog.Builder(context);
+                                        final LayoutInflater inflater = getActivity().getLayoutInflater();
+                                        final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
+                                        adb.setView(dialogView);
 
-                                    final LayoutInflater inflater = getActivity().getLayoutInflater();
-                                    final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
-                                    adb.setView(dialogView);
-
-                                    adb.setTitle(currentOffer.getDriverId());
-
-
-                                    final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
-                                    TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogDestination);
-                                    TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogRemarks);
-                                    TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTimestamp);
-                                    TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogSeatsAvailable);
-
-                                    dialogRemarks.setText(currentOffer.getDriverRemarks());
-                                    dialogDestination.setText(currentOffer.getVehicleDescription());
-
-                                    if (currentOffer.getMeetUpTime() != null) {
-                                        dialogTimestamp.setText(currentOffer.getMeetUpTime());
-                                    }
-                                    dialogSeatsAvailable.setText(Integer.toString(currentOffer.getSeatsAvailable()) + " LEFT");
+                                        adb.setTitle(currentOffer.getDriverId());
 
 
-                                    List<String> categories = new ArrayList<String>();
-                                    int seatsAvailable = currentOffer.getSeatsAvailable();
-                                    for (int i = 1; i <= seatsAvailable; i++) {
-                                        categories.add(Integer.toString(i));
-                                    }
-                                    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
-                                        @Override
-                                        public View getView(int position, View convertView, ViewGroup parent) {
-                                            return setCentered(super.getView(position, convertView, parent));
+                                        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
+                                        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogDestination);
+                                        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogRemarks);
+                                        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTimestamp);
+                                        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogSeatsAvailable);
+
+                                        dialogRemarks.setText(currentOffer.getDriverRemarks());
+                                        dialogDestination.setText(currentOffer.getVehicleDescription());
+
+                                        if (currentOffer.getMeetUpTime() != null) {
+                                            dialogTimestamp.setText(currentOffer.getMeetUpTime());
                                         }
+                                        dialogSeatsAvailable.setText(Integer.toString(currentOffer.getSeatsAvailable()) + " LEFT");
 
-                                        @Override
-                                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                                            return setCentered(super.getDropDownView(position, convertView, parent));
+
+                                        List<String> categories = new ArrayList<String>();
+                                        int seatsAvailable = currentOffer.getSeatsAvailable();
+                                        for (int i = 1; i <= seatsAvailable; i++) {
+                                            categories.add(Integer.toString(i));
                                         }
-
-                                        private View setCentered(View view) {
-                                            view.setPadding(10, 20, 10, 10);
-                                            TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                                            textView.setTextSize(20);
-                                            textView.setGravity(Gravity.CENTER);
-                                            return view;
-                                        }
-                                    };
-
-                                    spinner.setAdapter(dataAdapter);
-                                    spinner.setOnItemSelectedListener(new OnSpinnerItemClicked());
-
-                                    adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-
-
-                                            if (spinner.getSelectedItem().toString().matches("")) {
-                                                Toast.makeText(context, "Please enter number of seats", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                AlertDialog.Builder adb2 = new AlertDialog.Builder(context);
-
-                                                LayoutInflater inflater = getActivity().getLayoutInflater();
-
-
-                                                adb2.setTitle("Are you sure you want to book " + spinner.getSelectedItem().toString() + " seats?");
-
-
-                                                adb2.setIcon(android.R.drawable.ic_dialog_alert);
-
-
-                                                adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-
-
-                                                        Toast.makeText(context, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-
-
-                                                adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-                                                adb2.show();
+                                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
+                                            @Override
+                                            public View getView(int position, View convertView, ViewGroup parent) {
+                                                return setCentered(super.getView(position, convertView, parent));
                                             }
 
-                                        }
-                                    });
+                                            @Override
+                                            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                                                return setCentered(super.getDropDownView(position, convertView, parent));
+                                            }
+
+                                            private View setCentered(View view) {
+                                                view.setPadding(10, 20, 10, 10);
+                                                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                                                textView.setTextSize(20);
+                                                textView.setGravity(Gravity.CENTER);
+                                                return view;
+                                            }
+                                        };
+
+                                        spinner.setAdapter(dataAdapter);
+                                        spinner.setOnItemSelectedListener(new OnSpinnerItemClicked());
+
+                                        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
 
 
-                                    adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    adb.show();
+                                                if (spinner.getSelectedItem().toString().matches("")) {
+                                                    Toast.makeText(context, "Please enter number of seats", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    AlertDialog.Builder adb2 = new AlertDialog.Builder(context);
+
+                                                    LayoutInflater inflater = getActivity().getLayoutInflater();
+
+
+                                                    adb2.setTitle("Are you sure you want to book " + spinner.getSelectedItem().toString() + " seats?");
+
+
+                                                    adb2.setIcon(android.R.drawable.ic_dialog_alert);
+
+
+                                                    adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+
+
+                                                            Toast.makeText(context, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
+
+                                                    adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                                    adb2.show();
+                                                }
+
+                                            }
+                                        });
+
+
+                                        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        adb.show();
+                                    }
                                 }
                             });
 
@@ -403,7 +449,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (item.getItemId() == R.id.refresh) {
             Toast.makeText(context, "Refreshing...", Toast.LENGTH_LONG).show();
-            initMarkers();
+            getUserId();
 
         } else if (item.getItemId() == R.id.logout) {
             Intent intent = new Intent(context, FacebookLoginActivity.class);
@@ -418,7 +464,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (getContext() != null) {
-                initMarkers();
+                getUserId();
             }
         }
     }

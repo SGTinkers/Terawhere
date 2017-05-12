@@ -14,8 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.GetOffers;
+import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.R.layout;
 import tech.msociety.terawhere.TerawhereBackendServer;
@@ -95,16 +94,22 @@ public class MyOffersFragment extends Fragment {
     private void makeNetworkCall() {
         Log.i("MAKING NETWORK", ":");
 
-        Call<Object> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
+        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
 
-        callUser.enqueue(new Callback<Object>() {
+        callUser.enqueue(new Callback<GetUser>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
 
                 if (response.isSuccessful()) {
+                    Log.i("RESPONSE", response.body().toString());
+                    Log.i("user id", response.body().getUser().getId());
+
                     fetchOffersFromServer();
+
                 } else {
-                    try {
+                    Log.i("RESPONSE", response.errorBody().toString());
+
+                   /* try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
                         Log.i("ERROR", ":" + jObjError.getString("error"));
                         if (jObjError.getString("error").equals("token_expired")) {
@@ -112,12 +117,14 @@ public class MyOffersFragment extends Fragment {
                         }
 
                     } catch (Exception e) {
-                    }
+                    }*/
                 }
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<GetUser> call, Throwable t) {
+                Log.i("FAILURE", Arrays.toString(t.getStackTrace()));
+
                 System.out.println(Arrays.toString(t.getStackTrace()));
 
             }

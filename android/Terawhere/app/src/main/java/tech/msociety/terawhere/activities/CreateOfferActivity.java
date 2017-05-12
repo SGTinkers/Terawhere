@@ -86,7 +86,6 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
     public static final String GENDER_PREFERENCE = "genderPreference";
     public static final String EDIT_OFFER = "Edit Offer";
     public static final String MESSAGE_CREATE_OFFER_SUCCESSFUL = "SUCCESSFULLY CREATED OFFER";
-    public static final String MESSAGE = "MESSAGE";
     public static final String MESSAGE_RESPONSE = "messageResponse";
     public static final String MESSAGE_EDIT_OFFER_SUCCESSFUL = "Successfully updated offer!!";
     public static final String MESSAGE_NETWORK_ERROR = "Network is not connected!";
@@ -376,16 +375,9 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
                     Toast.makeText(CreateOfferActivity.this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!isEditOffer) {
-                        String date = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-                        String hour;
-                        String minute;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getHour());
-                            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getMinute());
-                        } else {
-                            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentHour());
-                            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentMinute());
-                        }
+                        String date = getDate();
+                        String hour = getHourToEdit();
+                        String minute = getMinuteToEdit();
 
                         int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                         RadioButton radioButtonGender = (RadioButton) findViewById(selectedId);
@@ -451,7 +443,7 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
 
                     } else {
 
-                        String date = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+                        String date = getDate();
                         String hour;
                         String minute;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -516,6 +508,30 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
                 Toast.makeText(CreateOfferActivity.this, MESSAGE_NETWORK_ERROR, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private String getDate() {
+        return new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+    }
+
+    private String getMinuteToEdit() {
+        String minute;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getMinute());
+        } else {
+            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentMinute());
+        }
+        return minute;
+    }
+
+    private String getHourToEdit() {
+        String hour;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getHour());
+        } else {
+            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentHour());
+        }
+        return hour;
     }
 
     private Call<OffersDatum> createOfferApi(OffersDatum offer) {

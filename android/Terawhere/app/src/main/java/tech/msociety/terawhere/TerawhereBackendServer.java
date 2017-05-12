@@ -67,7 +67,7 @@ public class TerawhereBackendServer {
         Call<FacebookUser> createUser(@Body FacebookUser user);
 
         @GET("api/v1/me")
-        Call<Object> getStatus();
+        Call<GetUser> getStatus();
 
         @GET("api/v1/offers-for-user")
         Call<GetOffers> getOffers();
