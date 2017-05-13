@@ -72,6 +72,7 @@ public class TerawhereBackendServer {
         @GET("api/v1/offers-for-user")
         Call<GetOffers> getOffers();
 
+
         @GET("api/v1/offers")
         Call<GetOffers> getAllOffers();
 

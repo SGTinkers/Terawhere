@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -65,6 +66,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private Context context;
     private SupportMapFragment supportMapFragment;
     protected GoogleMap googleMap;
+    private LocationManager locationManager;
 
     GoogleApiClient googleApiClient;
     Location currentLocation;
@@ -113,7 +115,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        getUserId();
 
         if (isMinimumSdkMarshmallow()) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -124,6 +125,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             buildGoogleApiClient();
             this.googleMap.setMyLocationEnabled(true);
         }
+
+        getUserId();
+
     }
 
     // Create connection with google maps
@@ -140,8 +144,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onConnected(Bundle bundle) {
 
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(1000);
+        locationRequest.setInterval(10);
+        locationRequest.setFastestInterval(10);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -165,7 +169,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         moveCameraToLocation(latLng);
         zoomCameraToLocation();
-        stopLocationUpdates();
+        //stopLocationUpdates();
     }
 
     private void zoomCameraToLocation() {
@@ -254,7 +258,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     private void initMarkers(final String userId) {
 
-        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getOffers();
+        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getAllOffers();
         callGetOffers.enqueue(new Callback<GetOffers>() {
             @Override
             public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {
@@ -270,6 +274,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     GetOffers getOffers = response.body();
 
                     List<Offer> offers = getOffers.getOffers();
+
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                             new LatLng(offers.get(0).getStartingLocationLatitude(), offers.get(0).getStartingLocationLongitude()), 16));
                     final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
