@@ -52,7 +52,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.models.Token;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
@@ -444,7 +443,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         String meetUpTime = date + " " + hour + ":" + minute;
                         OffersDatum offer = new OffersDatum(meetUpTime, editTextStartingLocationName.getText().toString(), textViewStartingLocation.getText().toString(), startingLocationLatitude, startingLocationLongitude, editTextEndingLocationName.getText().toString(), textViewEndingLocation.getText().toString(), endingLocationLatitude, endingLocationLongitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()), editTextRemarks.getText().toString(), 1, radioButtonGender.getText().toString().toLowerCase(), editTextVehiclePlateNumber.getText().toString(), editTextVehicleDescription.getText().toString(), editTextVehicleModel.getText().toString());
                         
-                        Call<OffersDatum> call = TerawhereBackendServer.getApiInstance(Token.getToken()).editOffer(offerId, offer);
+                        Call<OffersDatum> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offer);
                         call.enqueue(new Callback<OffersDatum>() {
                             @Override
                             public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
@@ -506,7 +505,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
     
     private Call<OffersDatum> createOfferApi(OffersDatum offer) {
-        return TerawhereBackendServer.getApiInstance(Token.getToken()).createOffer(offer);
+        return TerawhereBackendServer.getApiInstance().createOffer(offer);
     }
     
     @Override

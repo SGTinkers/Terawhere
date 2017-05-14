@@ -53,7 +53,6 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.models.Token;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -241,9 +240,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void getUserId() {
-        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
-
-        callUser.enqueue(new Callback<GetUser>() {
+        TerawhereBackendServer.getApiInstance().getStatus().enqueue(new Callback<GetUser>() {
             @Override
             public void onResponse(Call<GetUser> call, Response<GetUser> response) {
 
@@ -265,6 +262,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     } catch (Exception e) {
                     }*/
                 }
+
+
             }
 
             @Override
@@ -279,7 +278,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     private void initMarkers(final String userId) {
 
-        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getAllOffers();
+        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getAllOffers();
         callGetOffers.enqueue(new Callback<GetOffers>() {
             @Override
             public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {

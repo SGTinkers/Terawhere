@@ -22,7 +22,6 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.BookingsAdapter;
 import tech.msociety.terawhere.mocks.BackendMock;
 import tech.msociety.terawhere.models.Booking;
-import tech.msociety.terawhere.models.Token;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -55,7 +54,7 @@ public class MyBookingsFragment extends Fragment {
     private void makeNetworkCall() {
         Log.i("MAKING NETWORK", ":");
 
-        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
+        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance().getStatus();
 
         callUser.enqueue(new Callback<GetUser>() {
             @Override
@@ -123,7 +122,7 @@ public class MyBookingsFragment extends Fragment {
     }
 
     private void fetchOffersFromServer() {
-        Call<GetBookings> callGetBookings = TerawhereBackendServer.getApiInstance(Token.getToken()).getAllBookings();
+        Call<GetBookings> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookings();
         callGetBookings.enqueue(new Callback<GetBookings>() {
             @Override
             public void onResponse(Call<GetBookings> call, Response<GetBookings> response2) {
