@@ -2,6 +2,9 @@
     <string name="app_name">Terawhere</string>
     <string name="title_activity_create_offer">Create Offer</string>
     <string name="facebook_app_id">290133594776141</string>
+    <string name="accessibility_terawhere_logo">Terawhere Logo</string>
+    <string name="terms_and_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="terawhere_tagline">Going for terawih has \nnever been easier</string>
 
     <string-array name="mosques_array">
         <item>Yusuf Ishak</item>

@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import tech.msociety.terawhere.fragments.HomeFragment;
-import tech.msociety.terawhere.fragments.MyBookingsFragment;
-import tech.msociety.terawhere.fragments.MyOffersFragment;
+import tech.msociety.terawhere.screens.fragments.HomeFragment;
+import tech.msociety.terawhere.screens.fragments.MyBookingsFragment;
+import tech.msociety.terawhere.screens.fragments.MyOffersFragment;
 
 public class PagerAdapter extends FragmentPagerAdapter {
     private int numTabs;
