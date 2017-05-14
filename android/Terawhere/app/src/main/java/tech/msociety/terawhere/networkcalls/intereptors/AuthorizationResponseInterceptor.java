@@ -22,8 +22,8 @@ public class AuthorizationResponseInterceptor implements Interceptor {
         if (response.header("Authorization") != null && !response.header("Authorization").isEmpty()) {
             String authorization = response.header("Authorization");
             String[] authorizationSplit = authorization.split(" ");
-            Constants.BEARER_TOKEN = authorizationSplit[1];
-            Log.d(AuthorizationResponseInterceptor.class.getName(), "Bearer token updated: " + Constants.BEARER_TOKEN);
+            Constants.SetBearerToken(authorizationSplit[1]);
+            Log.d(AuthorizationResponseInterceptor.class.getName(), "Bearer token updated: " + Constants.GetBearerToken());
         }
 
         return response;

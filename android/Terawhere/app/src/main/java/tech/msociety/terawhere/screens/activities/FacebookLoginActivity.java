@@ -44,9 +44,10 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     
     private LoginButton loginButton;
     private Button continueButton;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        skipCheckForLogin = true;
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_facebook_login);
@@ -65,7 +66,6 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         
         FacebookCallback<LoginResult> callback = getLoginResultFacebookCallback();
         loginButton.registerCallback(callbackManager, callback);
-        
     }
     
     public void onClick(View view) {
@@ -76,7 +76,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             call.enqueue(new Callback<FacebookUser>() {
                              @Override
                              public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
-                                 Constants.BEARER_TOKEN = response.body().getToken();
+                                 Constants.SetBearerToken(response.body().getToken());
                                  Toast.makeText(getApplicationContext(), MESSAGE_LOGGING_IN, Toast.LENGTH_SHORT).show();
                                  Profile profile = Profile.getCurrentProfile();
                                  nextActivity(profile);
