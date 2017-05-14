@@ -3,12 +3,35 @@ package tech.msociety.terawhere.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tech.msociety.terawhere.FacebookUser;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.TerawhereBackendServer;
+
+
+/******************* ATTENTION ******************
+ *
+ * This file will not be use anymore, but will be keep in place
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * */
 
 public class LoginActivity extends AppCompatActivity {
     TextView textView;
@@ -22,6 +45,24 @@ public class LoginActivity extends AppCompatActivity {
 
         initViewHandles();
         attachClickListenerToLoginButton();
+        callFacebook();
+    }
+
+    private void callFacebook() {
+        FacebookUser user = new FacebookUser("EAAEH3ZC3aok0BAAq25MkWKDGpZCQqyn4Yac48zm4ZBVrdj79aubAWcbCxLVdlYST0EOESAuEQZAwsJc5gPM9a4tow23Vmc53aIs0ZBZCbf6ihgbVnjLyy9RfZAFMHphkYgoxgn42DytSbZBeESd3WjVzBbSWeUwZCJabZBY7Cy10Tgptm9je6ZBIqtouwjlsrHNoFEgxAifi3FEqsRfkIaZC96Xg", "facebook");
+        Call<FacebookUser> call = TerawhereBackendServer.getApiInstance("").createUser(user);
+        call.enqueue(new Callback<FacebookUser>() {
+                         @Override
+                         public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
+                             Log.i("Response", response.body().toString());
+                         }
+
+                         @Override
+                         public void onFailure(Call<FacebookUser> call, Throwable t) {
+
+                         }
+                     }
+        );
     }
 
     private void initViewHandles() {

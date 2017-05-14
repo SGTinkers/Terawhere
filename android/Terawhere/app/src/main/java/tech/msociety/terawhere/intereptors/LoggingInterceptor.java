@@ -14,15 +14,20 @@ import okhttp3.logging.HttpLoggingInterceptor.Logger;
  */
 public class LoggingInterceptor implements Interceptor {
     private final Logger logger;
+    private String token;
 
-    public LoggingInterceptor() {
+    public LoggingInterceptor(String token) {
         super();
+        this.token = token;
         logger = Logger.DEFAULT;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
+        request.newBuilder().addHeader("Authorization", "Bearer " + token);
+        request.newBuilder().addHeader("Accept", "application/json");
+        request.newBuilder().addHeader("Content-Type", "application/x-www-form-urlencoded");
 
         RequestBody requestBody = request.body();
         logger.log("--> " + URLDecoder.decode(request.url().url().toString(), "UTF-8"));
@@ -32,4 +37,6 @@ public class LoggingInterceptor implements Interceptor {
 
         return response;
     }
+
+
 }

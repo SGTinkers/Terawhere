@@ -6,13 +6,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tech.msociety.terawhere.GetBookings;
+import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.TerawhereBackendServer;
+import tech.msociety.terawhere.Token;
 import tech.msociety.terawhere.adapters.BookingsAdapter;
 import tech.msociety.terawhere.mocks.BackendMock;
 import tech.msociety.terawhere.models.Booking;
@@ -36,7 +46,51 @@ public class MyBookingsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         initRecyclerView();
-        populateListFromDatabase();
+
+        makeNetworkCall();
+        makeNetworkCall();
+        //populateListFromDatabase();
+    }
+
+    private void makeNetworkCall() {
+        Log.i("MAKING NETWORK", ":");
+
+        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
+
+        callUser.enqueue(new Callback<GetUser>() {
+            @Override
+            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
+
+                if (response.isSuccessful()) {
+                    Log.i("RESPONSE", response.body().toString());
+                    Log.i("user id", response.body().getUser().getId());
+
+                    fetchOffersFromServer();
+
+                } else {
+                    Log.i("RESPONSE", response.errorBody().toString());
+
+                   /* try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Log.i("ERROR", ":" + jObjError.getString("error"));
+                        if (jObjError.getString("error").equals("token_expired")) {
+                            //refresh token
+                        }
+
+                    } catch (Exception e) {
+                    }*/
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUser> call, Throwable t) {
+                Log.i("FAILURE", Arrays.toString(t.getStackTrace()));
+
+                System.out.println(Arrays.toString(t.getStackTrace()));
+
+            }
+        });
+
     }
 
     @Override
@@ -66,5 +120,39 @@ public class MyBookingsFragment extends Fragment {
 
         ((BookingsAdapter) adapter).setBookings(bookings);
         adapter.notifyDataSetChanged();
+    }
+
+    private void fetchOffersFromServer() {
+        Call<GetBookings> callGetBookings = TerawhereBackendServer.getApiInstance(Token.getToken()).getAllBookings();
+        callGetBookings.enqueue(new Callback<GetBookings>() {
+            @Override
+            public void onResponse(Call<GetBookings> call, Response<GetBookings> response2) {
+
+                if (response2.isSuccessful()) {
+                    GetBookings getBookings = response2.body();
+
+                    List<Booking> bookings = getBookings.getBookings();
+
+                    Log.i("response: ", getBookings.toString());
+
+
+                } else {
+
+                    try {
+                        Log.i("ERROR_OFFER", ": " + response2.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<GetBookings> call, Throwable t) {
+                System.out.println(Arrays.toString(t.getStackTrace()));
+
+            }
+        });
     }
 }

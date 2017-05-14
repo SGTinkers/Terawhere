@@ -11,7 +11,7 @@ import tech.msociety.terawhere.models.Offer;
 public class GetOffers {
     @SerializedName("data")
     @Expose
-    private final List<Datum> data = null;
+    private List<OffersDatum> data = null;
 
     @Override
     public String toString() {
@@ -20,11 +20,17 @@ public class GetOffers {
                 '}';
     }
 
+    public GetOffers(OffersDatum offer) {
+        data = new ArrayList<>();
+        data.add(offer);
+
+    }
+
     public List<Offer> getOffers() {
         List<Offer> offers = new ArrayList<>();
 
-        for (Datum datum : data) {
-            Offer offer = new Offer(String.valueOf(datum.getId()), datum.getEndName());
+        for (OffersDatum datum : data) {
+            Offer offer = new Offer(datum.getId(), datum.getUserId(), datum.getMeetupTime(), datum.getStartAddr(), datum.getStartName(), datum.getStartLat(), datum.getStartLng(), datum.getEndName(), datum.getEndAddr(), datum.getEndLat(), datum.getEndLng(), datum.getVacancy(), datum.getVehicleModel(), datum.getVehicleNumber(), datum.getRemarks(), datum.getPrefGender(), datum.getVehicleDesc());
             offers.add(offer);
         }
 

@@ -6,12 +6,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,159 +37,182 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
 
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tech.msociety.terawhere.GetOffers;
+import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.activities.LoginActivity;
+import tech.msociety.terawhere.TerawhereBackendServer;
+import tech.msociety.terawhere.Token;
+import tech.msociety.terawhere.activities.FacebookLoginActivity;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private Context mContext;
-    private SupportMapFragment mSupportMapFragment;
-    protected GoogleMap mMap;
-    private ClusterMarkerLocation clickedClusterItem;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastKnownLocation;
-    //Marker mCurrentLocationMarker;
-    LocationRequest mLocationRequest;
-    ClusterManager<ClusterMarkerLocation> clusterManager;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    private Context context;
+    private SupportMapFragment supportMapFragment;
+    protected GoogleMap googleMap;
+    private LocationManager locationManager;
+
+    GoogleApiClient googleApiClient;
+    Location currentLocation;
+    LocationRequest locationRequest;
+
+    double latitude = 0.0;
+    double longitude = 0.0;
+
+    ViewPager viewPager;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContext = getActivity();
+        initializeContext();
         setHasOptionsMenu(true);
-
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mContext = getActivity();
+        initializeContext();
+        viewPager = (ViewPager) getActivity().findViewById(R.id.pager);
 
 
-// latest version SDK after Marshmallow
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (isMinimumSdkMarshmallow()) {
             checkLocationPermission();
         }
 
-// create map in fragment
-        FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
-        mSupportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map_container);
-        if (mSupportMapFragment == null) {
-            mSupportMapFragment = SupportMapFragment.newInstance();
-            fm.beginTransaction().replace(R.id.map_container, mSupportMapFragment).commit();
+        LocationManager locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Location location;
+
+        if (network_enabled) {
+
+            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (location != null) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+            }
         }
-        mSupportMapFragment.getMapAsync(this);
+        Log.i("LATITUDES", ":" + latitude);
+        Log.i("LONGITUDES", ":" + longitude);
+        initializeSupportMapFragment();
+    }
 
+    private boolean isMinimumSdkMarshmallow() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
 
+    private void initializeSupportMapFragment() {
+        supportMapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map_container);
+        if (supportMapFragment == null) {
+            supportMapFragment = SupportMapFragment.newInstance();
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.map_container, supportMapFragment).commit();
+        }
+        supportMapFragment.getMapAsync(this);
+    }
+
+    private void initializeContext() {
+        context = getActivity();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        this.googleMap = googleMap;
 
-        initMarkers();
-
-// latest version SDK after Marshmallow
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (isMinimumSdkMarshmallow()) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
-                mMap.setMyLocationEnabled(true);
+                this.googleMap.setMyLocationEnabled(true);
             }
         } else {
             buildGoogleApiClient();
-            mMap.setMyLocationEnabled(true);
+            this.googleMap.setMyLocationEnabled(true);
         }
+
+        getUserId();
+
     }
 
     // Create connection with google maps
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+        googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
+        googleApiClient.connect();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
 
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(mContext,
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(10);
+        locationRequest.setFastestInterval(10);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         }
 
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        mLastKnownLocation = location;
-//if (mCurrentLocationMarker != null) {
-//     mCurrentLocationMarker.remove();
-// }
-
-// randomly place markers within the vicinity of current location
-
-// Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("You are here!");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-// mCurrentLocationMarker = mMap.addMarker(markerOptions);
-
-// move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
-
-// stop location updates
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
-
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        moveCameraToLocation(latLng);
+        zoomCameraToLocation();
+        stopLocationUpdates();
+    }
+
+    private void zoomCameraToLocation() {
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(18));
+    }
+
+    private void moveCameraToLocation(LatLng latLng) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+    }
+
+    private void stopLocationUpdates() {
+        if (googleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        }
+    }
 
     public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-// Asking user if explanation is needed
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-// Prompt the user once explanation has been shown
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             } else {
-// No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             }
             return false;
@@ -201,177 +225,223 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-// If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-// permission was granted
-
-                    if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        if (mGoogleApiClient == null) {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        if (googleApiClient == null) {
                             buildGoogleApiClient();
                         }
-                        mMap.setMyLocationEnabled(true);
+                        googleMap.setMyLocationEnabled(true);
                     }
                 } else {
-// Permission denied, Disable the functionality that depends on this permission.
-                    Toast.makeText(mContext, "Permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
         }
     }
 
-    @Override
-    public void setMenuVisibility(final boolean visible) {
-        super.setMenuVisibility(visible);
-        if (visible) {
-            Log.i("HELLO THERE", " HEHE");
+    private void getUserId() {
+        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
 
+        callUser.enqueue(new Callback<GetUser>() {
+            @Override
+            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
 
-        }
+                if (response.isSuccessful()) {
+                    Log.i("RESPONSE", response.body().toString());
+                    Log.i("user id", response.body().getUser().getId());
+                    initMarkers(response.body().getUser().getId());
+
+                } else {
+                    Log.i("RESPONSE", response.errorBody().toString());
+
+                   /* try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Log.i("ERROR", ":" + jObjError.getString("error"));
+                        if (jObjError.getString("error").equals("token_expired")) {
+                            //refresh token
+                        }
+
+                    } catch (Exception e) {
+                    }*/
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUser> call, Throwable t) {
+                Log.i("FAILURE", Arrays.toString(t.getStackTrace()));
+
+                System.out.println(Arrays.toString(t.getStackTrace()));
+
+            }
+        });
     }
 
-    //randomised markers
-    private void initMarkers() {
-        final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>(mContext, mMap);
-        mMap.clear();
-        clusterManager.clearItems(); // calling for sure - maybe it doenst need to be here
-        mMap.setOnCameraIdleListener(clusterManager);
-//mMap.setOnMarkerClickListener(clusterManager);
-//mMap.setOnInfoWindowClickListener(clusterManager);
-        mMap.getUiSettings().setMapToolbarEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-//clusterManager.setOnClusterClickListener(this);
-//clusterManager.setOnClusterInfoWindowClickListener(this);
-//clusterManager.setOnClusterItemClickListener(this);
-//clusterManager.setOnClusterItemInfoWindowClickListener(this);
+    private void initMarkers(final String userId) {
 
-//clusterManager.setOnClusterItemInfoWindowClickListener(this); //added
+        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getAllOffers();
+        callGetOffers.enqueue(new Callback<GetOffers>() {
+            @Override
+            public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {
 
-        final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
+                if (response.isSuccessful()) {
+                    final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>(context, googleMap);
+                    googleMap.clear();
+                    clusterManager.clearItems();
+                    googleMap.setOnCameraIdleListener(clusterManager);
+                    googleMap.getUiSettings().setMapToolbarEnabled(true);
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
 
-        clusterManager.getMarkerCollection()
-                .setOnInfoWindowAdapter(new CustomInfoViewAdapter(LayoutInflater.from(mContext), mapLocationOffer));
+                    GetOffers getOffers = response.body();
 
-        clusterManager.setOnClusterItemInfoWindowClickListener(
-                new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
-                    @Override
-                    public void onClusterItemInfoWindowClick(ClusterMarkerLocation stringClusterItem) {
-                        Offer currentOffer = mapLocationOffer.get(stringClusterItem.getPosition());
+                    List<Offer> offers = getOffers.getOffers();
 
-                        final AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(latitude, longitude), 16));
+                    final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
+                    for (int i = 0; i < offers.size(); i++) {
+                        clusterManager.addItem(new ClusterMarkerLocation(offers.get(i).getId(), new LatLng(offers.get(i).getStartingLocationLatitude(), offers.get(i).getStartingLocationLongitude())));
 
-                        final LayoutInflater inflater = getActivity().getLayoutInflater();
-                        final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
-                        adb.setView(dialogView);
-
-                        adb.setTitle(currentOffer.getDriverId());
-
-
-                        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
-                        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogDestination);
-                        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogRemarks);
-                        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTimestamp);
-                        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogSeatsAvailable);
-
-                        dialogRemarks.setText(currentOffer.getRemarks());
-                        dialogDestination.setText(currentOffer.getDestination());
-                        SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
-
-                        if (currentOffer.getTimestamp() != null) {
-                            dialogTimestamp.setText(ft.format(currentOffer.getTimestamp()));
-                        }
-                        dialogSeatsAvailable.setText(Integer.toString(currentOffer.getNumberOfSeats()) + " LEFT");
-
-
-// Spinner Drop down elements
-                        List<String> categories = new ArrayList<String>();
-                        stringClusterItem.getPosition();
-                        int seatsAvailable = currentOffer.getNumberOfSeats();
-                        for (int i = 1; i <= seatsAvailable; i++) {
-                            categories.add(Integer.toString(i));
-
-                        }
-
-
-// Creating adapter for spinner
-                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
-                            @Override
-                            public View getView(int position, View convertView, ViewGroup parent) {
-                                return setCentered(super.getView(position, convertView, parent));
-                            }
-
-                            @Override
-                            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                                return setCentered(super.getDropDownView(position, convertView, parent));
-                            }
-
-                            private View setCentered(View view) {
-                                view.setPadding(10, 20, 10, 10);
-                                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                                textView.setTextSize(20);
-                                textView.setGravity(Gravity.CENTER);
-                                return view;
-                            }
-                        };
-// Drop down layout style - list view with radio button
-
-// attaching data adapter to spinner
-                        spinner.setAdapter(dataAdapter);
-                        spinner.setOnItemSelectedListener(new OnSpinnerItemClicked());
-
-                        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-
-// CONFIRMATION BUTTON
-                                if (spinner.getSelectedItem().toString().matches("")) {
-                                    Toast.makeText(mContext, "Please enter number of seats", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    AlertDialog.Builder adb2 = new AlertDialog.Builder(mContext);
-
-                                    LayoutInflater inflater = getActivity().getLayoutInflater();
-
-
-                                    adb2.setTitle("Are you sure you want to book " + spinner.getSelectedItem().toString() + " seats?");
-
-
-                                    adb2.setIcon(android.R.drawable.ic_dialog_alert);
-
-
-                                    adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-
-
-                                            Toast.makeText(mContext, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
-
-                                    adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    adb2.show();
-                                }
-
-                            }
-                        });
-
-
-                        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        adb.show();
+                        mapLocationOffer.put(new LatLng(offers.get(i).getStartingLocationLatitude(), offers.get(i).getStartingLocationLongitude()), offers.get(i));
                     }
-                });
 
-        mMap.setOnInfoWindowClickListener(clusterManager);
-        mMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
-//mMap.setOnCameraChangeListener(mClusterManager);
-        mMap.setOnMarkerClickListener(clusterManager);
+
+                    clusterManager.getMarkerCollection()
+                            .setOnInfoWindowAdapter(new CustomInfoViewAdapter(LayoutInflater.from(context), mapLocationOffer));
+
+                    clusterManager.setOnClusterItemInfoWindowClickListener(
+                            new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
+                                @Override
+                                public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
+                                    Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+                                    //if (currentOffer.getDriverId().equals())
+                                    if (userId.equals(currentOffer.getDriverId())) {
+                                        viewPager.setCurrentItem(1);
+                                    } else {
+                                        final AlertDialog.Builder adb = new AlertDialog.Builder(context);
+
+                                        final LayoutInflater inflater = getActivity().getLayoutInflater();
+                                        final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
+                                        adb.setView(dialogView);
+
+                                        adb.setTitle(currentOffer.getDriverId());
+
+
+                                        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
+                                        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogDestination);
+                                        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogRemarks);
+                                        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTimestamp);
+                                        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogSeatsAvailable);
+
+                                        dialogRemarks.setText(currentOffer.getDriverRemarks());
+                                        dialogDestination.setText(currentOffer.getVehicleDescription());
+
+                                        if (currentOffer.getMeetUpTime() != null) {
+                                            dialogTimestamp.setText(currentOffer.getMeetUpTime());
+                                        }
+                                        dialogSeatsAvailable.setText(Integer.toString(currentOffer.getSeatsAvailable()) + " LEFT");
+
+
+                                        List<String> categories = new ArrayList<String>();
+                                        int seatsAvailable = currentOffer.getSeatsAvailable();
+                                        for (int i = 1; i <= seatsAvailable; i++) {
+                                            categories.add(Integer.toString(i));
+                                        }
+                                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
+                                            @Override
+                                            public View getView(int position, View convertView, ViewGroup parent) {
+                                                return setCentered(super.getView(position, convertView, parent));
+                                            }
+
+                                            @Override
+                                            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                                                return setCentered(super.getDropDownView(position, convertView, parent));
+                                            }
+
+                                            private View setCentered(View view) {
+                                                view.setPadding(10, 20, 10, 10);
+                                                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                                                textView.setTextSize(20);
+                                                textView.setGravity(Gravity.CENTER);
+                                                return view;
+                                            }
+                                        };
+
+                                        spinner.setAdapter(dataAdapter);
+                                        spinner.setOnItemSelectedListener(new OnSpinnerItemClicked());
+
+                                        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+
+
+                                                if (spinner.getSelectedItem().toString().matches("")) {
+                                                    Toast.makeText(context, "Please enter number of seats", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    AlertDialog.Builder adb2 = new AlertDialog.Builder(context);
+
+                                                    LayoutInflater inflater = getActivity().getLayoutInflater();
+
+
+                                                    adb2.setTitle("Are you sure you want to book " + spinner.getSelectedItem().toString() + " seats?");
+
+
+                                                    adb2.setIcon(android.R.drawable.ic_dialog_alert);
+
+
+                                                    adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+
+
+                                                            Toast.makeText(context, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
+
+                                                    adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                                    adb2.show();
+                                                }
+
+                                            }
+                                        });
+
+
+                                        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        adb.show();
+                                    }
+                                }
+                            });
+
+                    googleMap.setOnInfoWindowClickListener(clusterManager);
+                    googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+                    googleMap.setOnMarkerClickListener(clusterManager);
+
+
+                } else {
+
+                    try {
+                        Log.i("ERROR_OFFER", ": " + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<GetOffers> call, Throwable t) {
+                System.out.println(Arrays.toString(t.getStackTrace()));
+
+            }
+        });
 
 
     }
@@ -404,21 +474,26 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.refresh) {
-
-            Toast.makeText(mContext, "Refreshing...", Toast.LENGTH_LONG).show();
-//mMap.clear();
-
-            initMarkers();
+            Toast.makeText(context, "Refreshing...", Toast.LENGTH_LONG).show();
+            getUserId();
 
         } else if (item.getItemId() == R.id.logout) {
-
-
-            Intent intent = new Intent(mContext, LoginActivity.class);
+            Intent intent = new Intent(context, FacebookLoginActivity.class);
             startActivity(intent);
-
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (getContext() != null) {
+                getUserId();
+            }
+        }
+    }
+
 }
 

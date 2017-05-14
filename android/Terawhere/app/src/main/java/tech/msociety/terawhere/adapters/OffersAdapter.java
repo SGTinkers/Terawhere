@@ -13,11 +13,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tech.msociety.terawhere.OffersDatum;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.TerawhereBackendServer;
+import tech.msociety.terawhere.Token;
 import tech.msociety.terawhere.activities.CreateOfferActivity;
 import tech.msociety.terawhere.models.Offer;
 
@@ -31,7 +38,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_child, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_offer, parent, false);
         viewGroup = parent;
 
         return new ViewHolder(view);
@@ -42,17 +49,24 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
 
         final Offer offer = offers.get(position);
+        viewHolder.textViewId.setText(Integer.toString(offer.getId()));
+        viewHolder.textViewSeatsAvailable.setText(offer.getSeatsAvailable() + " LEFT ");
+        viewHolder.textViewDestination.setText(offer.getEndingLocationName());
+        viewHolder.textViewRemarks.setText(offer.getDriverRemarks());
 
-        viewHolder.textViewSeatsAvailable.setText(offer.getNumberOfSeats() + " LEFT ");
-        viewHolder.textViewDestination.setText(offer.getDestination());
-        viewHolder.textViewRemarks.setText(offer.getRemarks());
-        viewHolder.textViewVehicleColor.setText(offer.getVehicleColor());
-        viewHolder.textViewVehiclePlateNumber.setText(offer.getVehiclePlateNumber());
+        if (!offer.getVehicleDescription().matches("")) {
+            viewHolder.textViewVehicleModel.setText(offer.getVehicleModel() + " (" + offer.getVehicleDescription() + ") ");
+        } else {
+            viewHolder.textViewVehicleModel.setText(offer.getVehicleModel());
+
+        }
+        viewHolder.textViewVehiclePlateNumber.setText(offer.getVehicleNumber());
+        viewHolder.textViewPrefGender.setText(offer.getGenderPreference());
 
         SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
 
-        if (offer.getTimestamp() != null) {
-            viewHolder.textViewTimestamp.setText(ft.format(offer.getTimestamp()));
+        if (offer.getMeetUpTime() != null) {
+            viewHolder.textViewTimestamp.setText(offer.getMeetUpTime());
         } else {
             viewHolder.textViewTimestamp.setText("");
 
@@ -85,10 +99,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(final View v) {
-
-                Log.i("LONG", "LONG: " + position);
                 AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(viewGroup.getContext());
-
 
                 alertdialogbuilder.setItems(value, new DialogInterface.OnClickListener() {
                     @Override
@@ -98,27 +109,83 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
                         if (selectedText.equals("Delete")) {
 
-                        }
+                            Log.i("DELETING_INDEX", ":" + offers.get(position).getId());
 
+
+                            Call<OffersDatum> deleteRequest = TerawhereBackendServer.getApiInstance(Token.getToken()).deleteOffer(offers.get(position).getId());
+                            deleteRequest.enqueue(new Callback<OffersDatum>() {
+                                @Override
+                                public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
+                                    if (response.isSuccessful()) {
+                                        Log.i("DELETING: ", Integer.toString(position));
+
+                                        Log.i("DELETED", ": " + response.message());
+                                        offers.remove(position);
+                                        notifyItemRemoved(position);
+                                        notifyItemRangeChanged(position, getItemCount());
+
+                                    } else {
+                                        Log.i("ERROR_DELETE", ": " + response.message());
+
+                                        try {
+                                            Log.i("ERROR_DELETE_MESSAGE", ": " + response.errorBody().string());
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                    // use response.code, response.headers, etc.
+                                }
+
+                                @Override
+                                public void onFailure(Call<OffersDatum> call, Throwable t) {
+                                    // handle failure
+                                }
+                            });
+                        }
                         if (selectedText.equals("Edit")) {
                             Intent intent = new Intent(new Intent(viewGroup.getContext(), CreateOfferActivity.class));
                             intent.putExtra("isEdit", true);
                             intent.putExtra("id", offer.getId());
-                            intent.putExtra("destination", offer.getDestination());
-                            intent.putExtra("seatsAvailable", offer.getNumberOfSeats());
-                            intent.putExtra("pickUpTime", offer.getTimestamp());
-                            intent.putExtra("remarks", offer.getRemarks());
-                            intent.putExtra("vehicleColor", offer.getVehicleColor());
-                            intent.putExtra("vehiclePlateNumber", offer.getVehiclePlateNumber());
+                            intent.putExtra("driverId", offer.getDriverId());
+                            Log.i("DRIVER", ":" + offer.getDriverId());
+                            intent.putExtra("meetUpTime", offer.getMeetUpTime());
 
+                            intent.putExtra("startingLocationName", offer.getStartingLocationName());
+                            intent.putExtra("startingLocationAddress", offer.getStartingLocationAddress());
+                            intent.putExtra("startingLocationLatitude", offer.getStartingLocationLatitude());
+                            intent.putExtra("startingLocationLongitude", offer.getStartingLocationLongitude());
+
+                            intent.putExtra("endingLocationName", offer.getEndingLocationName());
+                            intent.putExtra("endingLocationAddress", offer.getEndingLocationAddress());
+                            intent.putExtra("endingLocationLatitude", offer.getEndingLocationLatitude());
+                            intent.putExtra("endingLocationLongitude", offer.getEndingLocationLongitude());
+
+                            Log.i("LAT2", ":" + offer.getEndingLocationLatitude());
+                            Log.i("LON2", ":" + offer.getEndingLocationLongitude());
+
+                            intent.putExtra("driverRemarks", offer.getDriverRemarks());
+                            intent.putExtra("seatsAvailable", offer.getSeatsAvailable());
+
+                            intent.putExtra("endingLocationAddress", offer.getEndingLocationAddress());
+                            intent.putExtra("endingLocationAddress", offer.getEndingLocationAddress());
+
+                            intent.putExtra("vehicleModel", offer.getVehicleModel());
+                            intent.putExtra("vehicleDescription", offer.getVehicleDescription());
+                            intent.putExtra("vehicleNumber", offer.getVehicleNumber());
+
+                            intent.putExtra("genderPreference", offer.getGenderPreference());
                             //((Activity) viewGroup.getContext()).finish();
                             viewGroup.getContext().startActivity(intent);
 
 
                         }
 
+
                     }
+
                 });
+
 
                 AlertDialog dialog = alertdialogbuilder.create();
 
@@ -139,8 +206,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView textViewDestination;
         private TextView textViewTimestamp;
         private TextView textViewRemarks;
-        private TextView textViewVehicleColor;
+        private TextView textViewVehicleModel;
         private TextView textViewVehiclePlateNumber;
+        private TextView textViewPrefGender;
+        private TextView textViewId;
 
 
         private LinearLayout expandedView;
@@ -152,11 +221,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             textViewDestination = (TextView) view.findViewById(R.id.textViewDestination);
             textViewTimestamp = (TextView) view.findViewById(R.id.textViewTimestamp);
             textViewRemarks = (TextView) view.findViewById(R.id.remarks);
-            textViewVehicleColor = (TextView) view.findViewById(R.id.vehicleColor);
+            textViewVehicleModel = (TextView) view.findViewById(R.id.vehicleModel);
             textViewVehiclePlateNumber = (TextView) view.findViewById(R.id.vehiclePlateNumber);
+            textViewPrefGender = (TextView) view.findViewById(R.id.prefGender);
+            textViewId = (TextView) view.findViewById(R.id.textViewId);
             expandedView = (LinearLayout) view.findViewById(R.id.expandView);
             expandCollapse = (TextView) view.findViewById(R.id.toggle);
         }
+
     }
 
     public void setOffers(List<Offer> offers) {

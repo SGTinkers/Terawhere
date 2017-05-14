@@ -16,13 +16,16 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <activity android:name=".activities.LoginActivity">
+        <activity android:name=".activities.FacebookLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
         <activity
             android:name=".activities.CreateOfferActivity"
             android:windowSoftInputMode="adjustPan"
@@ -35,6 +38,10 @@
         </activity>
         <activity android:name=".activities.MainActivity" />
 
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider"
+            android:exported="true" />
         <uses-library android:name="com.google.android.maps"/>
 
     </application>

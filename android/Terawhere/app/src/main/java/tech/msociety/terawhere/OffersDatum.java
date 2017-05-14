@@ -3,7 +3,7 @@ package tech.msociety.terawhere;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum {
+public class OffersDatum {
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -68,6 +68,39 @@ public class Datum {
     @Expose
     private String updatedAt;
 
+    public OffersDatum(String meetupTime, String startName, String startAddr, double startLat, double startLng, String endName, String endAddr, double endLat, double endLng, int vacancy, String vehicleNumber, String vehicleModel) {
+        this.meetupTime = meetupTime;
+        this.startName = startName;
+        this.startAddr = startAddr;
+        this.startLat = startLat;
+        this.startLng = startLng;
+        this.endName = endName;
+        this.endAddr = endAddr;
+        this.endLat = endLat;
+        this.endLng = endLng;
+        this.vacancy = vacancy;
+        this.vehicleNumber = vehicleNumber;
+        this.vehicleModel = vehicleModel;
+    }
+
+    public OffersDatum(String meetupTime, String startName, String startAddr, double startLat, double startLng, String endName, String endAddr, double endLat, double endLng, int vacancy, String remarks, int status, String prefGender, String vehicleNumber, String vehicleDesc, String vehicleModel) {
+        this.meetupTime = meetupTime;
+        this.startName = startName;
+        this.startAddr = startAddr;
+        this.startLat = startLat;
+        this.startLng = startLng;
+        this.endName = endName;
+        this.endAddr = endAddr;
+        this.endLat = endLat;
+        this.endLng = endLng;
+        this.vacancy = vacancy;
+        this.remarks = remarks;
+        this.status = status;
+        this.prefGender = prefGender;
+        this.vehicleDesc = vehicleDesc;
+        this.vehicleNumber = vehicleNumber;
+        this.vehicleModel = vehicleModel;
+    }
     public Integer getId() {
         return id;
     }
@@ -116,24 +149,36 @@ public class Datum {
         return vacancy;
     }
 
-    public Object getRemarks() {
-        return remarks;
+    public String getRemarks() {
+        if (remarks != null) {
+            return remarks.toString();
+        } else {
+            return "";
+        }
     }
 
     public Integer getStatus() {
         return status;
     }
 
-    public Object getPrefGender() {
-        return prefGender;
+    public String getPrefGender() {
+        if (prefGender != null) {
+            return prefGender.toString();
+        } else {
+            return "";
+        }
     }
 
     public String getVehicleNumber() {
         return vehicleNumber;
     }
 
-    public Object getVehicleDesc() {
-        return vehicleDesc;
+    public String getVehicleDesc() {
+        if (vehicleDesc != null) {
+            return vehicleDesc.toString();
+        } else {
+            return "";
+        }
     }
 
     public String getVehicleModel() {
