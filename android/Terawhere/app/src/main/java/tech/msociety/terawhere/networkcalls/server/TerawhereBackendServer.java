@@ -1,11 +1,6 @@
 package tech.msociety.terawhere.networkcalls.server;
 
-import java.io.IOException;
-
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
@@ -24,42 +19,29 @@ import tech.msociety.terawhere.GetOffers;
 import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.OffersDatum;
 import tech.msociety.terawhere.RefreshToken;
+import tech.msociety.terawhere.networkcalls.intereptors.ApiHeaderInterceptor;
+import tech.msociety.terawhere.networkcalls.intereptors.LoggingInterceptor;
 
 public class TerawhereBackendServer {
-    private static Api api;
-    String value;
-    
     public static Api getApiInstance(final String token) {
-        if (api != null) {
-            return api;
-        }
-        OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request.Builder ongoing = chain.request().newBuilder();
-                ongoing.addHeader("Accept", "application/json");
-                
-                ongoing.addHeader("Authorization", "Bearer " + token);
-                ongoing.addHeader("Content-Type", "application/x-www-form-urlencoded");
-                
-                return chain.proceed(ongoing.build());
-            }
-        }).build();
-        
-        Retrofit retrofit = new Builder().baseUrl(Constants.BASE_URL).addConverterFactory(GsonConverterFactory.create()).client(httpClient).build();
+        Retrofit retrofit = new Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getHttpClient(token))
+                .build();
         
         return retrofit.create(Api.class);
     }
     
-    /*
-    private static OkHttpClient getHttpClient() {
+    private static OkHttpClient getHttpClient(String token) {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        httpClientBuilder.addInterceptor(new QueryParamsInterceptor());
-        httpClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+//        httpClientBuilder.addInterceptor(new QueryParamsInterceptor());
+//        httpClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        httpClientBuilder.addInterceptor(new ApiHeaderInterceptor(token));
         httpClientBuilder.addInterceptor(new LoggingInterceptor());
         return httpClientBuilder.build();
     }
-*/
+    
     public interface Api {
         @POST("api/v1/auth")
         Call<FacebookUser> createUser(@Body FacebookUser user);
