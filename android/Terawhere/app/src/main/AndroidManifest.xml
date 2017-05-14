@@ -16,7 +16,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <activity android:name=".activities.FacebookLoginActivity">
+        <activity android:name=".screens.activities.FacebookLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,16 +27,16 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
         <activity
-            android:name=".activities.CreateOfferActivity"
+            android:name=".screens.activities.CreateOfferActivity"
             android:windowSoftInputMode="adjustPan"
             android:label="@string/title_activity_create_offer"
-            android:parentActivityName=".activities.MainActivity"
+            android:parentActivityName=".screens.activities.MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="tech.msociety.terawhere.activities.MainActivity" />
+                android:value="tech.msociety.terawhere.screens.activities.MainActivity"/>
         </activity>
-        <activity android:name=".activities.MainActivity" />
+        <activity android:name=".screens.activities.MainActivity"/>
 
         <provider
             android:name="com.facebook.FacebookContentProvider"

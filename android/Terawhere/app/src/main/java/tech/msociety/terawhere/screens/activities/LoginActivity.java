@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.activities;
+package tech.msociety.terawhere.screens.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

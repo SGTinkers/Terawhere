@@ -1,9 +1,8 @@
-package tech.msociety.terawhere.activities;
+package tech.msociety.terawhere.screens.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,8 +27,7 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
 
-
-public class FacebookLoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class FacebookLoginActivity extends BaseActivity implements View.OnClickListener {
     public static final String STRING_EMPTY = "";
     public static final String STRING_SEPARATOR = " ";
     public static final String STRING_FACEBOOK = "facebook";

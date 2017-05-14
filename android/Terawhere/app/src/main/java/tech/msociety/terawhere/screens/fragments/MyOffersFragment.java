@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.fragments;
+package tech.msociety.terawhere.screens.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,9 +27,9 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.R.layout;
 import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
-import tech.msociety.terawhere.activities.CreateOfferActivity;
 import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.models.Offer;
+import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 
 import static android.app.Activity.RESULT_OK;
 

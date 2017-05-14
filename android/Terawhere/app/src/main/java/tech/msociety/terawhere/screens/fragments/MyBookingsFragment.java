@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.fragments;
+package tech.msociety.terawhere.screens.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;

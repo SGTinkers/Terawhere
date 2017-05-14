@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.fragments;
+package tech.msociety.terawhere.screens.fragments;
 
 import android.Manifest;
 import android.content.Context;
@@ -54,10 +54,10 @@ import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
-import tech.msociety.terawhere.activities.FacebookLoginActivity;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
+import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 

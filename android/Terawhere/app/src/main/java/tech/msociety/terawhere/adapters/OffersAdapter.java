@@ -25,8 +25,8 @@ import tech.msociety.terawhere.OffersDatum;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
-import tech.msociety.terawhere.activities.CreateOfferActivity;
 import tech.msociety.terawhere.models.Offer;
+import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 
 public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
     private List<Offer> offers;

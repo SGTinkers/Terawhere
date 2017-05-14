@@ -1,18 +1,17 @@
-package tech.msociety.terawhere.activities;
+package tech.msociety.terawhere.screens.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.PagerAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private static final String TOOLBAR_TITLE = "Home";
     public static final String MESSAGE_HELLO_TERAWHERE = "Hello Terawhere!";
     private Toolbar toolbar;

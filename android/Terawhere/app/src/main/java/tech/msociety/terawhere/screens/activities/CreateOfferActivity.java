@@ -1,8 +1,6 @@
-package tech.msociety.terawhere.activities;
+package tech.msociety.terawhere.screens.activities;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -58,11 +56,11 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
 
-public class CreateOfferActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
+public class CreateOfferActivity extends ToolbarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
-
+    
     private static final String TOOLBAR_TITLE = "Create Offer";
     public static final String ENDING_LOCATION_LONGITUDE = "endingLocationLongitude";
     public static final String ENDING_LOCATION_LATITUDE = "endingLocationLatitude";
@@ -93,54 +91,51 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
     public static final String MESSAGE_YOU_ARE_AT = "You are at: ";
     public static final String FORMAT_TWO_DIGITS = "%02d";
     public static final String OFFER_ID = "id";
-
+    
     private boolean isEditOffer = false;
-
+    
     private double startingLocationLatitude;
     private double startingLocationLongitude;
     private double endingLocationLatitude;
     private double endingLocationLongitude;
-
+    
     private int offerId;
-
-
+    
     private Button buttonCreateOffer;
-
+    
     private RadioGroup genderRadioGroup;
     private RadioButton radioButtonMale;
     private RadioButton radioButtonFemale;
-
+    
     private TextView textViewStartingLocation;
     private TextView textViewEndingLocation;
     private AutoCompleteTextView editTextVehicleDescription;
-
+    
     private EditText editTextSeatsAvailable;
     private EditText editTextRemarks;
     private EditText editTextVehiclePlateNumber;
     private EditText editTextStartingLocationName;
     private EditText editTextEndingLocationName;
     private EditText editTextVehicleModel;
-
-
+    
     private TimePicker timePickerMeetUpTime;
     private GoogleApiClient googleApiClient;
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
         initToolbar(TOOLBAR_TITLE, true);
-
+        
         buildGoogleApiClient();
         trackCurrentLocation();
-
+        
         createOfferButtonListener();
         createOfferLinearLayoutListener();
         startingLocationTextViewListener();
         startingLocationImageViewListener();
         endingLocationTextViewListener();
-
+        
         initializeStartingLocationTextView();
         initializeEndingLocationTextView();
         initializeSeatsAvailableEditText();
@@ -154,15 +149,15 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         initializeGenderPreferenceRadioGroup();
         initializeMaleRadioButton();
         initializeFemaleRadioButton();
-
+        
         Bundle bundle = getIntent().getExtras();
         Intent intent = getIntent();
-
+        
         initializeIsEditOffer(bundle, intent);
-
+        
         if (isEditOffer) {
             initializeOfferId(intent);
-
+            
             setMeetUpTimeField(intent);
             setSeatsAvailableField(intent);
             setRemarksField(intent);
@@ -181,32 +176,32 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             setCreateOfferButton();
         }
     }
-
+    
     private void initializeOfferId(Intent intent) {
         offerId = intent.getExtras().getInt(OFFER_ID);
         Log.i(OFFER_ID, " " + offerId);
     }
-
+    
     private void setEndingLocationLongitudeField(Intent intent) {
         endingLocationLongitude = getDoubleValueToEdit(intent, ENDING_LOCATION_LONGITUDE);
     }
-
+    
     private void setEndingLocationLatitudeField(Intent intent) {
         endingLocationLatitude = getDoubleValueToEdit(intent, ENDING_LOCATION_LATITUDE);
     }
-
+    
     private void setStartingLocationLongitudeField(Intent intent) {
         startingLocationLongitude = getDoubleValueToEdit(intent, STARTING_LOCATION_LONGITUDE);
     }
-
+    
     private void setStartingLocationLatitudeField(Intent intent) {
         startingLocationLatitude = getDoubleValueToEdit(intent, STARTING_LOCATION_LATITUDE);
     }
-
+    
     private void setCreateOfferButton() {
         buttonCreateOffer.setText(EDIT_OFFER);
     }
-
+    
     private void setGenderPreferenceField(Intent intent) {
         String gender = getStringValueToEdit(intent, GENDER_PREFERENCE);
         if (gender.toLowerCase().equals(MALE)) {
@@ -215,51 +210,51 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             radioButtonFemale.setChecked(true);
         }
     }
-
+    
     private void initializeFemaleRadioButton() {
         radioButtonFemale = (RadioButton) findViewById(R.id.radioButton2);
     }
-
+    
     private void initializeMaleRadioButton() {
         radioButtonMale = (RadioButton) findViewById(R.id.radioButton);
     }
-
+    
     private void setEndingLocationAddressField(Intent intent) {
         textViewEndingLocation.setText(getStringValueToEdit(intent, ENDING_LOCATION_ADDRESS));
     }
-
+    
     private void setEndingLocationNameField(Intent intent) {
         editTextEndingLocationName.setText(getStringValueToEdit(intent, ENDING_LOCATION_NAME));
     }
-
+    
     private void setStartingLocationAddressField(Intent intent) {
         textViewStartingLocation.setText(getStringValueToEdit(intent, STARTING_LOCATION_ADDRESS));
     }
-
+    
     private void setStartingLocationNameField(Intent intent) {
         editTextStartingLocationName.setText(getStringValueToEdit(intent, STARTING_LOCATION_NAME));
     }
-
+    
     private void setVehicleModelField(Intent intent) {
         editTextVehicleModel.setText(getStringValueToEdit(intent, VEHICLE_MODEL));
     }
-
+    
     private void setVehicleNumberField(Intent intent) {
         editTextVehiclePlateNumber.setText(getStringValueToEdit(intent, VEHICLE_NUMBER));
     }
-
+    
     private void setVehicleDescriptionField(Intent intent) {
         editTextVehicleDescription.setText(getStringValueToEdit(intent, VEHICLE_DESCRIPTION));
     }
-
+    
     private void setRemarksField(Intent intent) {
         editTextRemarks.setText(getStringValueToEdit(intent, DRIVER_REMARKS));
     }
-
+    
     private void setSeatsAvailableField(Intent intent) {
         editTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", intent.getExtras().getInt(SEATS_AVAILABLE)));
     }
-
+    
     private void setMeetUpTimeField(Intent intent) {
         String meetUpTime = intent.getStringExtra(MEET_UP_TIME);
         SimpleDateFormat dateFormat = new SimpleDateFormat(YYYY_DD_MM_HH_MM);
@@ -269,90 +264,90 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             timePickerMeetUpTime.setHour(dateTime.getHours());
             timePickerMeetUpTime.setMinute(dateTime.getMinutes());
-
+            
         } else {
             timePickerMeetUpTime.setCurrentHour(dateTime.getHours());
             timePickerMeetUpTime.setCurrentMinute(dateTime.getMinutes());
         }
     }
-
+    
     private double getDoubleValueToEdit(Intent intent, String key) {
         return intent.getExtras().getDouble(key);
     }
-
+    
     private String getStringValueToEdit(Intent intent, String key) {
         return intent.getStringExtra(key);
     }
-
+    
     private void initializeIsEditOffer(Bundle bundle, Intent intent) {
         if (bundle != null) {
             isEditOffer = intent.getExtras().getBoolean(IS_EDIT);
         }
     }
-
+    
     private void initializeGenderPreferenceRadioGroup() {
         genderRadioGroup = (RadioGroup) findViewById(R.id.radioGroupGender);
     }
-
+    
     private void initializeVehicleNumberEditText() {
         editTextVehiclePlateNumber = (EditText) findViewById(R.id.vehiclePlateNumberEditText);
     }
-
+    
     private void buildGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
     }
-
+    
     private void initializeMeetUpTimePicker() {
         timePickerMeetUpTime = (TimePicker) findViewById(R.id.pickUpTimePicker);
     }
-
+    
     private void initializeVehicleModelEditText() {
         editTextVehicleModel = (EditText) findViewById(R.id.vehicleModelEditText);
     }
-
+    
     private void initializeEndingLocationNameEditText() {
         editTextEndingLocationName = (EditText) findViewById(R.id.endingLocationNameEditText);
     }
-
+    
     private void initializeStartingLocationNameEditText() {
         editTextStartingLocationName = (EditText) findViewById(R.id.startingLocationNameEditText);
     }
-
+    
     private void initialializeVehicleDescriptionEditText(ArrayAdapter<String> adapter) {
         editTextVehicleDescription = (AutoCompleteTextView) findViewById(R.id.vehicleDescriptionEditText);
         editTextVehicleDescription.setAdapter(adapter);
         editTextVehicleDescription.setThreshold(1);
     }
-
+    
     private void initializeRemarksEditText() {
         editTextRemarks = (EditText) findViewById(R.id.remarksEditText);
     }
-
+    
     private void initializeSeatsAvailableEditText() {
         editTextSeatsAvailable = (EditText) findViewById(R.id.seatsAvailableEditText);
     }
-
+    
     private void initializeEndingLocationTextView() {
         textViewEndingLocation = (TextView) findViewById(R.id.endingLocationTextView);
     }
-
+    
     private void initializeStartingLocationTextView() {
         textViewStartingLocation = (TextView) findViewById(R.id.locationTextView);
     }
-
+    
     private void trackCurrentLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
     }
-
+    
     @Override
     public void onClick(View view) {
-
+        
         if (view.getId() == R.id.createOfferLinearLayout) {
             hideKeyboard();
         } else if (view.getId() == R.id.imageCurrentLocation || view.getId() == R.id.locationTextView) {
@@ -369,32 +364,21 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (view.getId() == R.id.createOfferButton) {
             if (isNetworkConnected()) {
-
+                
                 if (areNotAllFieldsFilled() || !editTextVehiclePlateNumber.getText().toString().matches("^[a-zA-Z0-9]*$")) {
-
+                    
                     Toast.makeText(CreateOfferActivity.this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!isEditOffer) {
                         String date = getDate();
                         String hour = getHourToEdit();
                         String minute = getMinuteToEdit();
-
+                        
                         int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                         RadioButton radioButtonGender = (RadioButton) findViewById(selectedId);
-
+                        
                         String meetUpTime = date + " " + hour + ":" + minute;
-                        OffersDatum offer = new OffersDatum(meetUpTime, editTextStartingLocationName.getText().toString(),
-                                textViewStartingLocation.getText().toString(),
-                                startingLocationLatitude, startingLocationLongitude,
-                                editTextEndingLocationName.getText().toString(),
-                                textViewEndingLocation.getText().toString(),
-                                endingLocationLatitude, endingLocationLongitude,
-                                Integer.parseInt(editTextSeatsAvailable.getText().toString()),
-                                editTextRemarks.getText().toString(), 1,
-                                radioButtonGender.getText().toString().toLowerCase(),
-                                editTextVehiclePlateNumber.getText().toString(),
-                                editTextVehicleDescription.getText().toString(),
-                                editTextVehicleModel.getText().toString());
+                        OffersDatum offer = new OffersDatum(meetUpTime, editTextStartingLocationName.getText().toString(), textViewStartingLocation.getText().toString(), startingLocationLatitude, startingLocationLongitude, editTextEndingLocationName.getText().toString(), textViewEndingLocation.getText().toString(), endingLocationLatitude, endingLocationLongitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()), editTextRemarks.getText().toString(), 1, radioButtonGender.getText().toString().toLowerCase(), editTextVehiclePlateNumber.getText().toString(), editTextVehicleDescription.getText().toString(), editTextVehicleModel.getText().toString());
 
                         /*Log.i("meetUpTime"," : " + meetUpTime);
                         Log.i("StartingName",":" + editTextStartingLocationName.getText().toString());
@@ -414,35 +398,34 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
 */
                         Call<OffersDatum> call = createOfferApi(offer);
                         call.enqueue(new Callback<OffersDatum>() {
-                                         @Override
-                                         public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
-
-                                             if (response.isSuccessful()) {
-                                                 Log.i(MESSAGE_RESPONSE, ": " + response.message());
-                                                 Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
-
-                                                 Intent resultIntent = new Intent();
-                                                 resultIntent.putExtra("FirstTab", 4);
-                                                 setResult(Activity.RESULT_OK, resultIntent);
-                                                 finish();
-
-                                             } else {
-                                                 try {
-                                                     Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
-                                                 } catch (IOException e) {
-                                                     e.printStackTrace();
-                                                 }
-                                             }
-                                         }
-
-                                         @Override
-                                         public void onFailure(Call<OffersDatum> call, Throwable t) {
-                                         }
-                                     }
-                        );
-
+                            @Override
+                            public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
+                                
+                                if (response.isSuccessful()) {
+                                    Log.i(MESSAGE_RESPONSE, ": " + response.message());
+                                    Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
+                                    
+                                    Intent resultIntent = new Intent();
+                                    resultIntent.putExtra("FirstTab", 4);
+                                    setResult(RESULT_OK, resultIntent);
+                                    finish();
+                                    
+                                } else {
+                                    try {
+                                        Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            
+                            @Override
+                            public void onFailure(Call<OffersDatum> call, Throwable t) {
+                            }
+                        });
+                        
                     } else {
-
+                        
                         String date = getDate();
                         String hour;
                         String minute;
@@ -453,39 +436,26 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
                             hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentHour());
                             minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentMinute());
                         }
-
+                        
                         int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                         RadioButton radioButtonGender = (RadioButton) findViewById(selectedId);
-
+                        
                         String meetUpTime = date + " " + hour + ":" + minute;
-                        OffersDatum offer = new OffersDatum(meetUpTime, editTextStartingLocationName.getText().toString(),
-                                textViewStartingLocation.getText().toString(),
-                                startingLocationLatitude, startingLocationLongitude,
-                                editTextEndingLocationName.getText().toString(),
-                                textViewEndingLocation.getText().toString(),
-                                endingLocationLatitude, endingLocationLongitude,
-                                Integer.parseInt(editTextSeatsAvailable.getText().toString()),
-                                editTextRemarks.getText().toString(), 1,
-                                radioButtonGender.getText().toString().toLowerCase(),
-                                editTextVehiclePlateNumber.getText().toString(),
-                                editTextVehicleDescription.getText().toString(),
-                                editTextVehicleModel.getText().toString());
-
-
+                        OffersDatum offer = new OffersDatum(meetUpTime, editTextStartingLocationName.getText().toString(), textViewStartingLocation.getText().toString(), startingLocationLatitude, startingLocationLongitude, editTextEndingLocationName.getText().toString(), textViewEndingLocation.getText().toString(), endingLocationLatitude, endingLocationLongitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()), editTextRemarks.getText().toString(), 1, radioButtonGender.getText().toString().toLowerCase(), editTextVehiclePlateNumber.getText().toString(), editTextVehicleDescription.getText().toString(), editTextVehicleModel.getText().toString());
+                        
                         Call<OffersDatum> call = TerawhereBackendServer.getApiInstance(Token.getToken()).editOffer(offerId, offer);
                         call.enqueue(new Callback<OffersDatum>() {
                             @Override
                             public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
-
+                                
                                 if (response.isSuccessful()) {
                                     Log.i("EDIT_MESSAGE", ": " + response.message());
                                     Toast.makeText(getApplicationContext(), MESSAGE_EDIT_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
                                     Intent resultIntent = new Intent();
                                     resultIntent.putExtra("FirstTab", 4);
-                                    setResult(Activity.RESULT_OK, resultIntent);
+                                    setResult(RESULT_OK, resultIntent);
                                     finish();
-
-
+                                    
                                 } else {
                                     try {
                                         Log.i("EDIT_ERROR", ": " + response.errorBody().string());
@@ -493,15 +463,15 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
                                         e.printStackTrace();
                                     }
                                 }
-
+                                
                             }
-
+                            
                             @Override
                             public void onFailure(Call<OffersDatum> call, Throwable t) {
-
+                                
                             }
                         });
-
+                        
                     }
                 }
             } else {
@@ -509,11 +479,11 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             }
         }
     }
-
+    
     private String getDate() {
         return new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
     }
-
+    
     private String getMinuteToEdit() {
         String minute;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -523,7 +493,7 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         }
         return minute;
     }
-
+    
     private String getHourToEdit() {
         String hour;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -533,47 +503,42 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         }
         return hour;
     }
-
+    
     private Call<OffersDatum> createOfferApi(OffersDatum offer) {
         return TerawhereBackendServer.getApiInstance(Token.getToken()).createOffer(offer);
     }
-
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent resultIntent = new Intent();
-                setResult(Activity.RESULT_OK, resultIntent);
+                setResult(RESULT_OK, resultIntent);
                 finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
+    
     private boolean areNotAllFieldsFilled() {
-        return (startingLocationLatitude == 0.0 || startingLocationLongitude == 0.0 || endingLocationLatitude == 0.0 || endingLocationLongitude == 0.0 ||
-                editTextSeatsAvailable.getText().toString().matches("") ||
-                editTextRemarks.getText().toString().matches("") ||
-                editTextVehicleDescription.getText().toString().matches("") ||
-                editTextVehiclePlateNumber.getText().toString().matches(""));
-
+        return (startingLocationLatitude == 0.0 || startingLocationLongitude == 0.0 || endingLocationLatitude == 0.0 || endingLocationLongitude == 0.0 || editTextSeatsAvailable.getText().toString().matches("") || editTextRemarks.getText().toString().matches("") || editTextVehicleDescription.getText().toString().matches("") || editTextVehiclePlateNumber.getText().toString().matches(""));
+        
     }
-
+    
     private void showStartingPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
         initializePlacePickerMap(intentBuilder, startingLocationLatitude, startingLocationLongitude);
         startPlacePickerActivity(intentBuilder, 1);
     }
-
+    
     private void showEndingPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
-
+        
         if (isEndingLocationInitialized()) {
             initializePlacePickerMap(intentBuilder, endingLocationLatitude, endingLocationLongitude);
         } else {
@@ -581,67 +546,65 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
         }
         startPlacePickerActivity(intentBuilder, 2);
     }
-
+    
     private boolean isEndingLocationInitialized() {
         return (endingLocationLatitude != 0.0 || endingLocationLongitude != 0.0);
     }
-
+    
     private void initializePlacePickerMap(PlacePicker.IntentBuilder intentBuilder, double locationLatitude, double locationLongitude) {
         LatLng minimumBound = new LatLng(locationLatitude - OFFSET_LATITUDE, locationLongitude - OFFSET_LONGITUDE);
         LatLng maximumBound = new LatLng(locationLatitude + OFFSET_LATITUDE, locationLongitude + OFFSET_LONGITUDE);
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
         intentBuilder.setLatLngBounds(placePickerMapBounds);
     }
-
+    
     private void startPlacePickerActivity(PlacePicker.IntentBuilder intentBuilder, int requestCode) throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         Intent intent = intentBuilder.build(CreateOfferActivity.this);
         startActivityForResult(intent, requestCode);
     }
-
+    
     private void hideKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (getCurrentFocus() != null) {
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
-
+    
     /**
      * on click listeners
      */
-
+    
     private void startingLocationImageViewListener() {
         ImageView imageCurrentLocation = (ImageView) findViewById(R.id.imageCurrentLocation);
         imageCurrentLocation.setOnClickListener(this);
     }
-
+    
     private void startingLocationTextViewListener() {
         TextView locationTextView = (TextView) findViewById(R.id.locationTextView);
         locationTextView.setOnClickListener(this);
     }
-
+    
     private void endingLocationTextViewListener() {
         TextView endingLocationTextView = (TextView) findViewById(R.id.endingLocationTextView);
         endingLocationTextView.setOnClickListener(this);
     }
-
+    
     private void createOfferLinearLayoutListener() {
         LinearLayout backgroundLinearLayout = (LinearLayout) findViewById(R.id.createOfferLinearLayout);
         backgroundLinearLayout.setOnClickListener(this);
     }
-
+    
     private void createOfferButtonListener() {
         buttonCreateOffer = (Button) findViewById(R.id.createOfferButton);
         buttonCreateOffer.setOnClickListener(this);
     }
-
-
+    
     private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         return ni != null;
     }
-
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -649,11 +612,11 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
                 if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, MESSAGE_LOCATION_PERMISSION_NEEDED, Toast.LENGTH_SHORT).show();
                 }
-
+                
                 break;
         }
     }
-
+    
     @Override
     protected void onStart() {
         super.onStart();
@@ -661,17 +624,17 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             googleApiClient.connect();
         }
     }
-
+    
     @Override
     protected void onStop() {
         googleApiClient.disconnect();
         super.onStop();
     }
-
+    
     // Connection with Google Play Services successful
     @Override
     public void onConnected(Bundle bundle) {
-
+        
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             startingLocationLatitude = lastLocation.getLatitude();
@@ -693,36 +656,36 @@ public class CreateOfferActivity extends BaseActivity implements View.OnClickLis
             }
         }
     }
-
+    
     @Override
     public void onConnectionSuspended(int i) {
     }
-
+    
     // Connection with Google Play Services failed
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
-
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+        
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             final Place place = PlacePicker.getPlace(this, data);
             final CharSequence address = place.getAddress();
             startingLocationLatitude = place.getLatLng().latitude;
             startingLocationLongitude = place.getLatLng().longitude;
             textViewStartingLocation.setText(address);
-
-        } else if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
+            
+        } else if (requestCode == 2 && resultCode == RESULT_OK) {
             final Place place = PlacePicker.getPlace(this, data);
             final CharSequence address = place.getAddress();
             endingLocationLatitude = place.getLatLng().latitude;
             endingLocationLongitude = place.getLatLng().longitude;
             textViewEndingLocation.setText(address);
-
+            
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
+    
 }
