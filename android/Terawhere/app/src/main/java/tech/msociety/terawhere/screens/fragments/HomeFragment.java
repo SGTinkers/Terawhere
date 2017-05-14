@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.fragments;
+package tech.msociety.terawhere.screens.fragments;
 
 import android.Manifest;
 import android.content.Context;
@@ -49,18 +49,18 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import tech.msociety.terawhere.BookingDatum;
-import tech.msociety.terawhere.GetOffers;
-import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.TerawhereBackendServer;
-import tech.msociety.terawhere.Token;
-import tech.msociety.terawhere.activities.FacebookLoginActivity;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
+import tech.msociety.terawhere.models.Token;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
+import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
+import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
 
-import static tech.msociety.terawhere.activities.CreateOfferActivity.MESSAGE_RESPONSE;
+import static tech.msociety.terawhere.screens.activities.CreateOfferActivity.MESSAGE_RESPONSE;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
