@@ -48,8 +48,8 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         seatsAvailableTextView.setText(Integer.toString(objOffer.getNumberOfSeats()) + " LEFT");
         SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
 
-        if (objOffer.getTimestamp() != null) {
-            pickUpTimeTextView.setText(ft.format(objOffer.getTimestamp()));
+        if (objOffer.getMeetUpTime() != null) {
+            pickUpTimeTextView.setText(ft.format(objOffer.getMeetUpTime()));
         }
         */
         return popup;

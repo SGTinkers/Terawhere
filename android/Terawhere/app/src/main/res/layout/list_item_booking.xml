@@ -7,54 +7,151 @@
     card_view:cardUseCompatPadding="true"
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin">
 
-    <RelativeLayout
-        android:id="@+id/leftLayout"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textViewBookingId"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/textview_vertical_margin"
-            android:ellipsize="marquee"
-            android:text="placeholder nameOfAilment"
-            android:textAppearance="@style/cardViewTextHeader" />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/id" />
+
+            <TextView
+                android:id="@+id/textViewBookingId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/textview_vertical_margin"
+                android:ellipsize="marquee"
+                android:fontFamily="casual"
+                android:textAppearance="@style/cardViewTextHeader" />
+
+        </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/textViewTimestamp"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textViewBookingId"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/textview_vertical_margin"
-            android:ellipsize="marquee"
-            android:maxLines="1"
-            android:text="placeholder medical record date"
-            android:textAppearance="@style/cardViewTextTitle" />
+            android:orientation="horizontal">
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/id" />
 
-    <RelativeLayout
-        android:id="@+id/rightLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewPassengerId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/textview_vertical_margin"
+                android:ellipsize="marquee"
+                android:fontFamily="casual"
+                android:textAppearance="@style/cardViewTextHeader" />
 
-        <TextView
-            android:id="@+id/textViewPassengerId"
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:text="placeholder condition type"
-            android:textAppearance="@style/cardViewTextSubtitleRed" />
+            android:orientation="horizontal">
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/seat" />
 
+            <TextView
+                android:id="@+id/textViewSeatsAvailable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/textview_vertical_margin"
+                android:ellipsize="marquee"
+                android:fontFamily="casual"
+                android:textAppearance="@style/cardViewTextHeader" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/clock" />
+
+            <TextView
+                android:id="@+id/textViewTimestamp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/textview_vertical_margin"
+                android:ellipsize="marquee"
+                android:fontFamily="casual"
+                android:maxLines="1"
+                android:textAllCaps="true"
+                android:textAppearance="@style/cardViewTextTitle" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/destination" />
+
+            <TextView
+                android:id="@+id/textViewDestination"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/textview_vertical_margin"
+                android:ellipsize="marquee"
+                android:fontFamily="casual"
+                android:maxLines="1"
+                android:textSize="20dp"
+                android:textStyle="italic"
+
+                android:textColor="@color/colorCardViewTextRed"
+                android:textAppearance="@style/cardViewTextTitle" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

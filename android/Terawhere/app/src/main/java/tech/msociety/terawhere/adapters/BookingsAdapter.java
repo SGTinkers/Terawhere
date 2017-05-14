@@ -27,24 +27,29 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
 
         viewHolder.textViewBookingId.setText(booking.getId());
         viewHolder.textViewPassengerId.setText(booking.getPassengerId());
-        viewHolder.textViewTimestamp.setText(booking.getTimestamp());
+        viewHolder.textViewTimestamp.setText(booking.getMeetUpTime());
+        viewHolder.textViewEndingLocatioName.setText(booking.getEndingLocationName());
     }
 
     @Override
     public int getItemCount() {
-        return bookings.size();
+        return bookings == null ? 0 : bookings.size();
     }
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewBookingId;
         private TextView textViewPassengerId;
         private TextView textViewTimestamp;
+        private TextView textViewEndingLocatioName;
+
 
         private ViewHolder(View view) {
             super(view);
             textViewBookingId = (TextView) view.findViewById(R.id.textViewBookingId);
             textViewPassengerId = (TextView) view.findViewById(R.id.textViewPassengerId);
             textViewTimestamp = (TextView) view.findViewById(R.id.textViewTimestamp);
+            textViewEndingLocatioName = (TextView) view.findViewById(R.id.textViewDestination);
         }
     }
 

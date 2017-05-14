@@ -72,6 +72,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     Location currentLocation;
     LocationRequest locationRequest;
 
+    double latitude = 0.0;
+    double longitude = 0.0;
+
     ViewPager viewPager;
 
 
@@ -88,10 +91,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         initializeContext();
         viewPager = (ViewPager) getActivity().findViewById(R.id.pager);
 
+
         if (isMinimumSdkMarshmallow()) {
             checkLocationPermission();
         }
 
+        LocationManager locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Location location;
+
+        if (network_enabled) {
+
+            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (location != null) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+            }
+        }
+        Log.i("LATITUDES", ":" + latitude);
+        Log.i("LONGITUDES", ":" + longitude);
         initializeSupportMapFragment();
     }
 
@@ -169,7 +190,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         moveCameraToLocation(latLng);
         zoomCameraToLocation();
-        //stopLocationUpdates();
+        stopLocationUpdates();
     }
 
     private void zoomCameraToLocation() {
@@ -276,7 +297,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     List<Offer> offers = getOffers.getOffers();
 
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(offers.get(0).getStartingLocationLatitude(), offers.get(0).getStartingLocationLongitude()), 16));
+                            new LatLng(latitude, longitude), 16));
                     final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
                     for (int i = 0; i < offers.size(); i++) {
                         clusterManager.addItem(new ClusterMarkerLocation(offers.get(i).getId(), new LatLng(offers.get(i).getStartingLocationLatitude(), offers.get(i).getStartingLocationLongitude())));

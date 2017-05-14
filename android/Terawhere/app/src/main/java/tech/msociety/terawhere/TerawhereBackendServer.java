@@ -76,6 +76,9 @@ public class TerawhereBackendServer {
         @GET("api/v1/offers")
         Call<GetOffers> getAllOffers();
 
+        @GET("api/v1/bookings-for-user")
+        Call<GetBookings> getAllBookings();
+
         @POST("api/v1/offers")
         Call<OffersDatum> createOffer(@Body OffersDatum offers);
 
