@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.intereptors;
+package tech.msociety.terawhere.networkcalls.intereptors;
 
 import java.io.IOException;
 import java.net.URLDecoder;

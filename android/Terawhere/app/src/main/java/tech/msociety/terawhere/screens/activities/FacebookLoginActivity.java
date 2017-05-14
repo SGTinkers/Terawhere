@@ -24,8 +24,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.FacebookUser;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
+import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 
 public class FacebookLoginActivity extends BaseActivity implements View.OnClickListener {

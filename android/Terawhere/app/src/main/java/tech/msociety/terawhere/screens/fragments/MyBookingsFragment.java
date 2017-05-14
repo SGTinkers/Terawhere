@@ -21,11 +21,11 @@ import retrofit2.Response;
 import tech.msociety.terawhere.GetBookings;
 import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
 import tech.msociety.terawhere.adapters.BookingsAdapter;
 import tech.msociety.terawhere.mocks.BackendMock;
 import tech.msociety.terawhere.models.Booking;
+import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 
 import static android.app.Activity.RESULT_OK;
 

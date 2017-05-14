@@ -52,11 +52,11 @@ import retrofit2.Response;
 import tech.msociety.terawhere.GetOffers;
 import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
+import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
