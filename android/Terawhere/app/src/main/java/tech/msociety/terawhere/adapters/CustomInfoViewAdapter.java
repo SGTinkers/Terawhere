@@ -43,15 +43,14 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         final TextView pickUpTimeTextView = (TextView) popup.findViewById(R.id.pickUpTimeTextView);
         Offer objOffer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
-        /*
-        destinationTextView.setText(objOffer.getDestination());
-        seatsAvailableTextView.setText(Integer.toString(objOffer.getNumberOfSeats()) + " LEFT");
-        SimpleDateFormat ft = new SimpleDateFormat("hh:mm a");
 
-        if (objOffer.getMeetUpTime() != null) {
-            pickUpTimeTextView.setText(ft.format(objOffer.getMeetUpTime()));
-        }
-        */
+        nameTextView.setText(objOffer.getDriverId());
+        destinationTextView.setText(objOffer.getEndingLocationName());
+        seatsAvailableTextView.setText(Integer.toString(objOffer.getSeatsAvailable()) + " LEFT");
+
+        pickUpTimeTextView.setText(objOffer.getMeetUpTime());
+
+
         return popup;
     }
 }

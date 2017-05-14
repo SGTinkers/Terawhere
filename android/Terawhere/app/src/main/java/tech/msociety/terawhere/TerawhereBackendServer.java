@@ -82,6 +82,9 @@ public class TerawhereBackendServer {
         @POST("api/v1/offers")
         Call<OffersDatum> createOffer(@Body OffersDatum offers);
 
+        @POST("api/v1/bookings")
+        Call<BookingDatum> createBooking(@Body BookingDatum booking);
+
         @GET("api/v1/auth/refresh")
         Call<RefreshToken> getRefresh();
 

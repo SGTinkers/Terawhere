@@ -304,6 +304,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                         mapLocationOffer.put(new LatLng(offers.get(i).getStartingLocationLatitude(), offers.get(i).getStartingLocationLongitude()), offers.get(i));
                     }
+                    Log.i("SIZE OF MAP", ":" + mapLocationOffer.size());
+
 
 
                     clusterManager.getMarkerCollection()
@@ -311,9 +313,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                     clusterManager.setOnClusterItemInfoWindowClickListener(
                             new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
+
+
                                 @Override
                                 public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
                                     Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+                                    Log.i("OFFERDETAILS", ":" + currentOffer.toString());
                                     //if (currentOffer.getDriverId().equals())
                                     if (userId.equals(currentOffer.getDriverId())) {
                                         viewPager.setCurrentItem(1);
@@ -391,7 +396,34 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                     adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int which) {
 
+                                                            /*Call<BookingDatum> call = create(offer);
+                                                            call.enqueue(new Callback<OffersDatum>() {
+                                                                             @Override
+                                                                             public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
 
+                                                                                 if (response.isSuccessful()) {
+                                                                                     Log.i(MESSAGE_RESPONSE, ": " + response.message());
+                                                                                     Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
+
+                                                                                     Intent resultIntent = new Intent();
+                                                                                     resultIntent.putExtra("FirstTab", 4);
+                                                                                     setResult(Activity.RESULT_OK, resultIntent);
+                                                                                     finish();
+
+                                                                                 } else {
+                                                                                     try {
+                                                                                         Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
+                                                                                     } catch (IOException e) {
+                                                                                         e.printStackTrace();
+                                                                                     }
+                                                                                 }
+                                                                             }
+
+                                                                             @Override
+                                                                             public void onFailure(Call<OffersDatum> call, Throwable t) {
+                                                                             }
+                                                                         }
+                                                            );*/
                                                             Toast.makeText(context, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });

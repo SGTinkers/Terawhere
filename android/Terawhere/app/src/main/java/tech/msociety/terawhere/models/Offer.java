@@ -3,6 +3,30 @@ package tech.msociety.terawhere.models;
 import java.util.Date;
 
 public class Offer {
+    @Override
+    public String toString() {
+        return "Offer{" +
+                "id=" + id +
+                ", driverId='" + driverId + '\'' +
+                ", meetUpTime='" + meetUpTime + '\'' +
+                ", startingLocationName='" + startingLocationName + '\'' +
+                ", startingLocationAddress='" + startingLocationAddress + '\'' +
+                ", startingLocationLatitude=" + startingLocationLatitude +
+                ", startingLocationLongitude=" + startingLocationLongitude +
+                ", endingLocationName='" + endingLocationName + '\'' +
+                ", endingLocationAddress='" + endingLocationAddress + '\'' +
+                ", endingLocationLatitude=" + endingLocationLatitude +
+                ", endingLocationLongitude=" + endingLocationLongitude +
+                ", seatsAvailable=" + seatsAvailable +
+                ", driverRemarks='" + driverRemarks + '\'' +
+                ", offerStatus=" + offerStatus +
+                ", genderPreference='" + genderPreference + '\'' +
+                ", vehicleNumber='" + vehicleNumber + '\'' +
+                ", vehicleDescription='" + vehicleDescription + '\'' +
+                ", vehicleModel='" + vehicleModel + '\'' +
+                '}';
+    }
+
     private int id;
     private String driverId;
     private String meetUpTime;
