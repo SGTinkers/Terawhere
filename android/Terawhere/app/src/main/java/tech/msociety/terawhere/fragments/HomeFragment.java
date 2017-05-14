@@ -49,6 +49,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import tech.msociety.terawhere.BookingDatum;
 import tech.msociety.terawhere.GetOffers;
 import tech.msociety.terawhere.GetUser;
 import tech.msociety.terawhere.R;
@@ -58,6 +59,8 @@ import tech.msociety.terawhere.activities.FacebookLoginActivity;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
+
+import static tech.msociety.terawhere.activities.CreateOfferActivity.MESSAGE_RESPONSE;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -277,6 +280,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         });
     }
 
+    private Call<BookingDatum> createBookingApi(BookingDatum booking) {
+        return TerawhereBackendServer.getApiInstance(Token.getToken()).createBooking(booking);
+    }
+
     private void initMarkers(final String userId) {
 
         Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getAllOffers();
@@ -294,7 +301,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                     GetOffers getOffers = response.body();
 
-                    List<Offer> offers = getOffers.getOffers();
+                    final List<Offer> offers = getOffers.getOffers();
 
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                             new LatLng(latitude, longitude), 16));
@@ -317,7 +324,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                                 @Override
                                 public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
-                                    Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+                                    final Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
                                     Log.i("OFFERDETAILS", ":" + currentOffer.toString());
                                     //if (currentOffer.getDriverId().equals())
                                     if (userId.equals(currentOffer.getDriverId())) {
@@ -396,34 +403,63 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                     adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int which) {
 
-                                                            /*Call<BookingDatum> call = create(offer);
-                                                            call.enqueue(new Callback<OffersDatum>() {
-                                                                             @Override
-                                                                             public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
+                                                            Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
 
-                                                                                 if (response.isSuccessful()) {
-                                                                                     Log.i(MESSAGE_RESPONSE, ": " + response.message());
-                                                                                     Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
+                                                            callUser.enqueue(new Callback<GetUser>() {
+                                                                @Override
+                                                                public void onResponse(Call<GetUser> call, Response<GetUser> response) {
 
-                                                                                     Intent resultIntent = new Intent();
-                                                                                     resultIntent.putExtra("FirstTab", 4);
-                                                                                     setResult(Activity.RESULT_OK, resultIntent);
-                                                                                     finish();
+                                                                    if (response.isSuccessful()) {
+                                                                        Log.i("RESPONSE", response.body().toString());
+                                                                        Log.i("user id", response.body().getUser().getId());
+                                                                        int offerId = currentOffer.getId();
+                                                                        String seats = spinner.getSelectedItem().toString();
+                                                                        String userId = response.body().getUser().getId();
 
-                                                                                 } else {
-                                                                                     try {
-                                                                                         Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
-                                                                                     } catch (IOException e) {
-                                                                                         e.printStackTrace();
+                                                                        BookingDatum booking = new BookingDatum(Integer.toString(offerId), userId, seats);
+                                                                        Call<BookingDatum> call2 = createBookingApi(booking);
+                                                                        call2.enqueue(new Callback<BookingDatum>() {
+                                                                            @Override
+                                                                            public void onResponse(Call<BookingDatum> call, Response<BookingDatum> response) {
+
+                                                                                if (response.isSuccessful()) {
+                                                                                    Log.i(MESSAGE_RESPONSE, ": " + response.message());
+
+
+                                                                                } else {
+                                                                                    try {
+                                                                                        Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
+                                                                                    } catch (IOException e) {
+                                                                                        e.printStackTrace();
+                                                                                    }
+                                                                                }
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onFailure(Call<BookingDatum> call, Throwable t) {
+                                                                            }
                                                                                      }
-                                                                                 }
-                                                                             }
+                                                                        );
 
-                                                                             @Override
-                                                                             public void onFailure(Call<OffersDatum> call, Throwable t) {
-                                                                             }
-                                                                         }
-                                                            );*/
+
+                                                                    } else {
+                                                                        Log.i("RESPONSE", response.errorBody().toString());
+
+
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onFailure(Call<GetUser> call, Throwable t) {
+                                                                    Log.i("FAILURE", Arrays.toString(t.getStackTrace()));
+
+                                                                    System.out.println(Arrays.toString(t.getStackTrace()));
+
+                                                                }
+                                                            });
+
+
+
                                                             Toast.makeText(context, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });

@@ -65,6 +65,12 @@ public class BookingDatum {
                 '}';
     }
 
+    public BookingDatum(String offerId, String userId, String pax) {
+        this.offerId = offerId;
+        this.userId = userId;
+        this.pax = pax;
+    }
+
     @SerializedName("offer_id")
     @Expose
     private String offerId;
