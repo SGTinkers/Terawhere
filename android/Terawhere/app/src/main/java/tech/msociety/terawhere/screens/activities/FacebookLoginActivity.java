@@ -47,7 +47,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        skipCheckForLogin = true;
+        doesNotRequireAuth = true;
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_facebook_login);

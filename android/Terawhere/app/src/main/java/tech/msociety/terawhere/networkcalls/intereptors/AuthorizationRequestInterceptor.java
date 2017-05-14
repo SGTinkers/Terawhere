@@ -5,11 +5,14 @@ import com.google.gson.JsonParseException;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 
@@ -48,6 +51,7 @@ public class AuthorizationRequestInterceptor implements Interceptor {
                         throw new TokenInvalidException();
                     }
                 } else if (e.getError().equals("token_invalid")) {
+                    EventBus.getDefault().post(new TokenInvalidEvent());
                     throw new TokenInvalidException();
                 }
             } catch (JsonParseException e) {

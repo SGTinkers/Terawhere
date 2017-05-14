@@ -18,7 +18,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity android:name=".screens.activities.FacebookLoginActivity"
-          android:launchMode="singleInstance">
+          android:launchMode="singleTask"
+          android:clearTaskOnLaunch="true"
+          android:noHistory="true">
         </activity>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

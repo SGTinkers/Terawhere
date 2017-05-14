@@ -40,6 +40,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +53,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
+import tech.msociety.terawhere.events.TokenInvalidEvent;
+import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
@@ -545,8 +549,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             getUserId();
 
         } else if (item.getItemId() == R.id.logout) {
-            Intent intent = new Intent(context, FacebookLoginActivity.class);
-            startActivity(intent);
+            Constants.SetBearerToken(null);
+            EventBus.getDefault().post(new TokenInvalidEvent());
         }
 
         return super.onOptionsItemSelected(item);
