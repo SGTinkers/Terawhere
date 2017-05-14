@@ -37,38 +37,37 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     public static final String MESSAGE_LOGGING_IN = "Logging in...";
     public static final String FACEBOOK_TOKEN = "AccessToken";
     public static final String LOG_FACEBOOK_TOKEN = "AccessToken";
-
+    
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private ProfileTracker profileTracker;
-
+    
     private LoginButton loginButton;
     private Button continueButton;
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_facebook_login);
-
+        
         initializeCallBackManager();
         initializeAccessTokenTracker();
         initializeProfileTracker();
-
+        
         trackAccessTokenTracker();
         trackProfileTracker();
-
+        
         addContinueButtonListener();
         addLoginButtonListener();
-
+        
         initializeContinueButton();
-
+        
         FacebookCallback<LoginResult> callback = getLoginResultFacebookCallback();
         loginButton.registerCallback(callbackManager, callback);
-
+        
     }
-
+    
     public void onClick(View view) {
         if (isContinueButtonPressed(view)) {
             Log.i(FACEBOOK_TOKEN, AccessToken.getCurrentAccessToken().getToken());
@@ -82,25 +81,22 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
                                  Profile profile = Profile.getCurrentProfile();
                                  nextActivity(profile);
                              }
-
-                             @Override
+    
+                @Override
                              public void onFailure(Call<FacebookUser> call, Throwable t) {
-
-                             }
+        
+                }
                          }
             );
-
-
+    
         }
-
+        
     }
-
-
+    
     private boolean isContinueButtonPressed(View view) {
-        return view.getId() == R.id.continueButton;
+        return view.getId() == R.id.button_continue;
     }
-
-
+    
     @Override
     protected void onResume() {
         super.onResume();
@@ -109,32 +105,32 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             Token.setToken(AccessToken.getCurrentAccessToken().getToken());
         }
     }
-
+    
     @Override
     protected void onPause() {
         super.onPause();
     }
-
+    
     protected void onStop() {
         super.onStop();
         stopAccessTokenTracker();
         stopProfileTracker();
     }
-
+    
     private void stopProfileTracker() {
         profileTracker.stopTracking();
     }
-
+    
     private void stopAccessTokenTracker() {
         accessTokenTracker.stopTracking();
     }
-
+    
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
         super.onActivityResult(requestCode, responseCode, intent);
         callbackManager.onActivityResult(requestCode, responseCode, intent);
     }
-
+    
     private void nextActivity(Profile profile) {
         if (profile != null) {
             Intent main = new Intent(FacebookLoginActivity.this, MainActivity.class);
@@ -142,7 +138,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             startActivity(main);
         }
     }
-
+    
     private void initializeContinueButton() {
         if (getLoginButtonText().equals(STRING_FACEBOOK_LOG_OUT)) {
             showContinueButton();
@@ -155,35 +151,35 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             hideContinueButton();
         }
     }
-
+    
     private void hideContinueButton() {
         continueButton.setVisibility(View.INVISIBLE);
     }
-
+    
     @NonNull
     private FacebookCallback<LoginResult> getLoginResultFacebookCallback() {
         return new FacebookCallback<LoginResult>() {
-
+    
             @Override
             public void onSuccess(LoginResult loginResult) {
                 showContinueButton();
             }
-
+    
             @Override
             public void onCancel() {
             }
-
+    
             @Override
             public void onError(FacebookException e) {
             }
         };
     }
-
+    
     private void setContinueButtonText(String firstName, String lastName) {
         String continueButtonText = STRING_CONTINUE_AS + firstName + STRING_SEPARATOR + lastName;
         continueButton.setText(continueButtonText);
     }
-
+    
     private void showContinueButton() {
         continueButton.setVisibility(View.VISIBLE);
         Profile profile = Profile.getCurrentProfile();
@@ -191,20 +187,20 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             setContinueButtonText(profile.getFirstName(), profile.getLastName());
         }
     }
-
+    
     @NonNull
     private String getLoginButtonText() {
         return loginButton.getText().toString();
     }
-
+    
     private void trackProfileTracker() {
         profileTracker.startTracking();
     }
-
+    
     private void trackAccessTokenTracker() {
         accessTokenTracker.startTracking();
     }
-
+    
     private void initializeProfileTracker() {
         profileTracker = new ProfileTracker() {
             @Override
@@ -212,7 +208,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             }
         };
     }
-
+    
     private void initializeAccessTokenTracker() {
         accessTokenTracker = new AccessTokenTracker() {
             @Override
@@ -225,20 +221,18 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             }
         };
     }
-
+    
     private void initializeCallBackManager() {
         callbackManager = CallbackManager.Factory.create();
     }
-
+    
     private void addLoginButtonListener() {
-        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton = (LoginButton) findViewById(R.id.button_facebook_login);
         loginButton.setOnClickListener(this);
     }
-
+    
     private void addContinueButtonListener() {
-        continueButton = (Button) findViewById(R.id.continueButton);
+        continueButton = (Button) findViewById(R.id.button_continue);
         continueButton.setOnClickListener(this);
     }
-
-
 }
