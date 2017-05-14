@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.PagerAdapter;
+import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 
 public class MainActivity extends BaseActivity {
     private static final String TOOLBAR_TITLE = "Home";

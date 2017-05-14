@@ -55,6 +55,7 @@ import tech.msociety.terawhere.OffersDatum;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereBackendServer;
 import tech.msociety.terawhere.Token;
+import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
 
 public class CreateOfferActivity extends ToolbarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     

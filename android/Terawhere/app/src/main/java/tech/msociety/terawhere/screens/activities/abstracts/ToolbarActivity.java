@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.screens.activities;
+package tech.msociety.terawhere.screens.activities.abstracts;
 
 import android.support.v7.widget.Toolbar;
 

@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.screens.activities;
+package tech.msociety.terawhere.screens.activities.abstracts;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
