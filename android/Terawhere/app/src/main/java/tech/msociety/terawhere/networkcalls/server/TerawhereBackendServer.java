@@ -66,7 +66,6 @@ public class TerawhereBackendServer {
         @POST("api/v1/auth")
         Call<FacebookUser> createUser(@Body FacebookUser user);
 
-        // TODO: Fix response
         @GET("api/v1/auth/refresh")
         Call<Void> refreshToken();
 
