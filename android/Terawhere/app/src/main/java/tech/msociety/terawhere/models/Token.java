@@ -1,11 +1,6 @@
-package tech.msociety.terawhere;
-
-/**
- * Created by musa on 11/5/17.
- */
+package tech.msociety.terawhere.models;
 
 public class Token {
-
     private static String token;
 
     public static String getToken() {
@@ -15,6 +10,4 @@ public class Token {
     public static void setToken(String value) {
         token = value;
     }
-
-
 }

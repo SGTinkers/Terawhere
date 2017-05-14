@@ -1,15 +1,9 @@
-package tech.msociety.terawhere;
+package tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by musa on 12/5/17.
- */
-
 public class GetUser {
-
-
     @SerializedName("user")
     @Expose
     private UserDatum user;
@@ -24,6 +18,4 @@ public class GetUser {
     public UserDatum getUser() {
         return user;
     }
-
-
 }

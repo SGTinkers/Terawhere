@@ -22,9 +22,9 @@ import com.facebook.login.widget.LoginButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import tech.msociety.terawhere.FacebookUser;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.Token;
+import tech.msociety.terawhere.models.Token;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 

@@ -11,16 +11,14 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import tech.msociety.terawhere.BookingDatum;
-import tech.msociety.terawhere.Constants;
-import tech.msociety.terawhere.FacebookUser;
-import tech.msociety.terawhere.GetBookings;
-import tech.msociety.terawhere.GetOffers;
-import tech.msociety.terawhere.GetUser;
-import tech.msociety.terawhere.OffersDatum;
-import tech.msociety.terawhere.RefreshToken;
+import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.intereptors.ApiHeaderInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.LoggingInterceptor;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 
 public class TerawhereBackendServer {
     public static Api getApiInstance(final String token) {
@@ -35,8 +33,6 @@ public class TerawhereBackendServer {
     
     private static OkHttpClient getHttpClient(String token) {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-//        httpClientBuilder.addInterceptor(new QueryParamsInterceptor());
-//        httpClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         httpClientBuilder.addInterceptor(new ApiHeaderInterceptor(token));
         httpClientBuilder.addInterceptor(new LoggingInterceptor());
         return httpClientBuilder.build();
@@ -60,12 +56,9 @@ public class TerawhereBackendServer {
         
         @POST("api/v1/offers")
         Call<OffersDatum> createOffer(@Body OffersDatum offers);
-        
-        @POST("api/v1/bookings")
-        Call<BookingDatum> createBooking(@Body BookingDatum booking);
-        
-        @GET("api/v1/auth/refresh")
-        Call<RefreshToken> getRefresh();
+
+//        @POST("api/v1/bookings")
+//        Call<BookingDatum> createBooking(@Body BookingDatum booking);
         
         @DELETE("api/v1/offers/{offer}")
         Call<OffersDatum> deleteOffer(@Path("offer") Integer id);

@@ -21,10 +21,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import tech.msociety.terawhere.OffersDatum;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.Token;
 import tech.msociety.terawhere.models.Offer;
+import tech.msociety.terawhere.models.Token;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 

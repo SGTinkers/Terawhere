@@ -1,11 +1,7 @@
-package tech.msociety.terawhere;
+package tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-/**
- * Created by musa on 12/5/17.
- */
 
 public class UserDatum {
     @SerializedName("id")
@@ -17,8 +13,7 @@ public class UserDatum {
     @SerializedName("email")
     @Expose
     private String email;
-
-
+    
     public String getId() {
         return id;
     }
@@ -30,8 +25,7 @@ public class UserDatum {
     public String getEmail() {
         return email;
     }
-
-
+    
     @Override
     public String toString() {
         return "UserDatum{" +
@@ -41,6 +35,4 @@ public class UserDatum {
 
                 '}';
     }
-
-
 }
