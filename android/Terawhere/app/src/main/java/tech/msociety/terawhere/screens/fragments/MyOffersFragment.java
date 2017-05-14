@@ -52,7 +52,7 @@ public class MyOffersFragment extends Fragment {
 
         loading = new ProgressDialog(getContext());
         loading.setCancelable(true);
-        loading.setMessage("FETCHING DATA");
+        loading.setMessage("Fetching data");
         loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         loading.show();
 
@@ -129,8 +129,6 @@ public class MyOffersFragment extends Fragment {
 
             }
         });
-
-
     }
 
     private void fetchOffersFromServer() {
@@ -169,8 +167,7 @@ public class MyOffersFragment extends Fragment {
             }
         });
     }
-
-
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

@@ -6,7 +6,6 @@ import android.os.CountDownTimer;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.PagerAdapter;
@@ -14,7 +13,6 @@ import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 
 public class MainActivity extends BaseActivity {
     private static final String TOOLBAR_TITLE = "Home";
-    public static final String MESSAGE_HELLO_TERAWHERE = "Hello Terawhere!";
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -33,8 +31,6 @@ public class MainActivity extends BaseActivity {
         initializeToolBar();
         initializeTabLayout();
         initializePagerView();
-
-        Toast.makeText(this, MESSAGE_HELLO_TERAWHERE, Toast.LENGTH_SHORT).show();
     }
 
     private void initializeCountDown() {
