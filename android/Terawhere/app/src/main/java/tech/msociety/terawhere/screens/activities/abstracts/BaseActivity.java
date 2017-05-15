@@ -36,7 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             EventBus.getDefault().register(this);
         }
 
-        if (requireAuth && Constants.GetBearerToken() == null) {
+        if (requireAuth && Constants.getBearerToken() == null) {
             Intent i = new Intent(this, FacebookLoginActivity.class);
             startActivity(i);
             finish();

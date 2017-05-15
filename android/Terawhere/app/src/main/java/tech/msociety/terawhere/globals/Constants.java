@@ -7,7 +7,7 @@ public class Constants {
 
     private static String bearerToken;
 
-    public static String GetBearerToken() {
+    public static String getBearerToken() {
         if (bearerToken == null) {
             bearerToken = AppPrefs.with(TerawhereApplication.ApplicationContext).getBearerToken();
         }
@@ -15,7 +15,7 @@ public class Constants {
         return bearerToken;
     }
 
-    public static void SetBearerToken(String token) {
+    public static void setBearerToken(String token) {
         AppPrefs.with(TerawhereApplication.ApplicationContext).setBearerToken(token);
         bearerToken = token;
     }

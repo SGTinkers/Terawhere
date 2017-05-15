@@ -41,7 +41,7 @@ public class TerawhereApplication extends Application {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogoutEvent(LogoutEvent event) {
-        Constants.SetBearerToken(null);
+        Constants.setBearerToken(null);
         Intent i = new Intent(this, FacebookLoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);

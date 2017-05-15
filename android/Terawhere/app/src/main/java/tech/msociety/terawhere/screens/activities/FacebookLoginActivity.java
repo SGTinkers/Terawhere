@@ -35,7 +35,7 @@ public class FacebookLoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_login);
 
-        if (Constants.GetBearerToken() != null) {
+        if (Constants.getBearerToken() != null) {
             finish();
             return;
         }
@@ -53,7 +53,7 @@ public class FacebookLoginActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
                         Log.d("FacebookLoginActivity", "Server Token: " + response.body().getToken());
-                        Constants.SetBearerToken(response.body().getToken());
+                        Constants.setBearerToken(response.body().getToken());
                         Toast.makeText(getApplicationContext(), R.string.welcome_to_terawhere, Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(FacebookLoginActivity.this, MainActivity.class);
                         startActivity(i);

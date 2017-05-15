@@ -32,9 +32,9 @@ public class AuthorizationRequestInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        if (Constants.GetBearerToken() != null) {
+        if (Constants.getBearerToken() != null) {
             request = request.newBuilder()
-                    .addHeader("Authorization", "Bearer " + Constants.GetBearerToken())
+                    .addHeader("Authorization", "Bearer " + Constants.getBearerToken())
                     .build();
         }
         
