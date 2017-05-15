@@ -25,7 +25,6 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.R.layout;
 import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.models.Token;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -94,7 +93,7 @@ public class MyOffersFragment extends Fragment {
     private void makeNetworkCall() {
         Log.i("MAKING NETWORK", ":");
 
-        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
+        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance().getStatus();
 
         callUser.enqueue(new Callback<GetUser>() {
             @Override
@@ -132,7 +131,7 @@ public class MyOffersFragment extends Fragment {
     }
 
     private void fetchOffersFromServer() {
-        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getOffers();
+        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getOffers();
         callGetOffers.enqueue(new Callback<GetOffers>() {
             @Override
             public void onResponse(Call<GetOffers> call, Response<GetOffers> response2) {

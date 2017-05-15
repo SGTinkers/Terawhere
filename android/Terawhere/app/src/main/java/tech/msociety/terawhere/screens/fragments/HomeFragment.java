@@ -40,6 +40,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,9 +53,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
+import tech.msociety.terawhere.events.TokenInvalidEvent;
+import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.models.Token;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
@@ -244,9 +247,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void getUserId() {
-        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
-
-        callUser.enqueue(new Callback<GetUser>() {
+        TerawhereBackendServer.getApiInstance().getStatus().enqueue(new Callback<GetUser>() {
             @Override
             public void onResponse(Call<GetUser> call, Response<GetUser> response) {
 
@@ -268,6 +269,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     } catch (Exception e) {
                     }*/
                 }
+
+
             }
 
             @Override
@@ -281,12 +284,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private Call<BookingDatum> createBookingApi(BookingDatum booking) {
-        return TerawhereBackendServer.getApiInstance(Token.getToken()).createBooking(booking);
+        return TerawhereBackendServer.getApiInstance().createBooking(booking);
     }
 
     private void initMarkers(final String userId) {
 
-        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance(Token.getToken()).getAllOffers();
+        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getAllOffers();
         callGetOffers.enqueue(new Callback<GetOffers>() {
             @Override
             public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {
@@ -403,7 +406,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                     adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int which) {
 
-                                                            Call<GetUser> callUser = TerawhereBackendServer.getApiInstance(Token.getToken()).getStatus();
+                                                            Call<GetUser> callUser = TerawhereBackendServer.getApiInstance().getStatus();
 
                                                             callUser.enqueue(new Callback<GetUser>() {
                                                                 @Override
@@ -546,8 +549,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             getUserId();
 
         } else if (item.getItemId() == R.id.logout) {
-            Intent intent = new Intent(context, FacebookLoginActivity.class);
-            startActivity(intent);
+            Constants.SetBearerToken(null);
+            EventBus.getDefault().post(new TokenInvalidEvent());
         }
 
         return super.onOptionsItemSelected(item);

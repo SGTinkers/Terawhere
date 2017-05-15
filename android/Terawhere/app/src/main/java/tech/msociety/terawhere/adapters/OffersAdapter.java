@@ -19,7 +19,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.models.Token;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
@@ -57,7 +56,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                         if (selectedText.equals("Delete")) {
                             Log.i("DELETING_INDEX", ":" + offers.get(position).getId());
         
-                            Call<OffersDatum> deleteRequest = TerawhereBackendServer.getApiInstance(Token.getToken()).deleteOffer(offers.get(position).getId());
+                            Call<OffersDatum> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getId());
                             deleteRequest.enqueue(new Callback<OffersDatum>() {
                                 @Override
                                 public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {

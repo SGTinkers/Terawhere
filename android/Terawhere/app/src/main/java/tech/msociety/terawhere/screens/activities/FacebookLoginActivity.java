@@ -23,7 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.models.Token;
+import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
@@ -44,9 +44,10 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     
     private LoginButton loginButton;
     private Button continueButton;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        doesNotRequireAuth = true;
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_facebook_login);
@@ -65,18 +66,17 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         
         FacebookCallback<LoginResult> callback = getLoginResultFacebookCallback();
         loginButton.registerCallback(callbackManager, callback);
-        
     }
     
     public void onClick(View view) {
         if (isContinueButtonPressed(view)) {
             Log.i(FACEBOOK_TOKEN, AccessToken.getCurrentAccessToken().getToken());
             FacebookUser user = new FacebookUser(AccessToken.getCurrentAccessToken().getToken(), STRING_FACEBOOK);
-            Call<FacebookUser> call = TerawhereBackendServer.getApiInstance(STRING_EMPTY).createUser(user);
+            Call<FacebookUser> call = TerawhereBackendServer.getApiInstance().createUser(user);
             call.enqueue(new Callback<FacebookUser>() {
                              @Override
                              public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
-                                 Token.setToken(response.body().getToken());
+                                 Constants.SetBearerToken(response.body().getToken());
                                  Toast.makeText(getApplicationContext(), MESSAGE_LOGGING_IN, Toast.LENGTH_SHORT).show();
                                  Profile profile = Profile.getCurrentProfile();
                                  nextActivity(profile);
@@ -100,10 +100,12 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-        if (AccessToken.getCurrentAccessToken() != null) {
-            Log.i(LOG_FACEBOOK_TOKEN, STRING_SEPARATOR + AccessToken.getCurrentAccessToken().getToken());
-            Token.setToken(AccessToken.getCurrentAccessToken().getToken());
-        }
+        // TODO: Fix this
+//        if (AccessToken.getCurrentAccessToken() != null) {
+//            Log.i(LOG_FACEBOOK_TOKEN, STRING_SEPARATOR + AccessToken.getCurrentAccessToken().getToken());
+//            Token.setToken(AccessToken.getCurrentAccessToken().getToken());
+//            Constants.BEARER_TOKEN = response.body().getToken();
+//        }
     }
     
     @Override
