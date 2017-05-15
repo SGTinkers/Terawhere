@@ -33,8 +33,6 @@ import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 
 public class FacebookLoginActivity extends BaseActivity {
-    public static final String MESSAGE_LOGGING_IN = "Logging in...";
-    
     private CallbackManager callbackManager;
     private Button loginButton;
 
@@ -57,21 +55,25 @@ public class FacebookLoginActivity extends BaseActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d("FacebookLoginActivity", "onSuccess: " + loginResult.getAccessToken().getToken());
+                Toast.makeText(FacebookLoginActivity.this, R.string.please_wait, Toast.LENGTH_SHORT).show();
                 TerawhereBackendServer.getAuthApiInstance().createUser(new FacebookUser(loginResult.getAccessToken().getToken(), "facebook")).enqueue(new Callback<FacebookUser>() {
                     @Override
                     public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
                         Log.d("FacebookLoginActivity", "Server Token: " + response.body().getToken());
                         Constants.SetBearerToken(response.body().getToken());
-                        Toast.makeText(getApplicationContext(), MESSAGE_LOGGING_IN, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.welcome_to_terawhere, Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(FacebookLoginActivity.this, MainActivity.class);
                         startActivity(i);
+                        loginButton.setEnabled(true);
                         finish();
                     }
 
                     @Override
                     public void onFailure(Call<FacebookUser> call, Throwable t) {
-                        // TODO: Handle error
+                        // TODO: Handle error more elegantly
                         t.printStackTrace();
+                        Toast.makeText(FacebookLoginActivity.this, R.string.error_login_fail, Toast.LENGTH_SHORT).show();
+                        loginButton.setEnabled(true);
                     }
                 });
             }
@@ -79,19 +81,23 @@ public class FacebookLoginActivity extends BaseActivity {
             @Override
             public void onCancel() {
                 Log.d("FacebookLoginActivity", "Cancel");
+                loginButton.setEnabled(true);
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d("FacebookLoginActivity", "Error");
                 error.printStackTrace();
+                Toast.makeText(FacebookLoginActivity.this, R.string.error_login_fail_fb, Toast.LENGTH_SHORT).show();
+                loginButton.setEnabled(true);
             }
         });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(FacebookLoginActivity.this, Arrays.asList("public_profile"));
+                LoginManager.getInstance().logInWithReadPermissions(FacebookLoginActivity.this, Arrays.asList("email", "public_profile"));
+                loginButton.setEnabled(false);
             }
         });
     }

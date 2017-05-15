@@ -7,6 +7,12 @@
     <string name="terms_and_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="terawhere_tagline">Going for terawih has \nnever been easier</string>
 
+    <string name="please_wait">Please wait...</string>
+    <string name="welcome_to_terawhere">Welcome to Terawhere!</string>
+
+    <string name="error_login_fail">Error while trying to login. Please try again later.</string>
+    <string name="error_login_fail_fb">Error while trying to login with Facebook. Please try again later.</string>
+
     <string-array name="mosques_array">
         <item>Yusuf Ishak</item>
         <item>Darul Makmur</item>
