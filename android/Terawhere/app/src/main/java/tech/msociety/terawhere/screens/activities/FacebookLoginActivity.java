@@ -39,6 +39,7 @@ public class FacebookLoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         doesNotRequireAuth = true;
+        requireLocationServices = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_login);
 
