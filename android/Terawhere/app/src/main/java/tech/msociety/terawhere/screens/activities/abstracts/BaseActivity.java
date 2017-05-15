@@ -21,7 +21,7 @@ import tech.msociety.terawhere.screens.activities.RequestLocationServicesActivit
 public abstract class BaseActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getSimpleName();
 
-    protected boolean doesNotRequireAuth;
+    protected boolean requireAuth = true;
 
     protected boolean requireLocationServices = true;
 
@@ -36,7 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             EventBus.getDefault().register(this);
         }
 
-        if (!doesNotRequireAuth && Constants.GetBearerToken() == null) {
+        if (requireAuth && Constants.GetBearerToken() == null) {
             Intent i = new Intent(this, FacebookLoginActivity.class);
             startActivity(i);
             finish();
@@ -68,7 +68,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogoutEvent(LogoutEvent event) {
-        if (!doesNotRequireAuth) {
+        if (!requireAuth) {
             finish();
         }
     }

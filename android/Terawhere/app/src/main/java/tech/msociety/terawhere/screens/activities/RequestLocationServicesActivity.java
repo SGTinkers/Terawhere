@@ -18,7 +18,7 @@ public class RequestLocationServicesActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        doesNotRequireAuth = true;
+        requireAuth = false;
         requireLocationServices = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_location_services);
