@@ -22,6 +22,12 @@
         <meta-data
           android:name="com.facebook.sdk.ApplicationId"
           android:value="@string/facebook_app_id" />
+        <meta-data
+          android:name="com.google.firebase.messaging.default_notification_icon"
+          android:resource="@android:drawable/ic_dialog_info" />
+        <meta-data
+          android:name="com.google.firebase.messaging.default_notification_color"
+          android:resource="@color/colorAccent" />
 
         <!-- Our Activities -->
         <activity android:name=".screens.activities.MainActivity">
@@ -65,6 +71,21 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
+        <!-- Required Services by 3rd Party Libs -->
+        <service
+          android:name=".services.FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+          android:name=".services.FirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
 
         <!-- Required Providers by 3rd Party Libs -->
         <provider

@@ -68,6 +68,11 @@ dependencies {
     // EventBus!
     compile 'org.greenrobot:eventbus:3.0.0'
 
+    // Firebase stuff
+    compile 'com.google.firebase:firebase-messaging:10.2.4'
+
 //    Automated testing stuff
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'
