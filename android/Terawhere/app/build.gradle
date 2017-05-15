@@ -51,7 +51,7 @@ dependencies {
     compile 'com.google.maps.android:android-maps-utils:0.4.4'
 
 //    Facebook stuff
-    compile 'com.facebook.android:facebook-android-sdk:4.18.0'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 
 //    Android support stuff
     compile 'com.android.support:appcompat-v7:25.3.1'

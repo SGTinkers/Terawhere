@@ -10,6 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
@@ -52,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTokenInvalidEvent(TokenInvalidEvent event) {
+    public void onLogoutEvent(LogoutEvent event) {
         if (!doesNotRequireAuth) {
             finish();
         }
