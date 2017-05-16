@@ -53,6 +53,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
+import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
@@ -549,8 +550,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             getUserId();
 
         } else if (item.getItemId() == R.id.logout) {
-            Constants.SetBearerToken(null);
-            EventBus.getDefault().post(new TokenInvalidEvent());
+            EventBus.getDefault().post(new LogoutEvent());
         }
 
         return super.onOptionsItemSelected(item);

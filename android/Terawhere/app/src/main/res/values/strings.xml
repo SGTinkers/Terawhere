@@ -2,9 +2,19 @@
     <string name="app_name">Terawhere</string>
     <string name="title_activity_create_offer">Create Offer</string>
     <string name="facebook_app_id">290133594776141</string>
+    <string name="fb_login_protocol_scheme">fb290133594776141</string>
     <string name="accessibility_terawhere_logo">Terawhere Logo</string>
     <string name="terms_and_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="terawhere_tagline">Going for terawih has \nnever been easier</string>
+
+    <string name="please_wait">Please wait...</string>
+    <string name="welcome_to_terawhere">Welcome to Terawhere!</string>
+
+    <string name="location_services_instruction">Please turn on Location Services to use Terawhere</string>
+
+    <string name="error_login_fail">Error while trying to login. Please try again later.</string>
+    <string name="error_login_fail_fb">Error while trying to login with Facebook. Please try again later.</string>
+    <string name="error_need_location_services">Grant location services permission to proceed.</string>
 
     <string-array name="mosques_array">
         <item>Yusuf Ishak</item>
