@@ -11,9 +11,11 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import tech.msociety.terawhere.TerawhereApplication;
 import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.intereptors.AuthorizationRequestInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.AuthorizationResponseInterceptor;
+import tech.msociety.terawhere.networkcalls.intereptors.ConnectivityInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.DefaultInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.LoggingInterceptor;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
@@ -36,6 +38,7 @@ public class TerawhereBackendServer {
                     .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(new OkHttpClient.Builder()
+                            .addInterceptor(new ConnectivityInterceptor(TerawhereApplication.ApplicationContext))
                             .addInterceptor(new DefaultInterceptor())
                             .addInterceptor(new AuthorizationRequestInterceptor())
                             .addInterceptor(new LoggingInterceptor())
@@ -54,6 +57,7 @@ public class TerawhereBackendServer {
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(new OkHttpClient.Builder()
+                        .addInterceptor(new ConnectivityInterceptor(TerawhereApplication.ApplicationContext))
                         .addInterceptor(new DefaultInterceptor())
                         .addInterceptor(new AuthorizationRequestInterceptor(false))
                         .addInterceptor(new LoggingInterceptor())
