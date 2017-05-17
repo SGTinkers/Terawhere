@@ -29,7 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     
     protected boolean requireNetwork = true;
     
-    protected boolean registerEventBus;
+    protected boolean registerEventBus = true;
     
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
