@@ -1,12 +1,9 @@
 package tech.msociety.terawhere.screens.activities.abstracts;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +18,7 @@ import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
 import tech.msociety.terawhere.screens.activities.NoNetworkActivity;
 import tech.msociety.terawhere.screens.activities.RequestLocationServicesActivity;
+import tech.msociety.terawhere.utils.NetworkUtils;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getSimpleName();
@@ -40,16 +38,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     
         if (registerEventBus) {
             EventBus.getDefault().register(this);
-        }
-    
-        if (requireNetwork) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-            boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        
-            if (!isConnected) {
-                startActivity(new Intent(this, NoNetworkActivity.class));
-            }
         }
         
         if (requireAuth && Constants.getBearerToken() == null) {
@@ -71,6 +59,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    
+        if (requireNetwork) {
+            if (!NetworkUtils.hasConnectivity(this)) {
+                startActivity(new Intent(this, NoNetworkActivity.class));
+            }
+        }
     }
     
     @Override
