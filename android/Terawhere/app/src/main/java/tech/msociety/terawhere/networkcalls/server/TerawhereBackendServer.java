@@ -22,6 +22,8 @@ import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBooki
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
 
 public class TerawhereBackendServer {
 
@@ -68,6 +70,9 @@ public class TerawhereBackendServer {
 
         @GET("api/v1/auth/refresh")
         Call<Void> refreshToken();
+
+        @POST("api/v1/store-device-token")
+        Call<StoreDeviceToken> storeDeviceToken(@Body DeviceTokenDatum deviceToken);
 
         @GET("api/v1/me")
         Call<GetUser> getStatus();
