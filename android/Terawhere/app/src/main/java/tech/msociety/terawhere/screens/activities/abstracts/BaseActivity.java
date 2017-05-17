@@ -68,7 +68,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogoutEvent(LogoutEvent event) {
-        if (!requireAuth) {
+        if (requireAuth) {
             finish();
         }
     }
