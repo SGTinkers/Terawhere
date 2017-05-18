@@ -3,7 +3,7 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="Refresh"
+        android:title="@Refresh"
         android:id="@+id/refresh" />
 
     <item
@@ -12,9 +12,7 @@
     <item
 
         android:id="@+id/action_search"
-        android:icon="@drawable/action_button_info"
+        android:icon="@drawable/info_button"
         android:title="info"
-        compat:showAsAction="ifRoom" />
-
-
+        compat:showAsAction="always" />
 </menu>
