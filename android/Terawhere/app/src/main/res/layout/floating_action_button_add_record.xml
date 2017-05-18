@@ -8,6 +8,7 @@
     android:layout_margin="8dp"
     android:clickable="true"
     android:tint="@android:color/white"
-    app:backgroundTint="@color/colorPrimary"
+    app:backgroundTint="@color/color_terawhere_primary"
     app:fabSize="normal"
+
     app:srcCompat="@android:drawable/ic_input_add" />
