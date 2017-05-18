@@ -3,6 +3,8 @@ package tech.msociety.terawhere.adapters;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.transition.ChangeBounds;
+import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -64,6 +68,58 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         }
         viewHolder.dayTextView.setText(day);
         viewHolder.monthTextView.setText(month);
+
+        if (offer.getDriverRemarks().matches("")) {
+            viewHolder.remarksTextView.setText("Remarks: NIL");
+        } else {
+            viewHolder.remarksTextView.setText("Remarks: " + offer.getDriverRemarks());
+        }
+
+        final boolean[] shouldExpand = {viewHolder.remarksTextView.getVisibility() == View.GONE};
+        ChangeBounds transition = new ChangeBounds();
+        transition.setDuration(125);
+        viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shouldExpand[0]) {
+                    viewHolder.remarksTextView.setVisibility(View.VISIBLE);
+                    viewHolder.detailsTextView.setText("\u2014 LESS DETAILS");
+
+                    shouldExpand[0] = false;
+                } else {
+                    viewHolder.remarksTextView.setVisibility(View.GONE);
+                    viewHolder.detailsTextView.setText("+ MORE DETAILS");
+
+                    shouldExpand[0] = true;
+                }
+
+                TransitionManager.beginDelayedTransition(viewGroup);
+                viewHolder.itemView.setActivated(shouldExpand[0]);
+
+            }
+        });
+
+        viewHolder.detailsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shouldExpand[0]) {
+                    viewHolder.remarksTextView.setVisibility(View.VISIBLE);
+                    viewHolder.detailsTextView.setText("\u2014 LESS DETAILS");
+
+                    shouldExpand[0] = false;
+                } else {
+                    viewHolder.remarksTextView.setVisibility(View.GONE);
+                    viewHolder.detailsTextView.setText("+ MORE DETAILS");
+
+                    shouldExpand[0] = true;
+                }
+
+                TransitionManager.beginDelayedTransition(viewGroup);
+                viewHolder.itemView.setActivated(shouldExpand[0]);
+
+            }
+        });
+
         viewHolder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,10 +323,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView endingLocationTextView;
         private TextView startingLocationTextView;
         private TextView meetUpTimeTextView;
+        private TextView remarksTextView;
+
+        private LinearLayout linearLayout;
         private TextView seatsOfferedTextView;
         private TextView seatsLeftTextView;
-        private Button editButton;
-        private Button deleteButton;
+        private ImageButton editButton;
+        private ImageButton deleteButton;
+        private TextView detailsTextView;
 
         private ViewHolder(View view) {
             super(view);
@@ -280,10 +340,12 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             seatsOfferedTextView = (TextView) view.findViewById(R.id.offersItemTextViewSeatsOffered);
             seatsLeftTextView = (TextView) view.findViewById(R.id.offersItemTextViewSeatsLeft);
             dayTextView = (TextView) view.findViewById(R.id.offersItemTextViewDay);
+            remarksTextView = (TextView) view.findViewById(R.id.offersItemTextViewRemarks);
             monthTextView = (TextView) view.findViewById(R.id.offersItemTextViewMonth);
-            editButton = (Button) view.findViewById(R.id.offersItemButtonEdit);
-            deleteButton = (Button) view.findViewById(R.id.offersItemButtonDelete);
-
+            editButton = (ImageButton) view.findViewById(R.id.offersItemButtonEdit);
+            deleteButton = (ImageButton) view.findViewById(R.id.offersItemButtonDelete);
+            detailsTextView = (TextView) view.findViewById(R.id.offersItemTextViewDetails);
+            linearLayout = (LinearLayout) view.findViewById(R.id.offersItemLinearLayout);
 
         }
     }

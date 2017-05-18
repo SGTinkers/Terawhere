@@ -21,6 +21,8 @@
 
 
             <LinearLayout
+                android:id="@+id/offersItemLinearLayout"
+
                 android:layout_width="wrap_content"
             android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -144,6 +146,21 @@
 
                         />
 
+                    <TextView
+                        android:id="@+id/offersItemTextViewRemarks"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Remarks:"
+                        android:textColor="#7e7b7b"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+
+                        />
+
 
                 </LinearLayout>
 
@@ -154,6 +171,8 @@
 
 
         <TextView
+            android:id="@+id/offersItemTextViewDetails"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"
@@ -173,7 +192,7 @@
             android:gravity="right"
             android:orientation="horizontal">
 
-            <Button
+            <ImageButton
                 android:id="@+id/offersItemButtonEdit"
 
                 android:layout_width="30dp"
@@ -184,11 +203,12 @@
 
                 />
 
-            <Button
+            <ImageButton
                 android:id="@+id/offersItemButtonDelete"
 
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+
                 android:background="@drawable/garbage"
 
 
