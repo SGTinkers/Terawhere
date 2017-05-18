@@ -50,6 +50,8 @@ import com.google.maps.android.ui.IconGenerator;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -323,7 +325,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     Log.i("SIZE OF MAP", ":" + mapLocationOffer.size());
 
 
-
                     clusterManager.getMarkerCollection()
                             .setOnInfoWindowAdapter(new CustomInfoViewAdapter(LayoutInflater.from(context), mapLocationOffer));
 
@@ -345,22 +346,45 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                         final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
                                         adb.setView(dialogView);
 
-                                        adb.setTitle(currentOffer.getDriverId());
-
 
                                         final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
-                                        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogDestination);
-                                        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogRemarks);
-                                        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTimestamp);
-                                        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogSeatsAvailable);
+                                        TextView dialogStartingLocation = (TextView) dialogView.findViewById(R.id.dialogTextViewStartingLocation);
 
-                                        dialogRemarks.setText(currentOffer.getDriverRemarks());
-                                        dialogDestination.setText(currentOffer.getVehicleDescription());
+                                        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogTextViewEndingLocation);
+                                        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogTextViewRemarks);
+                                        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTextViewMeetUpTime);
+                                        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogTextViewSeatsAvailable);
+                                        TextView dialogMonth = (TextView) dialogView.findViewById(R.id.dialogTextViewMonth);
+                                        TextView dialogDay = (TextView) dialogView.findViewById(R.id.dialogTextViewDay);
 
-                                        if (currentOffer.getMeetUpTime() != null) {
-                                            dialogTimestamp.setText(currentOffer.getMeetUpTime());
+
+                                        if (currentOffer.getDriverRemarks().matches("")) {
+                                            dialogRemarks.setText("Remarks: NIL");
+
+                                        } else {
+                                            dialogRemarks.setText("Remarks: " + currentOffer.getDriverRemarks());
                                         }
-                                        dialogSeatsAvailable.setText(Integer.toString(currentOffer.getSeatsAvailable()) + " LEFT");
+                                        dialogDestination.setText("Destination: " + currentOffer.getEndingLocationAddress());
+                                        dialogStartingLocation.setText("Meeting Point: " + currentOffer.getStartingLocationAddress());
+                                        String meetUpTime = "";
+                                        String day = "";
+                                        String month = "";
+                                        try {
+                                            meetUpTime = new SimpleDateFormat("hh:mm a").format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").parse(currentOffer.getMeetUpTime().toString()));
+                                            day = new SimpleDateFormat("dd").format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").parse(currentOffer.getMeetUpTime().toString()));
+                                            month = new SimpleDateFormat("MMMM").format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").parse(currentOffer.getMeetUpTime().toString()));
+
+
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                        if (!meetUpTime.matches("")) {
+                                            dialogTimestamp.setText("Pick Up Time: " + meetUpTime);
+                                        }
+                                        dialogDay.setText(day);
+                                        dialogMonth.setText(month);
+
+                                        dialogSeatsAvailable.setText("Seats Left: " + Integer.toString(currentOffer.getSeatsAvailable()));
 
 
                                         List<String> categories = new ArrayList<String>();
@@ -428,26 +452,26 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                                         BookingDatum booking = new BookingDatum(Integer.toString(offerId), userId, seats);
                                                                         Call<BookingDatum> call2 = createBookingApi(booking);
                                                                         call2.enqueue(new Callback<BookingDatum>() {
-                                                                            @Override
-                                                                            public void onResponse(Call<BookingDatum> call, Response<BookingDatum> response) {
+                                                                                          @Override
+                                                                                          public void onResponse(Call<BookingDatum> call, Response<BookingDatum> response) {
 
-                                                                                if (response.isSuccessful()) {
-                                                                                    Log.i(MESSAGE_RESPONSE, ": " + response.message());
+                                                                                              if (response.isSuccessful()) {
+                                                                                                  Log.i(MESSAGE_RESPONSE, ": " + response.message());
 
 
-                                                                                } else {
-                                                                                    try {
-                                                                                        Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
-                                                                                    } catch (IOException e) {
-                                                                                        e.printStackTrace();
-                                                                                    }
-                                                                                }
-                                                                            }
+                                                                                              } else {
+                                                                                                  try {
+                                                                                                      Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
+                                                                                                  } catch (IOException e) {
+                                                                                                      e.printStackTrace();
+                                                                                                  }
+                                                                                              }
+                                                                                          }
 
-                                                                            @Override
-                                                                            public void onFailure(Call<BookingDatum> call, Throwable t) {
-                                                                            }
-                                                                                     }
+                                                                                          @Override
+                                                                                          public void onFailure(Call<BookingDatum> call, Throwable t) {
+                                                                                          }
+                                                                                      }
                                                                         );
 
 
@@ -466,7 +490,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                                                                 }
                                                             });
-
 
 
                                                             Toast.makeText(context, spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
@@ -492,6 +515,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                             }
                                         });
                                         adb.show();
+
+
                                     }
                                 }
                             });
