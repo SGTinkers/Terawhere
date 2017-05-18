@@ -2,7 +2,6 @@ package tech.msociety.terawhere.screens.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.io.IOException;
-import java.util.Arrays;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -19,141 +20,77 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.BookingsAdapter;
+import tech.msociety.terawhere.events.GetBookingsHasFinishedEvent;
+import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
+import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
+import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 
-public class MyBookingsFragment extends Fragment {
-    private static final int REQUEST_CODE = 1;
-    private RecyclerView.Adapter adapter;
-    private RecyclerView recyclerView;
-
+public class MyBookingsFragment extends BaseFragment {
+    private BookingsAdapter bookingsAdapter;
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        this.needsProgressDialog = true;
+        this.needsEventBus = true;
         setHasOptionsMenu(false);
-
         return inflater.inflate(R.layout.fragment_my_bookings, container, false);
     }
-
+    
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        
         initRecyclerView();
-
-        makeNetworkCall();
-        //makeNetworkCall();
-        //populateListFromDatabase();
+        getBookingsFromServer();
     }
-
-    private void makeNetworkCall() {
-        Log.i("MAKING NETWORK", ":");
-
-        Call<GetUser> callUser = TerawhereBackendServer.getApiInstance().getStatus();
-
-        callUser.enqueue(new Callback<GetUser>() {
-            @Override
-            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
-
-                if (response.isSuccessful()) {
-                    Log.i("RESPONSE", response.body().toString());
-                    Log.i("user id", response.body().getUser().getId());
-
-                    fetchOffersFromServer();
-
-                } else {
-                    Log.i("RESPONSE", response.errorBody().toString());
-
-                   /* try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Log.i("ERROR", ":" + jObjError.getString("error"));
-                        if (jObjError.getString("error").equals("token_expired")) {
-                            //refresh token
-                        }
-
-                    } catch (Exception e) {
-                    }*/
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetUser> call, Throwable t) {
-                Log.i("FAILURE", Arrays.toString(t.getStackTrace()));
-
-                System.out.println(Arrays.toString(t.getStackTrace()));
-
-            }
-        });
-
-    }
-
-    /*@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                //populateListFromDatabase();
-            }
-        }
-    }*/
-
+    
     private void initRecyclerView() {
-        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyBookings);
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyBookings);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-
-        adapter = new BookingsAdapter();
-        recyclerView.setAdapter(adapter);
+        
+        bookingsAdapter = new BookingsAdapter();
+        recyclerView.setAdapter(bookingsAdapter);
     }
-
-   /* private void populateListFromDatabase() {
-        List<Booking> bookings = BackendMock.getBookings();
-
-        ((BookingsAdapter) adapter).setBookings(bookings);
-        adapter.notifyDataSetChanged();
-    }*/
-
-    private void fetchOffersFromServer() {
+    
+    private void getBookingsFromServer() {
+        progressDialog.setMessage("Getting bookings...");
+        progressDialog.show();
         Call<GetBookings> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookings();
         callGetBookings.enqueue(new Callback<GetBookings>() {
             @Override
-            public void onResponse(Call<GetBookings> call, Response<GetBookings> response2) {
-
-                if (response2.isSuccessful()) {
-                    GetBookings getBookings = response2.body();
-
+            public void onResponse(Call<GetBookings> call, Response<GetBookings> response) {
+                progressDialog.cancel();
+                if (response.isSuccessful()) {
+                    GetBookings getBookings = response.body();
                     List<Booking> bookings = getBookings.getBookings();
-
-                    populateListFromDatabase(bookings);
-                    Log.i("response: ", getBookings.toString());
-
-
+                    EventBus.getDefault().post(new GetBookingsHasFinishedEvent(bookings));
                 } else {
-
-                    try {
-                        Log.i("ERROR_OFFER", ": " + response2.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
-
-
             }
-
+    
             @Override
             public void onFailure(Call<GetBookings> call, Throwable t) {
-                System.out.println(Arrays.toString(t.getStackTrace()));
-
+                progressDialog.cancel();
+                EventBus.getDefault().post(new ResponseNotSuccessfulEvent(t));
             }
         });
     }
-
-    void populateListFromDatabase(List<Booking> bookings) {
-        ((BookingsAdapter) adapter).setBookings(bookings);
-        adapter.notifyDataSetChanged();
+    
+    @Subscribe
+    public void populateRecyclerView(GetBookingsHasFinishedEvent event) {
+        progressDialog.cancel();
+        bookingsAdapter.setBookings(event.getBookings());
+        bookingsAdapter.notifyDataSetChanged();
+    }
+    
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
+        Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());
     }
 }

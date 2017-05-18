@@ -74,6 +74,7 @@ public class MyOffersFragment extends BaseFragment {
     }
     
     private void getOffersFromServer() {
+        progressDialog.setMessage("Getting offers...");
         progressDialog.show();
         Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getOffers();
         callGetOffers.enqueue(new Callback<GetOffers>() {
@@ -85,7 +86,6 @@ public class MyOffersFragment extends BaseFragment {
                     List<Offer> offers = getOffers.getOffers();
                     EventBus.getDefault().post(new GetOffersHasFinishedEvent(offers));
                 } else {
-                    Log.e(TAG, "inside onResponse's notSuccessful");
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
             }
@@ -93,7 +93,6 @@ public class MyOffersFragment extends BaseFragment {
             @Override
             public void onFailure(Call<GetOffers> call, Throwable t) {
                 progressDialog.cancel();
-                Log.e(TAG, "inside onFailure");
                 EventBus.getDefault().post(new ResponseNotSuccessfulEvent(t));
             }
         });
