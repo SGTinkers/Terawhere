@@ -27,7 +27,7 @@ public class AuthorizationRequestInterceptor implements Interceptor {
     public AuthorizationRequestInterceptor(boolean handleTokenExpiry) {
         this.handleTokenExpiry = handleTokenExpiry;
     }
-    
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
@@ -37,7 +37,7 @@ public class AuthorizationRequestInterceptor implements Interceptor {
                     .addHeader("Authorization", "Bearer " + Constants.getBearerToken())
                     .build();
         }
-        
+
         Response response = chain.proceed(request);
 
         if (handleTokenExpiry && !response.isSuccessful()) {
