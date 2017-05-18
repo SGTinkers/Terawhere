@@ -25,10 +25,8 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         Booking booking = bookings.get(position);
 
-        viewHolder.textViewBookingId.setText(booking.getId());
-        viewHolder.textViewPassengerId.setText(booking.getPassengerId());
-        viewHolder.textViewTimestamp.setText(booking.getMeetUpTime());
-        viewHolder.textViewEndingLocatioName.setText(booking.getEndingLocationName());
+        viewHolder.seatsBookedTextView.setText("Seats Booked: " + booking.getNumberOfSeats());
+
     }
 
     @Override
@@ -38,18 +36,16 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
 
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView textViewBookingId;
-        private TextView textViewPassengerId;
-        private TextView textViewTimestamp;
-        private TextView textViewEndingLocatioName;
+        private TextView endingLocationTextView;
+        private TextView startingLocationTextView;
+        private TextView seatsBookedTextView;
 
 
         private ViewHolder(View view) {
             super(view);
-            textViewBookingId = (TextView) view.findViewById(R.id.textViewBookingId);
-            textViewPassengerId = (TextView) view.findViewById(R.id.textViewPassengerId);
-            textViewTimestamp = (TextView) view.findViewById(R.id.textViewTimestamp);
-            textViewEndingLocatioName = (TextView) view.findViewById(R.id.textViewDestination);
+            endingLocationTextView = (TextView) view.findViewById(R.id.bookingsItemTextViewEndingLocation);
+            startingLocationTextView = (TextView) view.findViewById(R.id.bookingsItemTextViewStartingLocation);
+            seatsBookedTextView = (TextView) view.findViewById(R.id.bookingsItemTextViewSeatsBooked);
         }
     }
 

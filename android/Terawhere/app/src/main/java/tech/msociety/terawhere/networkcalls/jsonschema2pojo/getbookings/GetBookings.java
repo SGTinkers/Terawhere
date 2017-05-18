@@ -35,7 +35,7 @@ public class GetBookings {
         List<Booking> bookings = new ArrayList<>();
 
         for (BookingDatum datum : data) {
-            Booking booking = new Booking(datum.getOfferId(), datum.getUserId(), datum.getPax());
+            Booking booking = new Booking(datum.getDriverName(), datum.getOfferId(), datum.getUserId(), datum.getPax());
             bookings.add(booking);
         }
 

@@ -7,151 +7,175 @@
     card_view:cardUseCompatPadding="true"
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="10dp"
 
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/id" />
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textViewBookingId"
-                android:layout_width="match_parent"
+
+            <LinearLayout
+                android:id="@+id/bookingsItemLinearLayout"
+
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/textview_vertical_margin"
-                android:ellipsize="marquee"
-                android:fontFamily="casual"
-                android:textAppearance="@style/cardViewTextHeader" />
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/bookingsItemTextViewDay"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center_horizontal"
+                        android:lineSpacingExtra="-28sp"
+                        android:text="26"
+                        android:textColor="#000000"
+                        android:textSize="48sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/bookingsItemTextViewMonth"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="sans-serif"
+                        android:text="May"
+                        android:textColor="#000000"
+                        android:textSize="15sp"
+                        android:textStyle="normal" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dip"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="10dp"
+                    android:background="#FF000000" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/bookingsItemTextViewEndingLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Destination:"
+                        android:textColor="#7e7b7b"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/bookingsItemTextViewStartingLocation"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Meeting Point:"
+                        android:textColor="#7e7b7b"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+
+
+                        />
+
+                    <TextView
+                        android:id="@+id/bookingsItemTextViewMeetUpTime"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Pick Up Time:"
+                        android:textColor="#7e7b7b"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/bookingsItemTextViewSeatsBooked"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Seats Booked:"
+                        android:textColor="#7e7b7b"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+
+                        />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
 
         </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/bookingsItemTextViewDetails"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:fontFamily="sans-serif-light"
+            android:text="+ MORE DETAILS"
+            android:textColor="#7e7b7b"
+            android:textSize="13sp"
+            android:textStyle="normal" />
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="30dp"
+
+            android:gravity="right"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/imageView10"
+
+            <ImageButton
+                android:id="@+id/bookingsItemButtonDelete"
+
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/id" />
 
-            <TextView
-                android:id="@+id/textViewPassengerId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/textview_vertical_margin"
-                android:ellipsize="marquee"
-                android:fontFamily="casual"
-                android:textAppearance="@style/cardViewTextHeader" />
+                android:background="@drawable/garbage"
+
+
+                />
 
         </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/seat" />
-
-            <TextView
-                android:id="@+id/textViewSeatsAvailable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/textview_vertical_margin"
-                android:ellipsize="marquee"
-                android:fontFamily="casual"
-                android:textAppearance="@style/cardViewTextHeader" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/clock" />
-
-            <TextView
-                android:id="@+id/textViewTimestamp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/textview_vertical_margin"
-                android:ellipsize="marquee"
-                android:fontFamily="casual"
-                android:maxLines="1"
-                android:textAllCaps="true"
-                android:textAppearance="@style/cardViewTextTitle" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/destination" />
-
-            <TextView
-                android:id="@+id/textViewDestination"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/textview_vertical_margin"
-                android:ellipsize="marquee"
-                android:fontFamily="casual"
-                android:maxLines="1"
-                android:textSize="20dp"
-                android:textStyle="italic"
-
-                android:textColor="@color/colorCardViewTextRed"
-                android:textAppearance="@style/cardViewTextTitle" />
-
-
-        </LinearLayout>
-
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

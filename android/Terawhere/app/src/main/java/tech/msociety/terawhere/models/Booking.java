@@ -7,20 +7,28 @@ public class Booking {
     private String meetUpTime;
     private String endingLocationName;
 
-    public Booking(String id, String passengerId, String numberOfSeats, String meetUpTime, String endingLocationName) {
+
+    private String driverName;
+
+    public Booking(String driverName, String id, String passengerId, String numberOfSeats, String meetUpTime, String endingLocationName) {
         this.id = id;
         this.passengerId = passengerId;
         this.numberOfSeats = numberOfSeats;
         this.meetUpTime = meetUpTime;
         this.endingLocationName = endingLocationName;
+        this.driverName = driverName;
     }
 
-    public Booking(String id, String passengerId, String numberOfSeats) {
+    public Booking(String driverName, String id, String passengerId, String numberOfSeats) {
+        this.driverName = driverName;
         this.id = id;
         this.passengerId = passengerId;
         this.numberOfSeats = numberOfSeats;
     }
 
+    public String getDriverName() {
+        return driverName;
+    }
 
     public String getId() {
         return id;
@@ -41,4 +49,5 @@ public class Booking {
     public String getEndingLocationName() {
         return endingLocationName;
     }
+
 }

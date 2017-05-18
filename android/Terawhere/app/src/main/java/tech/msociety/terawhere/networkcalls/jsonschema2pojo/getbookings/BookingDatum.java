@@ -57,7 +57,8 @@ public class BookingDatum {
     public String toString() {
         return "BookingDatum{" +
                 "offerId='" + offerId + '\'' +
-                ", name='" + userId + '\'' +
+                ", userId='" + userId + '\'' +
+                "driverName='" + driverName + '\'' +
                 ", pax='" + pax + '\'' +
                 ", id='" + id + '\'' +
                 ", updatedAt='" + updatedAt + '\'' +
@@ -65,10 +66,18 @@ public class BookingDatum {
                 '}';
     }
 
+    public BookingDatum(String driverName, String offerId, String userId, String pax) {
+        this.offerId = offerId;
+        this.userId = userId;
+        this.pax = pax;
+        this.driverName = driverName;
+    }
+
     public BookingDatum(String offerId, String userId, String pax) {
         this.offerId = offerId;
         this.userId = userId;
         this.pax = pax;
+        this.driverName = driverName;
     }
 
     @SerializedName("offer_id")
@@ -89,6 +98,14 @@ public class BookingDatum {
     @SerializedName("created_at")
     @Expose
     private String createdAt;
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    @SerializedName("name")
+    @Expose
+    private String driverName;
 
 
 }
