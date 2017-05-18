@@ -2,6 +2,7 @@ package tech.msociety.terawhere.networkcalls.intereptors;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -18,6 +19,7 @@ import okio.Buffer;
  */
 public class LoggingInterceptor implements Interceptor {
     private final Logger logger;
+    private StringBuilder stringBuilder;
     
     public LoggingInterceptor() {
         super();
@@ -32,7 +34,7 @@ public class LoggingInterceptor implements Interceptor {
         String requestHeaders = request.headers().toString();
         String url = URLDecoder.decode(request.url().url().toString(), "UTF-8");
     
-        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder = new StringBuilder();
         stringBuilder.append(method.toUpperCase());
         stringBuilder.append(" -> ");
         stringBuilder.append(url);
@@ -53,8 +55,28 @@ public class LoggingInterceptor implements Interceptor {
         }
     
         logger.log(stringBuilder.toString());
-
+    
         Response response = chain.proceed(request);
+        int responseCode = response.code();
+    
+        if (responseCode != 200) {
+            String responseMessage = response.message();
+            stringBuilder = new StringBuilder();
+        
+            stringBuilder.append("URL: ");
+            stringBuilder.append(url);
+            stringBuilder.append("\n");
+        
+            stringBuilder.append("Code: ");
+            stringBuilder.append(responseCode);
+            stringBuilder.append("\n");
+        
+            stringBuilder.append("Message: ");
+            stringBuilder.append(responseMessage);
+            stringBuilder.append("\n");
+        
+            Log.e("LoggingInterceptor", stringBuilder.toString());
+        }
         logger.log("<- " + URLDecoder.decode(response.toString(), "UTF-8"));
 
         return response;
