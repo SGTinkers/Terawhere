@@ -170,6 +170,7 @@
             android:text="Choose no. of seats:"
             android:textColor="#7e7b7b"
             android:textSize="13sp"
+            android:layout_margin="10dp"
             android:textStyle="normal" />
 
         <Spinner

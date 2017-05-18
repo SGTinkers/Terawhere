@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -514,7 +516,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                 dialog.dismiss();
                                             }
                                         });
-                                        adb.show();
+                                        //adb.show();
+                                        AlertDialog alert = adb.create();
+                                        alert.show();
+                                        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+                                        nbutton.setTextColor(Color.BLACK);
+                                        nbutton.setText("Cancel");
+                                        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                                        pbutton.setTextColor(Color.parseColor("#54d8bd"));
+                                        pbutton.setText("Confirm");
+
 
 
                                     }

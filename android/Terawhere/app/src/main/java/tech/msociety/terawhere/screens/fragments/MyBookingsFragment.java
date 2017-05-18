@@ -1,6 +1,5 @@
 package tech.msociety.terawhere.screens.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,13 +19,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.BookingsAdapter;
-import tech.msociety.terawhere.mocks.BackendMock;
 import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
-
-import static android.app.Activity.RESULT_OK;
 
 public class MyBookingsFragment extends Fragment {
     private static final int REQUEST_CODE = 1;
@@ -47,7 +43,7 @@ public class MyBookingsFragment extends Fragment {
         initRecyclerView();
 
         makeNetworkCall();
-        makeNetworkCall();
+        //makeNetworkCall();
         //populateListFromDatabase();
     }
 
@@ -92,16 +88,16 @@ public class MyBookingsFragment extends Fragment {
 
     }
 
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                populateListFromDatabase();
+                //populateListFromDatabase();
             }
         }
-    }
+    }*/
 
     private void initRecyclerView() {
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyBookings);
@@ -114,12 +110,12 @@ public class MyBookingsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    private void populateListFromDatabase() {
+   /* private void populateListFromDatabase() {
         List<Booking> bookings = BackendMock.getBookings();
 
         ((BookingsAdapter) adapter).setBookings(bookings);
         adapter.notifyDataSetChanged();
-    }
+    }*/
 
     private void fetchOffersFromServer() {
         Call<GetBookings> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookings();
@@ -132,6 +128,7 @@ public class MyBookingsFragment extends Fragment {
 
                     List<Booking> bookings = getBookings.getBookings();
 
+                    populateListFromDatabase(bookings);
                     Log.i("response: ", getBookings.toString());
 
 
@@ -153,5 +150,10 @@ public class MyBookingsFragment extends Fragment {
 
             }
         });
+    }
+
+    void populateListFromDatabase(List<Booking> bookings) {
+        ((BookingsAdapter) adapter).setBookings(bookings);
+        adapter.notifyDataSetChanged();
     }
 }
