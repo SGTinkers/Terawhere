@@ -675,13 +675,19 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             startingLocationLatitude = place.getLatLng().latitude;
             startingLocationLongitude = place.getLatLng().longitude;
             textViewStartingLocation.setText(address);
-            
+            if (!(place.getName().toString().contains("\"N") || place.getName().toString().contains("\"E") || place.getName().toString().contains("\"S") || place.getName().toString().contains("\"W"))) {
+                textViewStartingLocation.append("\n" + place.getName());
+            }
+
         } else if (requestCode == 2 && resultCode == RESULT_OK) {
             final Place place = PlacePicker.getPlace(this, data);
             final CharSequence address = place.getAddress();
             endingLocationLatitude = place.getLatLng().latitude;
             endingLocationLongitude = place.getLatLng().longitude;
             textViewEndingLocation.setText(address);
+            if (!(place.getName().toString().contains("\"N") || place.getName().toString().contains("\"E") || place.getName().toString().contains("\"S") || place.getName().toString().contains("\"W"))) {
+                textViewStartingLocation.append("\n" + place.getName());
+            }
             
         } else {
             super.onActivityResult(requestCode, resultCode, data);

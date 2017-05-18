@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -36,8 +37,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.google.maps.android.ui.IconGenerator;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -310,7 +318,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
                     for (int i = 0; i < offers.size(); i++) {
                         clusterManager.addItem(new ClusterMarkerLocation(offers.get(i).getId(), new LatLng(offers.get(i).getStartingLocationLatitude(), offers.get(i).getStartingLocationLongitude())));
-
                         mapLocationOffer.put(new LatLng(offers.get(i).getStartingLocationLatitude(), offers.get(i).getStartingLocationLongitude()), offers.get(i));
                     }
                     Log.i("SIZE OF MAP", ":" + mapLocationOffer.size());
@@ -488,7 +495,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                     }
                                 }
                             });
-
+                    clusterManager.setRenderer(new MyClustererRenderer(context, googleMap,
+                            clusterManager));
                     googleMap.setOnInfoWindowClickListener(clusterManager);
                     googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
                     googleMap.setOnMarkerClickListener(clusterManager);
@@ -561,6 +569,45 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             if (getContext() != null) {
                 getUserId();
             }
+        }
+    }
+
+    public class MyClustererRenderer extends DefaultClusterRenderer<ClusterMarkerLocation> {
+
+        private final IconGenerator mClusterIconGenerator = new IconGenerator(getActivity().getApplicationContext());
+
+        public MyClustererRenderer(Context context, GoogleMap map,
+                                   ClusterManager<ClusterMarkerLocation> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(ClusterMarkerLocation item,
+                                                   MarkerOptions markerOptions) {
+
+            BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.pin_location);
+
+            markerOptions.icon(markerDescriptor);
+        }
+
+        @Override
+        protected void onClusterItemRendered(ClusterMarkerLocation clusterItem, Marker marker) {
+            super.onClusterItemRendered(clusterItem, marker);
+        }
+
+        @Override
+        protected void onBeforeClusterRendered(Cluster<ClusterMarkerLocation> cluster, MarkerOptions markerOptions) {
+
+
+            //modify padding for one or two digit numbers
+            if (cluster.getSize() < 10) {
+                mClusterIconGenerator.setContentPadding(40, 20, 0, 0);
+            } else {
+                mClusterIconGenerator.setContentPadding(30, 20, 0, 0);
+            }
+
+            Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
     }
 
