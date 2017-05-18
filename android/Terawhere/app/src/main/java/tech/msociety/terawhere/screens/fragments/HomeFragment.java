@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -633,17 +632,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
         @Override
         protected void onBeforeClusterRendered(Cluster<ClusterMarkerLocation> cluster, MarkerOptions markerOptions) {
+            super.onBeforeClusterRendered(cluster, markerOptions);
 
-
-            //modify padding for one or two digit numbers
-            if (cluster.getSize() < 10) {
-                mClusterIconGenerator.setContentPadding(40, 20, 0, 0);
-            } else {
-                mClusterIconGenerator.setContentPadding(30, 20, 0, 0);
-            }
-
-            Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
     }
 
