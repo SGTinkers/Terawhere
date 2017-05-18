@@ -3,7 +3,6 @@ package tech.msociety.terawhere.screens.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -54,15 +53,12 @@ import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.events.LogoutEvent;
-import tech.msociety.terawhere.events.TokenInvalidEvent;
-import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
-import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
 
 import static tech.msociety.terawhere.screens.activities.CreateOfferActivity.MESSAGE_RESPONSE;
 
@@ -89,6 +85,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         initializeContext();
         setHasOptionsMenu(true);
+
+
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
