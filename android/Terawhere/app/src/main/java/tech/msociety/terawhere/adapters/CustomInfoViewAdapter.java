@@ -37,18 +37,17 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
     public View getInfoContents(Marker marker) {
         popup = mInflater.inflate(R.layout.custom_info_window, null);
         //((TextView) popup.findViewById(R.id.nameTextView)).setText("HAFIZ");
-        final TextView nameTextView = (TextView) popup.findViewById(R.id.nameTextView);
-        final TextView destinationTextView = (TextView) popup.findViewById(R.id.destinationTextView);
-        final TextView seatsAvailableTextView = (TextView) popup.findViewById(R.id.seatsAvailableTextView);
-        final TextView pickUpTimeTextView = (TextView) popup.findViewById(R.id.pickUpTimeTextView);
+        final TextView startingLocationTextView = (TextView) popup.findViewById(R.id.textViewStartingLocation);
+        final TextView endingLocationTextView = (TextView) popup.findViewById(R.id.textViewEndingLocation);
+        final TextView meetUpTimeTextView = (TextView) popup.findViewById(R.id.textViewMeetUpTime);
+        final TextView seatsAvailableTextView = (TextView) popup.findViewById(R.id.textViewSeatsAvailable);
         Offer objOffer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
 
+        startingLocationTextView.append("\n" + objOffer.getStartingLocationName());
+        endingLocationTextView.append("\n" + objOffer.getEndingLocationName());
+        meetUpTimeTextView.append("\n" + objOffer.getMeetUpTime());
+        seatsAvailableTextView.append("\n" + Integer.toString(objOffer.getSeatsAvailable()));
 
-        nameTextView.setText(objOffer.getDriverId());
-        destinationTextView.setText(objOffer.getEndingLocationName());
-        seatsAvailableTextView.setText(Integer.toString(objOffer.getSeatsAvailable()) + " LEFT");
-
-        pickUpTimeTextView.setText(objOffer.getMeetUpTime());
 
 
         return popup;
