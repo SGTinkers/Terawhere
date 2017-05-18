@@ -69,6 +69,7 @@ import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 
 import static tech.msociety.terawhere.screens.activities.CreateOfferActivity.MESSAGE_RESPONSE;
@@ -299,7 +300,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     private void initMarkers(final String userId) {
 
-        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getAllOffers();
+
+        Log.i("LATITUDE", Double.toString(latitude));
+        Log.i("LONGITUDE", Double.toString(longitude));
+        LocationDatum locationDatum = new LocationDatum(latitude, longitude);
+        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationDatum(latitude, longitude));
         callGetOffers.enqueue(new Callback<GetOffers>() {
             @Override
             public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {
@@ -313,7 +318,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     googleMap.getUiSettings().setZoomControlsEnabled(true);
 
                     GetOffers getOffers = response.body();
-
+                    Log.i("GET_OFFERS", ":" + getOffers.toString());
                     final List<Offer> offers = getOffers.getOffers();
 
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
@@ -541,6 +546,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                     try {
                         Log.i("ERROR_OFFER", ": " + response.errorBody().string());
+                        Log.i("ERROR_OFFER2", ": " + response.message());
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

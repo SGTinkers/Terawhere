@@ -24,6 +24,7 @@ import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBooki
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
 
@@ -89,6 +90,11 @@ public class TerawhereBackendServer {
 
         @GET("api/v1/bookings-for-user")
         Call<GetBookings> getAllBookings();
+
+
+        @POST("api/v1/nearby-offers")
+        Call<GetOffers> getNearbyOffers(@Body LocationDatum location);
+
 
         @POST("api/v1/offers")
         Call<OffersDatum> createOffer(@Body OffersDatum offers);
