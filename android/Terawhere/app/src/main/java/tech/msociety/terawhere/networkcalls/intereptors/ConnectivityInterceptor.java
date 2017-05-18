@@ -25,7 +25,10 @@ public class ConnectivityInterceptor implements Interceptor {
         if (!NetworkUtils.hasConnectivity(context)) {
             NoConnectivityException exception = new NoConnectivityException();
             Log.e("INTERCEPTOR", "ConnectivityInterceptor detects no connectivity", exception);
-            context.startActivity(new Intent(context, NoNetworkActivity.class));
+            Intent intent = new Intent(context, NoNetworkActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            context.startActivity(intent);
         }
         
         Request.Builder builder = chain.request().newBuilder();

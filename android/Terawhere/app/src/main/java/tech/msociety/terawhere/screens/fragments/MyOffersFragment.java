@@ -69,11 +69,11 @@ public class MyOffersFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (getContext() != null) {
-                loading = new ProgressDialog(getContext());
+               /* loading = new ProgressDialog(getContext());
                 loading.setCancelable(true);
                 loading.setMessage("FETCHING DATA");
                 loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                loading.show();
+                loading.show();*/
                 Log.i("VISIBLE", "REFRESHING");
                 makeNetworkCall();
             }
