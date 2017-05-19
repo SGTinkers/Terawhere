@@ -21,8 +21,8 @@ public class BackendMock {
             Integer offerId = (int) faker.number(1);
             String offererId = faker.words(1);
             Date meetupTime = new Date();
-            TerawhereLocation startTerawhereLocation = LocationMock.getRandomLocation();
-            TerawhereLocation endTerawhereLocation = LocationMock.getRandomLocation();
+            TerawhereLocation startTerawhereLocation = TerawhereLocationMock.getRandomLocation();
+            TerawhereLocation endTerawhereLocation = TerawhereLocationMock.getRandomLocation();
             Vehicle vehicle = VehicleMock.getRandomVehicle();
             Integer vacancy = (int) faker.number(1);
             BackendTimestamp backendTimestamp = BackendTimestampMock.getRandomBackendTimestamp();

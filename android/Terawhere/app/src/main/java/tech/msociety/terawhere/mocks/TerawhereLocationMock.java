@@ -3,7 +3,7 @@ package tech.msociety.terawhere.mocks;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.utils.faker.Faker;
 
-public class LocationMock {
+public class TerawhereLocationMock {
     private static Faker faker = new Faker();
     
     public static TerawhereLocation getRandomLocation() {
