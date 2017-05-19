@@ -3,7 +3,6 @@ package tech.msociety.terawhere.adapters;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +31,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         final Offer offer = offers.get(position);
-    
-        Log.e("SAIFUL", offer.getMeetupTime().toString());
     
         String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);

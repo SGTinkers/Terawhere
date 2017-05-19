@@ -17,8 +17,8 @@ public class OfferFactory {
         List<Offer> offers = new ArrayList<>();
         
         for (OffersDatum offersDatum : getOffersResponse.data) {
-            TerawhereLocation startTerawhereLocation = new TerawhereLocation(offersDatum.getStartName(), offersDatum.getStartAddr(), offersDatum.getStartLat(), offersDatum.getStartLng(), "geohash");
-            TerawhereLocation endTerawhereLocation = new TerawhereLocation(offersDatum.getEndName(), offersDatum.getEndAddr(), offersDatum.getEndLat(), offersDatum.getEndLng(), "geohash");
+            TerawhereLocation startTerawhereLocation = new TerawhereLocation(offersDatum.getStartName(), offersDatum.getStartAddr(), offersDatum.getStartLat(), offersDatum.getStartLng(), offersDatum.getStartGeohash());
+            TerawhereLocation endTerawhereLocation = new TerawhereLocation(offersDatum.getEndName(), offersDatum.getEndAddr(), offersDatum.getEndLat(), offersDatum.getEndLng(), offersDatum.getEndGeohash());
             Vehicle vehicle = new Vehicle(offersDatum.getVehicleNumber(), offersDatum.getVehicleDesc(), offersDatum.getVehicleModel());
             
             Date dateCreated = DateUtils.fromMysqlDateTimeString(offersDatum.getCreatedAt());

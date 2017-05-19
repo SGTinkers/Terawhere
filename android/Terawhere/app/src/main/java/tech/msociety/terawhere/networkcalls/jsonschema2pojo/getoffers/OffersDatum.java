@@ -25,6 +25,9 @@ public class OffersDatum {
     @SerializedName("start_lng")
     @Expose
     private Double startLng;
+    @SerializedName("start_geohash")
+    @Expose
+    private String startGeohash;
     @SerializedName("end_name")
     @Expose
     private String endName;
@@ -37,6 +40,9 @@ public class OffersDatum {
     @SerializedName("end_lng")
     @Expose
     private Double endLng;
+    @SerializedName("end_geohash")
+    @Expose
+    private String endGeohash;
     @SerializedName("vacancy")
     @Expose
     private Integer vacancy;
@@ -180,5 +186,13 @@ public class OffersDatum {
 
     public String getUpdatedAt() {
         return updatedAt;
+    }
+    
+    public String getStartGeohash() {
+        return startGeohash;
+    }
+    
+    public String getEndGeohash() {
+        return endGeohash;
     }
 }
