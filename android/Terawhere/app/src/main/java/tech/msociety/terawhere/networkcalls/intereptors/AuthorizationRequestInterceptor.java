@@ -12,6 +12,7 @@ import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import tech.msociety.terawhere.events.LoginEvent;
 import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -46,6 +47,7 @@ public class AuthorizationRequestInterceptor implements Interceptor {
                 if (e.getError() != null && e.getError().equals("token_expired")) {
                     retrofit2.Response<Void> responseRefreshToken = TerawhereBackendServer.getAuthApiInstance().refreshToken().execute();
                     if (responseRefreshToken.isSuccessful()) {
+                        EventBus.getDefault().post(new LoginEvent());
                         return intercept(chain);
                     } else {
                         throw new TokenInvalidException();

@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import tech.msociety.terawhere.events.LoginEvent;
 import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.globals.Constants;
@@ -36,6 +37,10 @@ public class TerawhereApplication extends Application {
         super.onCreate();
         EventBus.getDefault().register(this);
 
+        registerPushTokensWithBackend();
+    }
+
+    private void registerPushTokensWithBackend() {
         if (Constants.getBearerToken() != null) {
             final String token = FirebaseInstanceId.getInstance().getToken();
             if (token != null) {
@@ -71,6 +76,11 @@ public class TerawhereApplication extends Application {
         Intent i = new Intent(this, FacebookLoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginEvent(LoginEvent event) {
+        registerPushTokensWithBackend();
     }
 
 }

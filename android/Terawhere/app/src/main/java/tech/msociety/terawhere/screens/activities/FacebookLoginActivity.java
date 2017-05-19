@@ -13,6 +13,8 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Arrays;
 
 import retrofit2.Call;
@@ -20,6 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereApplication;
+import tech.msociety.terawhere.events.LoginEvent;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
@@ -57,7 +60,8 @@ public class FacebookLoginActivity extends BaseActivity {
                     public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
                         Log.d("FacebookLoginActivity", "Server Token: " + response.body().getToken());
                         Constants.setBearerToken(response.body().getToken());
-    
+
+                        EventBus.getDefault().post(new LoginEvent());
                         getUserDetails();
                     }
 
