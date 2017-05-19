@@ -2,16 +2,16 @@ package tech.msociety.terawhere.events;
 
 import java.util.List;
 
-import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.models.Offer;
 
 public class GetOffersHasFinishedEvent {
-    private List<OfferRevamp> offers;
+    private List<Offer> offers;
     
-    public GetOffersHasFinishedEvent(List<OfferRevamp> offers) {
+    public GetOffersHasFinishedEvent(List<Offer> offers) {
         this.offers = offers;
     }
     
-    public List<OfferRevamp> getOffers() {
+    public List<Offer> getOffers() {
         return offers;
     }
 }

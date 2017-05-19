@@ -6,7 +6,7 @@ import java.util.List;
 
 import tech.msociety.terawhere.models.BackendTimestamp;
 import tech.msociety.terawhere.models.Booking;
-import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.utils.faker.Faker;
@@ -14,8 +14,8 @@ import tech.msociety.terawhere.utils.faker.Faker;
 public class BackendMock {
     private static Faker faker = new Faker();
     
-    public static List<OfferRevamp> getOffers() {
-        List<OfferRevamp> offerRevamps = new ArrayList<>();
+    public static List<Offer> getOffers() {
+        List<Offer> offers = new ArrayList<>();
         
         for (int i = 0; i < 10; i++) {
             Integer offerId = (int) faker.number(1);
@@ -28,11 +28,11 @@ public class BackendMock {
             BackendTimestamp backendTimestamp = BackendTimestampMock.getRandomBackendTimestamp();
             String remarks = faker.words(1);
     
-            OfferRevamp offerRevamp = new OfferRevamp(offerId, offererId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, vacancy, backendTimestamp, remarks);
-            offerRevamps.add(offerRevamp);
+            Offer offer = new Offer(offerId, offererId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, vacancy, backendTimestamp, remarks);
+            offers.add(offer);
         }
         
-        return offerRevamps;
+        return offers;
     }
     
     public static List<Booking> getBookings() {

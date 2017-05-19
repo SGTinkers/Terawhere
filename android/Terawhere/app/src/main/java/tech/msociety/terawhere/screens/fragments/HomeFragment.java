@@ -63,7 +63,7 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
-import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
@@ -314,11 +314,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         
                     GetOffersResponse getOffersResponse = response.body();
                     Log.i("GET_OFFERS", ":" + getOffersResponse.toString());
-                    final List<OfferRevamp> offers = getOffersResponse.getOffers();
+                    final List<Offer> offers = getOffersResponse.getOffers();
                     
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                             new LatLng(latitude, longitude), 16));
-                    final HashMap<LatLng, OfferRevamp> mapLocationOffer = new HashMap<>();
+                    final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
                     for (int i = 0; i < offers.size(); i++) {
                         TerawhereLocation startLocation = offers.get(i).getStartTerawhereLocation();
                         LatLng startLatLng = new LatLng(startLocation.getLatitude(), startLocation.getLongitude());
@@ -336,7 +336,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     
                                 @Override
                                 public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
-                                    final OfferRevamp currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+                                    final Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
                                     Log.i("OFFERDETAILS", ":" + currentOffer.toString());
                                     //if (currentOffer.getDriverId().equals())
                                     if (userId.equals(currentOffer.getOffererId())) {

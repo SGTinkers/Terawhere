@@ -14,15 +14,15 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.HashMap;
 
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.utils.DateUtils;
 
 public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
     private final LayoutInflater mInflater;
-    private HashMap<LatLng, OfferRevamp> mapLocationOffer;
+    private HashMap<LatLng, Offer> mapLocationOffer;
     View popup;
     
-    public CustomInfoViewAdapter(LayoutInflater inflater, HashMap<LatLng, OfferRevamp> map) {
+    public CustomInfoViewAdapter(LayoutInflater inflater, HashMap<LatLng, Offer> map) {
         this.mInflater = inflater;
         mapLocationOffer = map;
     }
@@ -42,8 +42,8 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         final TextView meetUpTimeTextView = (TextView) popup.findViewById(R.id.textViewMeetUpTime);
         final TextView seatsAvailableTextView = (TextView) popup.findViewById(R.id.textViewSeatsAvailable);
         final TextView viewMoreTextView = (TextView) popup.findViewById(R.id.textViewViewMore);
-        
-        OfferRevamp offer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+    
+        Offer offer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
         
         String meetUpTime = DateUtils.toFriendlyDateTimeString(offer.getMeetupTime());
         

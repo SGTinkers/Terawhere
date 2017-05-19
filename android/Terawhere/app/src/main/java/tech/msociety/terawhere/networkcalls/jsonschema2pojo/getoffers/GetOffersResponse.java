@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import tech.msociety.terawhere.models.BackendTimestamp;
-import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.utils.DateUtils;
@@ -31,8 +31,8 @@ public class GetOffersResponse {
         
     }
     
-    public List<OfferRevamp> getOffers() {
-        List<OfferRevamp> offers = new ArrayList<>();
+    public List<Offer> getOffers() {
+        List<Offer> offers = new ArrayList<>();
         
         for (OffersDatum datum : data) {
             TerawhereLocation startTerawhereLocation = new TerawhereLocation(datum.getStartName(), datum.getStartAddr(), datum.getStartLat(), datum.getStartLng(), "geohash");
@@ -45,7 +45,7 @@ public class GetOffersResponse {
             BackendTimestamp backendTimestamp = new BackendTimestamp(dateCreated, dateUpdated, null);
             Date meetupTime = DateUtils.fromMysqlDateTimeString(datum.getMeetupTime());
     
-            OfferRevamp offer = new OfferRevamp(datum.getId(), datum.getUserId(), meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, datum.getVacancy(), backendTimestamp, datum.getRemarks());
+            Offer offer = new Offer(datum.getId(), datum.getUserId(), meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, datum.getVacancy(), backendTimestamp, datum.getRemarks());
             offers.add(offer);
         }
         

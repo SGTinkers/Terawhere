@@ -14,11 +14,11 @@ import android.widget.TextView;
 import java.util.List;
 
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.utils.DateUtils;
 
 public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
-    private List<OfferRevamp> offers;
+    private List<Offer> offers;
     private ViewGroup viewGroup;
     
     @Override
@@ -31,7 +31,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
-        final OfferRevamp offer = offers.get(position);
+        final Offer offer = offers.get(position);
     
         Log.e("SAIFUL", offer.getMeetupTime().toString());
     
@@ -128,7 +128,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         }
     }
     
-    public void setOffers(List<OfferRevamp> offers) {
+    public void setOffers(List<Offer> offers) {
         this.offers = offers;
     }
 }
