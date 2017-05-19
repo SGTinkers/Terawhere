@@ -38,7 +38,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -59,6 +58,7 @@ import tech.msociety.terawhere.adapters.CustomInfoViewAdapter;
 import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
+import tech.msociety.terawhere.maps.ClusterRenderer;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.factories.OfferFactory;
@@ -390,7 +390,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                     }
                                 }
                             });
-                    clusterManager.setRenderer(new DefaultClusterRenderer<>(getContext(), googleMap, clusterManager));
+                    clusterManager.setRenderer(new ClusterRenderer(getContext(), googleMap,
+                            clusterManager));
                     googleMap.setOnInfoWindowClickListener(clusterManager);
                     googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
                     googleMap.setOnMarkerClickListener(clusterManager);
