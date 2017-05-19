@@ -43,8 +43,8 @@ public class AuthorizationRequestInterceptor implements Interceptor {
 
         if (handleTokenExpiry && !response.isSuccessful()) {
             try {
-                Error e = new Gson().fromJson(response.body().charStream(), Error.class);
-                if (e.getError() != null && e.getError().equals("token_expired")) {
+                Error e = new Gson().fromJson(response.body().string(), Error.class);
+                if (e != null && e.getError() != null && e.getError().equals("token_expired")) {
                     retrofit2.Response<Void> responseRefreshToken = TerawhereBackendServer.getAuthApiInstance().refreshToken().execute();
                     if (responseRefreshToken.isSuccessful()) {
                         EventBus.getDefault().post(new LoginEvent());
@@ -52,10 +52,10 @@ public class AuthorizationRequestInterceptor implements Interceptor {
                     } else {
                         throw new TokenInvalidException();
                     }
-                } else if (e.getError().equals("token_invalid")) {
+                } else if (e != null && e.getError() != null && e.getError().equals("token_invalid")) {
                     EventBus.getDefault().post(new TokenInvalidEvent());
                     throw new TokenInvalidException();
-                } else if (e.getError().equals("user_not_found")) {
+                } else if (e != null && e.getError() != null && e.getError().equals("user_not_found")) {
                     EventBus.getDefault().post(new TokenInvalidEvent());
                     throw new TokenInvalidException();
                 }
