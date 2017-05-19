@@ -201,7 +201,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     
     private void initMarkers() {
         final String userId = AppPrefs.with(TerawhereApplication.ApplicationContext).getUserId();
-        
+        Log.i("USER_ID", ":" + userId);
         Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationDatum(latitude, longitude));
         callGetOffers.enqueue(new Callback<GetOffersResponse>() {
             @Override
@@ -235,6 +235,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                 @Override
                                 public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
                                     final Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+                                    Log.i("USER_ID2", ":" + currentOffer.getOffererId());
+
                                     if (userId.equals(currentOffer.getOffererId())) {
                                         viewPager.setCurrentItem(1);
                                     } else {
