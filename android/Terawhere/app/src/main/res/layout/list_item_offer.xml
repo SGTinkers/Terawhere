@@ -16,13 +16,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-
             android:orientation="vertical">
-
 
             <LinearLayout
                 android:id="@+id/offersItemLinearLayout"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -32,12 +29,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/offersItemTextViewDay"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -73,7 +68,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-
                     android:orientation="vertical">
 
                     <TextView
@@ -85,13 +79,10 @@
                         android:text="Destination:"
                         android:textColor="#7e7b7b"
                         android:textSize="13sp"
-                        android:textStyle="normal"
-
-                        />
+                        android:textStyle="normal"/>
 
                     <TextView
                         android:id="@+id/offersItemTextViewStartingLocation"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -99,14 +90,10 @@
                         android:text="Meeting Point:"
                         android:textColor="#7e7b7b"
                         android:textSize="13sp"
-                        android:textStyle="normal"
-
-
-                        />
+                        android:textStyle="normal"/>
 
                     <TextView
                         android:id="@+id/offersItemTextViewMeetUpTime"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -114,13 +101,10 @@
                         android:text="Pick Up Time:"
                         android:textColor="#7e7b7b"
                         android:textSize="13sp"
-                        android:textStyle="normal"
-
-                        />
+                        android:textStyle="normal"/>
 
                     <TextView
                         android:id="@+id/offersItemTextViewSeatsOffered"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -128,13 +112,10 @@
                         android:text="Seats Offered:"
                         android:textColor="#7e7b7b"
                         android:textSize="13sp"
-                        android:textStyle="normal"
-
-                        />
+                        android:textStyle="normal"/>
 
                     <TextView
                         android:id="@+id/offersItemTextViewSeatsLeft"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -142,13 +123,10 @@
                         android:text="Seats Left:"
                         android:textColor="#7e7b7b"
                         android:textSize="13sp"
-                        android:textStyle="normal"
-
-                        />
+                        android:textStyle="normal"/>
 
                     <TextView
                         android:id="@+id/offersItemTextViewRemarks"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -157,22 +135,15 @@
                         android:textColor="#7e7b7b"
                         android:textSize="13sp"
                         android:textStyle="normal"
-                        android:visibility="gone"
-
-                        />
+                        android:visibility="gone"/>
 
 
                 </LinearLayout>
-
             </LinearLayout>
-
-
         </LinearLayout>
-
 
         <TextView
             android:id="@+id/offersItemTextViewDetails"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -182,39 +153,27 @@
             android:textSize="13sp"
             android:textStyle="normal"/>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="30dp"
-
             android:gravity="right"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/offersItemButtonEdit"
-
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginRight="30dp"
-                android:background="@drawable/edit_1"
-
-
-                />
+                android:background="@drawable/edit_1"/>
 
             <ImageButton
                 android:id="@+id/offersItemButtonDelete"
-
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-
-                android:background="@drawable/garbage"
-
-
-                />
+                android:background="@drawable/garbage"/>
 
         </LinearLayout>
-
     </LinearLayout>
 </android.support.v7.widget.CardView>

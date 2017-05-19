@@ -33,7 +33,6 @@ import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
     private List<Offer> offers;
     private ViewGroup viewGroup;
-    private String[] value = new String[]{"Edit", "Delete"};
     
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,7 +53,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         String day = "";
         String month = "";
         try {
-            meetUpTime = new SimpleDateFormat("hh:mm a").format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").parse(offer.getMeetUpTime().toString()));
+            meetUpTime = new SimpleDateFormat("hh:mm a")
+                    .format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss")
+                            .parse(offer.getMeetUpTime())
+                    );
             day = new SimpleDateFormat("dd").format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").parse(offer.getMeetUpTime().toString()));
             month = new SimpleDateFormat("MMMM").format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").parse(offer.getMeetUpTime().toString()));
     
@@ -216,98 +218,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 pbutton.setText("Confirm");
             }
         });
-        //viewHolder.seatsLeftTextView.setText(offer.getSeatsAvailable());
-
-
-
-        /*viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(final View v) {
-                AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(viewGroup.getContext());
-                alertdialogbuilder.setItems(value, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String selectedText = Arrays.asList(value).get(which);
-
-                        if (selectedText.equals("Delete")) {
-                            Log.i("DELETING_INDEX", ":" + offers.get(position).getId());
-
-                            Call<OffersDatum> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getId());
-                            deleteRequest.enqueue(new Callback<OffersDatum>() {
-                                @Override
-                                public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
-                                    if (response.isSuccessful()) {
-                                        Log.i("DELETING: ", Integer.toString(position));
-
-                                        Log.i("DELETED", ": " + response.message());
-                                        offers.remove(position);
-                                        notifyItemRemoved(position);
-                                        notifyItemRangeChanged(position, getItemCount());
-
-                                    } else {
-                                        Log.i("ERROR_DELETE", ": " + response.message());
-
-                                        try {
-                                            Log.i("ERROR_DELETE_MESSAGE", ": " + response.errorBody().string());
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                    }
-                                    // use response.code, response.headers, etc.
-                                }
-
-                                @Override
-                                public void onFailure(Call<OffersDatum> call, Throwable t) {
-                                    // handle failure
-                                }
-                            });
-                        }
-                        if (selectedText.equals("Edit")) {
-                            Intent intent = new Intent(new Intent(viewGroup.getContext(), CreateOfferActivity.class));
-                            intent.putExtra("isEdit", true);
-                            intent.putExtra("id", offer.getId());
-                            intent.putExtra("driverId", offer.getDriverId());
-                            Log.i("DRIVER", ":" + offer.getDriverId());
-                            intent.putExtra("meetUpTime", offer.getMeetUpTime());
-
-                            intent.putExtra("startingLocationName", offer.getStartingLocationName());
-                            intent.putExtra("startingLocationAddress", offer.getStartingLocationAddress());
-                            intent.putExtra("startingLocationLatitude", offer.getStartingLocationLatitude());
-                            intent.putExtra("startingLocationLongitude", offer.getStartingLocationLongitude());
-
-                            intent.putExtra("endingLocationName", offer.getEndingLocationName());
-                            intent.putExtra("endingLocationAddress", offer.getEndingLocationAddress());
-                            intent.putExtra("endingLocationLatitude", offer.getEndingLocationLatitude());
-                            intent.putExtra("endingLocationLongitude", offer.getEndingLocationLongitude());
-
-                            Log.i("LAT2", ":" + offer.getEndingLocationLatitude());
-                            Log.i("LON2", ":" + offer.getEndingLocationLongitude());
-
-                            intent.putExtra("driverRemarks", offer.getDriverRemarks());
-                            intent.putExtra("seatsAvailable", offer.getSeatsAvailable());
-
-                            intent.putExtra("endingLocationAddress", offer.getEndingLocationAddress());
-                            intent.putExtra("endingLocationAddress", offer.getEndingLocationAddress());
-
-                            intent.putExtra("vehicleModel", offer.getVehicleModel());
-                            intent.putExtra("vehicleDescription", offer.getVehicleDescription());
-                            intent.putExtra("vehicleNumber", offer.getVehicleNumber());
-
-                            intent.putExtra("genderPreference", offer.getGenderPreference());
-                            //((Activity) viewGroup.getContext()).finish();
-                            viewGroup.getContext().startActivity(intent);
-                        }
-                    }
-
-                });
-
-                AlertDialog dialog = alertdialogbuilder.create();
-
-                dialog.show();
-                return true;
-            }
-        });*/
     }
     
     @Override
@@ -344,7 +254,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             deleteButton = (ImageButton) view.findViewById(R.id.offersItemButtonDelete);
             detailsTextView = (TextView) view.findViewById(R.id.offersItemTextViewDetails);
             linearLayout = (LinearLayout) view.findViewById(R.id.offersItemLinearLayout);
-            
         }
     }
     

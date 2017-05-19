@@ -1,7 +1,5 @@
 package tech.msociety.terawhere.models;
 
-import java.util.Date;
-
 public class Offer {
     private int id;
     private String driverId;
@@ -25,17 +23,6 @@ public class Offer {
     private String vehicleNumber;
     private String vehicleDescription;
     private String vehicleModel;
-    
-    public Offer(int id, String driverId, String destination, Integer numberOfSeats, Date timestamp, String remarks, String vehicleColor, String vehiclePlateNumber) {
-        this.id = id;
-        this.driverId = driverId;
-        this.endingLocationName = destination;
-        this.seatsAvailable = numberOfSeats;
-        this.meetUpTime = timestamp.toString();
-        this.driverRemarks = remarks;
-        this.vehicleDescription = vehicleColor;
-        this.vehicleNumber = vehiclePlateNumber;
-    }
     
     public Offer(int id, String userId, String meetupTime, String startAddr, String startName, double startingLocationLatitude, double startingLocationLongitude, String endName, String endAddr, double endingLocationLatitude, double endingLocationLongitude, int vacancy, String vehicleModel, String vehicleNumber, String remarks, String genderPreference, String vehicleDesc) {
         this.id = id;
