@@ -68,21 +68,6 @@ public class OffersDatum {
     @Expose
     private String updatedAt;
 
-    public OffersDatum(String meetupTime, String startName, String startAddr, double startLat, double startLng, String endName, String endAddr, double endLat, double endLng, int vacancy, String vehicleNumber, String vehicleModel) {
-        this.meetupTime = meetupTime;
-        this.startName = startName;
-        this.startAddr = startAddr;
-        this.startLat = startLat;
-        this.startLng = startLng;
-        this.endName = endName;
-        this.endAddr = endAddr;
-        this.endLat = endLat;
-        this.endLng = endLng;
-        this.vacancy = vacancy;
-        this.vehicleNumber = vehicleNumber;
-        this.vehicleModel = vehicleModel;
-    }
-
     public OffersDatum(String meetupTime, String startName, String startAddr, double startLat, double startLng, String endName, String endAddr, double endLat, double endLng, int vacancy, String remarks, int status, String prefGender, String vehicleNumber, String vehicleDesc, String vehicleModel) {
         this.meetupTime = meetupTime;
         this.startName = startName;
@@ -195,32 +180,5 @@ public class OffersDatum {
 
     public String getUpdatedAt() {
         return updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Datum{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", meetupTime='" + meetupTime + '\'' +
-                ", startName='" + startName + '\'' +
-                ", startAddr='" + startAddr + '\'' +
-                ", startLat=" + startLat +
-                ", startLng=" + startLng +
-                ", endName='" + endName + '\'' +
-                ", endAddr='" + endAddr + '\'' +
-                ", endLat=" + endLat +
-                ", endLng=" + endLng +
-                ", vacancy=" + vacancy +
-                ", remarks=" + remarks +
-                ", status=" + status +
-                ", prefGender=" + prefGender +
-                ", vehicleNumber='" + vehicleNumber + '\'' +
-                ", vehicleDesc=" + vehicleDesc +
-                ", vehicleModel='" + vehicleModel + '\'' +
-                ", deletedAt=" + deletedAt +
-                ", createdAt='" + createdAt + '\'' +
-                ", updatedAt='" + updatedAt + '\'' +
-                '}';
     }
 }

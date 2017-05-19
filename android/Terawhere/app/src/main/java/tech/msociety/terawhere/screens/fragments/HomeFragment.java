@@ -65,6 +65,7 @@ import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
+import tech.msociety.terawhere.models.factories.OfferFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
@@ -314,7 +315,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         
                     GetOffersResponse getOffersResponse = response.body();
                     Log.i("GET_OFFERS", ":" + getOffersResponse.toString());
-                    final List<Offer> offers = getOffersResponse.getOffers();
+                    List<Offer> offers = OfferFactory.createFromResponse(getOffersResponse);
                     
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                             new LatLng(latitude, longitude), 16));
@@ -343,24 +344,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                         viewPager.setCurrentItem(1);
                                     } else {
                                         final AlertDialog.Builder adb = new AlertDialog.Builder(context);
-            
+    
                                         final LayoutInflater inflater = getActivity().getLayoutInflater();
                                         final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
                                         adb.setView(dialogView);
-            
+    
                                         final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
                                         TextView dialogStartingLocation = (TextView) dialogView.findViewById(R.id.dialogTextViewStartingLocation);
-            
+    
                                         TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogTextViewEndingLocation);
                                         TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogTextViewRemarks);
                                         TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTextViewMeetUpTime);
                                         TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogTextViewSeatsAvailable);
                                         TextView dialogMonth = (TextView) dialogView.findViewById(R.id.dialogTextViewMonth);
                                         TextView dialogDay = (TextView) dialogView.findViewById(R.id.dialogTextViewDay);
-            
+    
                                         if (currentOffer.getRemarks().matches("")) {
                                             dialogRemarks.setText("Remarks: NIL");
-                
+        
                                         } else {
                                             dialogRemarks.setText("Remarks: " + currentOffer.getRemarks());
                                         }
@@ -374,7 +375,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                         }
                                         dialogDay.setText(day);
                                         dialogMonth.setText(month);
-            
+    
                                         dialogSeatsAvailable.setText("Seats Left: " + Integer.toString(currentOffer.getVacancy()));
                                         
                                         List<String> categories = new ArrayList<String>();
@@ -401,10 +402,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                 return view;
                                             }
                                         };
-            
+    
                                         spinner.setAdapter(dataAdapter);
                                         spinner.setOnItemSelectedListener(new OnSpinnerItemClicked());
-            
+    
                                         adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
     
@@ -488,7 +489,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     
                                             }
                                         });
-            
+    
                                         adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 dialog.dismiss();
@@ -503,7 +504,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                                         pbutton.setTextColor(Color.parseColor("#54d8bd"));
                                         pbutton.setText("Confirm");
-            
+    
                                     }
                                 }
                             });

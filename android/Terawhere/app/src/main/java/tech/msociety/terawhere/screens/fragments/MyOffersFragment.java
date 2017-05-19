@@ -27,6 +27,7 @@ import tech.msociety.terawhere.events.GetOffersHasFinishedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Offer;
+import tech.msociety.terawhere.models.factories.OfferFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
@@ -83,7 +84,7 @@ public class MyOffersFragment extends BaseFragment {
                 progressDialog.cancel();
                 if (response.isSuccessful()) {
                     GetOffersResponse getOffersResponse = response.body();
-                    List<Offer> offers = getOffersResponse.getOffers();
+                    List<Offer> offers = OfferFactory.createFromResponse(getOffersResponse);
                     EventBus.getDefault().post(new GetOffersHasFinishedEvent(offers));
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
