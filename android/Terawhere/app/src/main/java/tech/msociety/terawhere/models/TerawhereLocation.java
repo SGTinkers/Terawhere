@@ -1,13 +1,13 @@
 package tech.msociety.terawhere.models;
 
-public class Location {
+public class TerawhereLocation {
     private String name;
     private String address;
     private Double latitude;
     private Double longitude;
     private String geohash;
     
-    public Location(String name, String address, Double latitude, Double longitude, String geohash) {
+    public TerawhereLocation(String name, String address, Double latitude, Double longitude, String geohash) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;

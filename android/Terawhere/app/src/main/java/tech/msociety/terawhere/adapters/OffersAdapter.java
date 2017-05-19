@@ -39,8 +39,8 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
     
-        viewHolder.endingLocationTextView.setText("Destination: " + offer.getEndLocation().getAddress());
-        viewHolder.startingLocationTextView.setText("Meeting Point: " + offer.getStartLocation().getAddress());
+        viewHolder.endingLocationTextView.setText("Destination: " + offer.getEndTerawhereLocation().getAddress());
+        viewHolder.startingLocationTextView.setText("Meeting Point: " + offer.getStartTerawhereLocation().getAddress());
         viewHolder.meetUpTimeTextView.setText("Pick Up Time: " + meetUpTime);
         viewHolder.dayTextView.setText(day);
         viewHolder.monthTextView.setText(month);

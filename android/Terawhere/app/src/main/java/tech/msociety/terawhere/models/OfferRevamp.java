@@ -6,19 +6,19 @@ public class OfferRevamp {
     private Integer offerId;
     private String offererId;
     private Date meetupTime;
-    private Location startLocation;
-    private Location endLocation;
+    private TerawhereLocation startTerawhereLocation;
+    private TerawhereLocation endTerawhereLocation;
     private Vehicle vehicle;
     private Integer vacancy;
     private BackendTimestamp backendTimestamp;
     private String remarks;
     
-    public OfferRevamp(Integer offerId, String offererId, Date meetupTime, Location startLocation, Location endLocation, Vehicle vehicle, Integer vacancy, BackendTimestamp backendTimestamp, String remarks) {
+    public OfferRevamp(Integer offerId, String offererId, Date meetupTime, TerawhereLocation startTerawhereLocation, TerawhereLocation endTerawhereLocation, Vehicle vehicle, Integer vacancy, BackendTimestamp backendTimestamp, String remarks) {
         this.offerId = offerId;
         this.offererId = offererId;
         this.meetupTime = meetupTime;
-        this.startLocation = startLocation;
-        this.endLocation = endLocation;
+        this.startTerawhereLocation = startTerawhereLocation;
+        this.endTerawhereLocation = endTerawhereLocation;
         this.vehicle = vehicle;
         this.vacancy = vacancy;
         this.backendTimestamp = backendTimestamp;
@@ -37,12 +37,12 @@ public class OfferRevamp {
         return meetupTime;
     }
     
-    public Location getStartLocation() {
-        return startLocation;
+    public TerawhereLocation getStartTerawhereLocation() {
+        return startTerawhereLocation;
     }
     
-    public Location getEndLocation() {
-        return endLocation;
+    public TerawhereLocation getEndTerawhereLocation() {
+        return endTerawhereLocation;
     }
     
     public Vehicle getVehicle() {

@@ -11,33 +11,28 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.models.Offer;
-
-/**
- * Created by musa on 4/5/17.
- */
+import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.utils.DateUtils;
 
 public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
     private final LayoutInflater mInflater;
-    private HashMap<LatLng, Offer> mapLocationOffer;
+    private HashMap<LatLng, OfferRevamp> mapLocationOffer;
     View popup;
-
-    public CustomInfoViewAdapter(LayoutInflater inflater, HashMap<LatLng, Offer> map) {
+    
+    public CustomInfoViewAdapter(LayoutInflater inflater, HashMap<LatLng, OfferRevamp> map) {
         this.mInflater = inflater;
         mapLocationOffer = map;
     }
-
+    
     @Override
     public View getInfoWindow(Marker marker) {
-
+        
         return null;
     }
-
+    
     @Override
     public View getInfoContents(Marker marker) {
         popup = mInflater.inflate(R.layout.custom_info_window, null);
@@ -47,27 +42,19 @@ public class CustomInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         final TextView meetUpTimeTextView = (TextView) popup.findViewById(R.id.textViewMeetUpTime);
         final TextView seatsAvailableTextView = (TextView) popup.findViewById(R.id.textViewSeatsAvailable);
         final TextView viewMoreTextView = (TextView) popup.findViewById(R.id.textViewViewMore);
-
-        Offer objOffer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-
-
-        String meetUpTime = "";
-        try {
-            meetUpTime = new SimpleDateFormat("hh:mm a").format(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").parse(objOffer.getMeetUpTime().toString()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        startingLocationTextView.setText(Html.fromHtml("<b>Meeting point:</b>" + "<br/>" + objOffer.getStartingLocationAddress()));
-        endingLocationTextView.setText((Html.fromHtml("<b>Destination:</b>" + "<br/>" + objOffer.getEndingLocationAddress())));
+        
+        OfferRevamp offer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+        
+        String meetUpTime = DateUtils.toFriendlyDateTimeString(offer.getMeetupTime());
+        
+        startingLocationTextView.setText(Html.fromHtml("<b>Meeting point:</b>" + "<br/>" + offer.getStartTerawhereLocation().getAddress()));
+        endingLocationTextView.setText((Html.fromHtml("<b>Destination:</b>" + "<br/>" + offer.getEndTerawhereLocation().getAddress())));
         meetUpTimeTextView.setText((Html.fromHtml("<b>Pick Up Time:</b>" + "<br/>" + meetUpTime)));
-        seatsAvailableTextView.setText((Html.fromHtml("<b>Seats Left: </b>" + "<br/>" + Integer.toString(objOffer.getSeatsAvailable()))));
+        seatsAvailableTextView.setText((Html.fromHtml("<b>Seats Left: </b>" + "<br/>" + Integer.toString(offer.getVacancy()))));
         SpannableString content = new SpannableString("VIEW MORE");
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         viewMoreTextView.setText(content);
-
-
-
+        
         return popup;
     }
 }

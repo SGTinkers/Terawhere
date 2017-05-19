@@ -6,8 +6,8 @@ import java.util.List;
 
 import tech.msociety.terawhere.models.BackendTimestamp;
 import tech.msociety.terawhere.models.Booking;
-import tech.msociety.terawhere.models.Location;
 import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.utils.faker.Faker;
 
@@ -21,14 +21,14 @@ public class BackendMock {
             Integer offerId = (int) faker.number(1);
             String offererId = faker.words(1);
             Date meetupTime = new Date();
-            Location startLocation = LocationMock.getRandomLocation();
-            Location endLocation = LocationMock.getRandomLocation();
+            TerawhereLocation startTerawhereLocation = LocationMock.getRandomLocation();
+            TerawhereLocation endTerawhereLocation = LocationMock.getRandomLocation();
             Vehicle vehicle = VehicleMock.getRandomVehicle();
             Integer vacancy = (int) faker.number(1);
             BackendTimestamp backendTimestamp = BackendTimestampMock.getRandomBackendTimestamp();
             String remarks = faker.words(1);
     
-            OfferRevamp offerRevamp = new OfferRevamp(offerId, offererId, meetupTime, startLocation, endLocation, vehicle, vacancy, backendTimestamp, remarks);
+            OfferRevamp offerRevamp = new OfferRevamp(offerId, offererId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, vacancy, backendTimestamp, remarks);
             offerRevamps.add(offerRevamp);
         }
         
