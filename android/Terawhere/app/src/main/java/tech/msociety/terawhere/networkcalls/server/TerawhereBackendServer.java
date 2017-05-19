@@ -76,7 +76,7 @@ public class TerawhereBackendServer {
         @GET("api/v1/auth/refresh")
         Call<Void> refreshToken();
 
-        @POST("api/v1/store-device-token")
+        @POST("api/v1/devices")
         Call<StoreDeviceToken> storeDeviceToken(@Body DeviceTokenDatum deviceToken);
 
         @GET("api/v1/me")
@@ -85,7 +85,7 @@ public class TerawhereBackendServer {
         @GET("api/v1/offers-for-user")
         Call<GetOffersResponse> getOffers();
 
-        @GET("api/v1/bookings-for-user")
+        @GET("api/v1/users/me/bookings")
         Call<GetBookings> getAllBookings();
 
         @POST("api/v1/nearby-offers")
