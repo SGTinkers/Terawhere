@@ -18,34 +18,56 @@
         <ImageView
             android:id="@+id/image_view_terawhere_logo"
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="@dimen/activity_vertical_margin_sextuplet"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="142dp"
             android:contentDescription="@string/accessibility_terawhere_logo"
-            android:src="@drawable/terawhere_landing_page_logo"/>
+
+            android:src="@drawable/logo"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/text_view_welcome_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="#ffffff"
+            android:gravity="center_horizontal"
+            android:layout_below="@id/image_view_terawhere_logo"
+            android:text="Welcome to Terawhere"
+            android:layout_marginTop="15dp"
+
+            android:layout_centerInParent="true"
+
+
+            />
 
         <TextView
             android:id="@+id/text_view_tagline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_view_terawhere_logo"
+            android:layout_below="@id/text_view_welcome_message"
             android:layout_marginTop="26dp"
             android:gravity="center_horizontal"
+
             android:text="@string/terawhere_tagline"
             android:textColor="@color/white"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/button_facebook_login"
-            android:background="@drawable/btn_fb_login"
-            android:layout_width="match_parent"
+            android:src="@drawable/btn_fb_login"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/text_view_tagline"
             android:layout_gravity="center_vertical"
+            android:layout_centerInParent="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginTop="40dp" />
+            android:layout_marginTop="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+
+            />
 
         <TextView
             android:id="@+id/text_view_terms_and_conditions"

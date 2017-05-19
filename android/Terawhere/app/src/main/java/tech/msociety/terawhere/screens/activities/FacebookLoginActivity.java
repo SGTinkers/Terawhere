@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -32,7 +32,7 @@ import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 
 public class FacebookLoginActivity extends BaseActivity {
     private CallbackManager callbackManager;
-    private Button loginButton;
+    private ImageButton loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class FacebookLoginActivity extends BaseActivity {
             return;
         }
 
-        loginButton = (Button) findViewById(R.id.button_facebook_login);
+        loginButton = (ImageButton) findViewById(R.id.button_facebook_login);
 
         callbackManager = CallbackManager.Factory.create();
 
