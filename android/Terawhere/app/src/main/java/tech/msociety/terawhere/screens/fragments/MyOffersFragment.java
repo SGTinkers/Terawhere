@@ -26,8 +26,8 @@ import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.events.GetOffersHasFinishedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
-import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
+import tech.msociety.terawhere.models.OfferRevamp;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
@@ -76,14 +76,14 @@ public class MyOffersFragment extends BaseFragment {
     private void getOffersFromServer() {
         progressDialog.setMessage("Getting offers...");
         progressDialog.show();
-        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getOffers();
-        callGetOffers.enqueue(new Callback<GetOffers>() {
+        Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getOffers();
+        callGetOffers.enqueue(new Callback<GetOffersResponse>() {
             @Override
-            public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {
+            public void onResponse(Call<GetOffersResponse> call, Response<GetOffersResponse> response) {
                 progressDialog.cancel();
                 if (response.isSuccessful()) {
-                    GetOffers getOffers = response.body();
-                    List<Offer> offers = getOffers.getOffers();
+                    GetOffersResponse getOffersResponse = response.body();
+                    List<OfferRevamp> offers = getOffersResponse.getOffers();
                     EventBus.getDefault().post(new GetOffersHasFinishedEvent(offers));
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
@@ -91,7 +91,7 @@ public class MyOffersFragment extends BaseFragment {
             }
     
             @Override
-            public void onFailure(Call<GetOffers> call, Throwable t) {
+            public void onFailure(Call<GetOffersResponse> call, Throwable t) {
                 progressDialog.cancel();
                 EventBus.getDefault().post(new ResponseNotSuccessfulEvent(t));
             }

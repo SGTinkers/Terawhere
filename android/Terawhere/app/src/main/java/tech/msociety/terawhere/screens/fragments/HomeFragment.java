@@ -67,7 +67,7 @@ import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffers;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -304,10 +304,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         Log.i("LATITUDE", Double.toString(latitude));
         Log.i("LONGITUDE", Double.toString(longitude));
         LocationDatum locationDatum = new LocationDatum(latitude, longitude);
-        Call<GetOffers> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationDatum(latitude, longitude));
-        callGetOffers.enqueue(new Callback<GetOffers>() {
+        Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationDatum(latitude, longitude));
+        callGetOffers.enqueue(new Callback<GetOffersResponse>() {
             @Override
-            public void onResponse(Call<GetOffers> call, Response<GetOffers> response) {
+            public void onResponse(Call<GetOffersResponse> call, Response<GetOffersResponse> response) {
 
                 if (response.isSuccessful()) {
                     final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>(context, googleMap);
@@ -316,10 +316,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                     googleMap.setOnCameraIdleListener(clusterManager);
                     googleMap.getUiSettings().setMapToolbarEnabled(true);
                     googleMap.getUiSettings().setZoomControlsEnabled(true);
-
-                    GetOffers getOffers = response.body();
-                    Log.i("GET_OFFERS", ":" + getOffers.toString());
-                    final List<Offer> offers = getOffers.getOffers();
+    
+                    GetOffersResponse getOffersResponse = response.body();
+                    Log.i("GET_OFFERS", ":" + getOffersResponse.toString());
+//                    final List<Offer> offers = getOffersResponse.getOffers();
+                    final List<Offer> offers = new ArrayList<>();
 
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                             new LatLng(latitude, longitude), 16));
@@ -557,7 +558,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
             }
 
             @Override
-            public void onFailure(Call<GetOffers> call, Throwable t) {
+            public void onFailure(Call<GetOffersResponse> call, Throwable t) {
                 System.out.println(Arrays.toString(t.getStackTrace()));
 
             }

@@ -60,7 +60,7 @@ public class OffersDatum {
     private String vehicleModel;
     @SerializedName("deleted_at")
     @Expose
-    private Object deletedAt;
+    private String deletedAt;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -184,8 +184,8 @@ public class OffersDatum {
     public String getVehicleModel() {
         return vehicleModel;
     }
-
-    public Object getDeletedAt() {
+    
+    public String getDeletedAt() {
         return deletedAt;
     }
 

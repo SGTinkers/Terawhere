@@ -9,13 +9,17 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class DateUtils {
-    private static final String FRIENDLY_DATE_FORMAT = "dd MMM yyyy";
-    private static final String FRIENDLY_TIME_FORMAT = "KK:mm a";
-    private static final String FRIENDLY_DATE_TIME_FORMAT = "dd MMM yyyy, KK:mm:ss a";
-
-    private static final SimpleDateFormat friendlyDateFormatter = new SimpleDateFormat(FRIENDLY_DATE_FORMAT, Locale.UK);
-    private static final SimpleDateFormat friendlyTimeFormatter = new SimpleDateFormat(FRIENDLY_TIME_FORMAT, Locale.UK);
-    private static final SimpleDateFormat friendlyDateTimeFormatter = new SimpleDateFormat(FRIENDLY_DATE_TIME_FORMAT, Locale.UK);
+    public static final String MYSQL_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String FRIENDLY_DATE_FORMAT = "dd MMM yyyy";
+    public static final String FRIENDLY_TIME_FORMAT = "KK:mm a";
+    public static final String FRIENDLY_DATE_TIME_FORMAT = "dd MMM yyyy, KK:mm:ss a";
+    public static final String DAY_OF_MONTH_FORMAT = "dd";
+    public static final String MONTH_ABBREVIATED_FORMAT = "MMMM";
+    public static final Locale LOCALE = Locale.UK;
+    
+    private static final SimpleDateFormat friendlyDateFormatter = new SimpleDateFormat(FRIENDLY_DATE_FORMAT, LOCALE);
+    private static final SimpleDateFormat friendlyTimeFormatter = new SimpleDateFormat(FRIENDLY_TIME_FORMAT, LOCALE);
+    private static final SimpleDateFormat friendlyDateTimeFormatter = new SimpleDateFormat(FRIENDLY_DATE_TIME_FORMAT, LOCALE);
 
     private static SimpleDateFormat getLocalizedFormatter(SimpleDateFormat simpleDateFormat) {
         simpleDateFormat = (SimpleDateFormat) simpleDateFormat.clone();
@@ -82,6 +86,11 @@ public class DateUtils {
     public static String toFriendlyTimeString(Date date) {
         return getLocalizedFormatter(friendlyTimeFormatter).format(date);
     }
+    
+    public static String toString(Date date, String pattern) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
+        return simpleDateFormat.format(date);
+    }
 
     public static Date fromFriendlyTimeString(String timeString) throws ParseException {
         return friendlyTimeFormatter.parse(timeString);
@@ -97,5 +106,19 @@ public class DateUtils {
 
     public static boolean dateIsInThePast(Date date) {
         return (date.getTime() < (new Date()).getTime());
+    }
+    
+    public static Date fromMysqlDateTimeString(String mysqlDateTimeString) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(MYSQL_DATE_TIME_FORMAT, LOCALE);
+        
+        Date date = null;
+        
+        try {
+            date = simpleDateFormat.parse(mysqlDateTimeString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
+        return date;
     }
 }
