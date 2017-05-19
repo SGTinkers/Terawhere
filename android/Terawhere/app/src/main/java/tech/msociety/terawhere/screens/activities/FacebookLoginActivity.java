@@ -19,8 +19,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.TerawhereApplication;
+import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 
@@ -54,11 +57,8 @@ public class FacebookLoginActivity extends BaseActivity {
                     public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
                         Log.d("FacebookLoginActivity", "Server Token: " + response.body().getToken());
                         Constants.setBearerToken(response.body().getToken());
-                        Toast.makeText(getApplicationContext(), R.string.welcome_to_terawhere, Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(FacebookLoginActivity.this, MainActivity.class);
-                        startActivity(i);
-                        loginButton.setEnabled(true);
-                        finish();
+    
+                        getUserDetails();
                     }
 
                     @Override
@@ -94,25 +94,42 @@ public class FacebookLoginActivity extends BaseActivity {
             }
         });
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-    
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-    
-    protected void onStop() {
-        super.onStop();
-    }
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
+    
+    private void getUserDetails() {
+        TerawhereBackendServer.getApiInstance().getStatus().enqueue(new Callback<GetUserDetailsResponse>() {
+            @Override
+            public void onResponse(Call<GetUserDetailsResponse> call, Response<GetUserDetailsResponse> response) {
+                if (response.isSuccessful()) {
+                    GetUserDetailsResponse getUserDetailsResponse = response.body();
+                    
+                    AppPrefs.with(TerawhereApplication.ApplicationContext).setUserId(getUserDetailsResponse.user.id);
+                    AppPrefs.with(TerawhereApplication.ApplicationContext).setUserName(getUserDetailsResponse.user.name);
+                    AppPrefs.with(TerawhereApplication.ApplicationContext).setUserEmail(getUserDetailsResponse.user.email);
+                    
+                    goToMainActivity();
+                } else {
+                    Log.e("SAIFUL", "network call not successful");
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<GetUserDetailsResponse> call, Throwable t) {
+                Log.e("SAIFUL", "network call not successful", t);
+            }
+        });
+    }
+    
+    private void goToMainActivity() {
+        Toast.makeText(getApplicationContext(), R.string.welcome_to_terawhere, Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(FacebookLoginActivity.this, MainActivity.class);
+        startActivity(i);
+        loginButton.setEnabled(true);
+        finish();
+    }
 }

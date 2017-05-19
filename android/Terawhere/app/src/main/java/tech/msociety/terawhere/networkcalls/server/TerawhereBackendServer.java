@@ -23,7 +23,7 @@ import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingD
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
@@ -80,22 +80,17 @@ public class TerawhereBackendServer {
         Call<StoreDeviceToken> storeDeviceToken(@Body DeviceTokenDatum deviceToken);
 
         @GET("api/v1/me")
-        Call<GetUser> getStatus();
+        Call<GetUserDetailsResponse> getStatus();
 
         @GET("api/v1/offers-for-user")
         Call<GetOffersResponse> getOffers();
 
-        @GET("api/v1/offers")
-        Call<GetOffersResponse> getAllOffers();
-
         @GET("api/v1/bookings-for-user")
         Call<GetBookings> getAllBookings();
 
-
         @POST("api/v1/nearby-offers")
         Call<GetOffersResponse> getNearbyOffers(@Body LocationDatum location);
-
-
+    
         @POST("api/v1/offers")
         Call<OffersDatum> createOffer(@Body OffersDatum offers);
 
