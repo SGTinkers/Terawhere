@@ -2,6 +2,7 @@ package tech.msociety.terawhere.screens.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,13 +31,16 @@ import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 
 public class MyBookingsFragment extends BaseFragment {
     private BookingsAdapter bookingsAdapter;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.needsProgressDialog = true;
         this.needsEventBus = true;
         setHasOptionsMenu(false);
-        return inflater.inflate(R.layout.fragment_my_bookings, container, false);
+        View view = inflater.inflate(R.layout.fragment_my_bookings, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        return view;
     }
     
     @Override
@@ -48,6 +52,15 @@ public class MyBookingsFragment extends BaseFragment {
     }
     
     private void initRecyclerView() {
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorTerawherePrimary);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getBookingsFromServer();
+            }
+        });
+
         RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyBookings);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -58,13 +71,12 @@ public class MyBookingsFragment extends BaseFragment {
     }
     
     private void getBookingsFromServer() {
-        progressDialog.setMessage("Getting bookings...");
-        progressDialog.show();
+        swipeRefreshLayout.setRefreshing(true);
+
         Call<GetBookings> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookings();
         callGetBookings.enqueue(new Callback<GetBookings>() {
             @Override
             public void onResponse(Call<GetBookings> call, Response<GetBookings> response) {
-                progressDialog.cancel();
                 if (response.isSuccessful()) {
                     GetBookings getBookings = response.body();
                     List<Booking> bookings = getBookings.getBookings();
@@ -72,23 +84,23 @@ public class MyBookingsFragment extends BaseFragment {
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
+
+                swipeRefreshLayout.setRefreshing(false);
             }
     
             @Override
             public void onFailure(Call<GetBookings> call, Throwable t) {
-                progressDialog.cancel();
                 EventBus.getDefault().post(new ResponseNotSuccessfulEvent(t));
             }
         });
     }
-    
+
     @Subscribe
     public void populateRecyclerView(GetBookingsHasFinishedEvent event) {
-        progressDialog.cancel();
         bookingsAdapter.setBookings(event.getBookings());
         bookingsAdapter.notifyDataSetChanged();
     }
-    
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
         Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());

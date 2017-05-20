@@ -51,7 +51,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="15dp"
-            android:background="@color/color_terawhere_primary"
+            android:background="@color/colorTerawherePrimary"
             android:text="OK"
             android:textColor="#ffffff"
             android:textSize="17sp"

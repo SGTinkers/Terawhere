@@ -7,8 +7,9 @@
     <color name="colorCardViewText">#19535F</color>
     <color name="colorCardViewTextRed">#ff0000</color>
     <color name="white">#ffffff</color>
-    <color name="color_terawhere_primary">#54d8bd</color>
-    <color name="color_terawhere_primary_dark">#3ea28e</color>
+    <color name="colorTerawherePrimary">#54d8bd</color>
+    <color name="colorTerawherePrimaryDark">#3ea28e</color>
+    <color name="colorTerawhereSecondary">#8cffef</color>
     <color name="color_hard_black">#000000</color>
     <color name="color_soft_black">#666666</color>
 </resources>

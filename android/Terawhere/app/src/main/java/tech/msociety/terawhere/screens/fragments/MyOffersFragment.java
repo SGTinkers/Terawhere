@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,13 +36,17 @@ import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 
 public class MyOffersFragment extends BaseFragment {
     private static final int REQUEST_CODE = 1;
+
     private OffersAdapter offersAdapter;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.needsProgressDialog = true;
         this.needsEventBus = true;
-        return inflater.inflate(layout.fragment_my_offers, container, false);
+        View view = inflater.inflate(layout.fragment_my_offers, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        return view;
     }
     
     @Override
@@ -65,6 +70,15 @@ public class MyOffersFragment extends BaseFragment {
     }
     
     private void initRecyclerView() {
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorTerawherePrimary);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getOffersFromServer();
+            }
+        });
+
         RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyOffers);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -75,13 +89,12 @@ public class MyOffersFragment extends BaseFragment {
     }
     
     private void getOffersFromServer() {
-        progressDialog.setMessage("Getting offers...");
-        progressDialog.show();
+        swipeRefreshLayout.setRefreshing(true);
+
         Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getOffers();
         callGetOffers.enqueue(new Callback<GetOffersResponse>() {
             @Override
             public void onResponse(Call<GetOffersResponse> call, Response<GetOffersResponse> response) {
-                progressDialog.cancel();
                 if (response.isSuccessful()) {
                     GetOffersResponse getOffersResponse = response.body();
                     List<Offer> offers = OfferFactory.createFromResponse(getOffersResponse);
@@ -89,23 +102,23 @@ public class MyOffersFragment extends BaseFragment {
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
+
+                swipeRefreshLayout.setRefreshing(false);
             }
     
             @Override
             public void onFailure(Call<GetOffersResponse> call, Throwable t) {
-                progressDialog.cancel();
                 EventBus.getDefault().post(new ResponseNotSuccessfulEvent(t));
             }
         });
     }
-    
+
     @Subscribe
     public void populateRecyclerView(GetOffersHasFinishedEvent event) {
-        progressDialog.cancel();
         offersAdapter.setOffers(event.getOffers());
         offersAdapter.notifyDataSetChanged();
     }
-    
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
         Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());
