@@ -73,46 +73,7 @@
         <requestFocus />
 
 
-        <EditText
-            android:id="@+id/startingLocationNameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/pickUpTimePicker"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="18dp"
-            android:layout_marginLeft="30dp"
-            android:background="@drawable/ripple_effect_edit_text"
 
-            android:layout_marginTop="30dp"
-
-            android:layout_marginRight="30dp"
-            android:ems="10"
-            android:hint="E.g Carpark of Blk 58"
-            android:imeOptions="actionNext"
-            android:inputType="text"
-
-            />
-
-
-        <EditText
-            android:id="@+id/endingLocationNameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/startingLocationNameEditText"
-            android:layout_centerInParent="true"
-            android:background="@drawable/ripple_effect_edit_text"
-            android:layout_marginTop="30dp"
-
-            android:layout_marginBottom="18dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:ems="10"
-            android:hint="E.g Foyer of Assyafaah Mosque"
-            android:imeOptions="actionNext"
-            android:inputType="text"
-
-
-            />
 
 
         <EditText
@@ -120,7 +81,7 @@
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content"
-            android:layout_below="@id/endingLocationNameEditText"
+            android:layout_below="@id/pickUpTimePicker"
             android:layout_centerInParent="true"
             android:background="@drawable/ripple_effect_edit_text"
             android:layout_marginTop="70dp"
