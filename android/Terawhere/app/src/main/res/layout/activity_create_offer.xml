@@ -61,19 +61,22 @@
             android:textStyle="italic" />
 
 
-        <TimePicker
-            android:id="@+id/pickUpTimePicker"
+        <EditText
+            android:id="@+id/meetUpTimeEditText"
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
             android:layout_below="@id/endingLocationTextView"
-            android:background="@android:color/transparent"
+            android:layout_centerInParent="true"
+            android:background="@drawable/ripple_effect_edit_text"
+            android:layout_marginTop="20dp"
 
-            android:timePickerMode="spinner" />
-
-        <requestFocus />
-
-
-
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:ems="10"
+            android:hint="Meet Up Time"
+            android:imeOptions="actionNext"
+            android:focusable="false" />
 
 
         <EditText
@@ -81,12 +84,11 @@
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content"
-            android:layout_below="@id/pickUpTimePicker"
+            android:layout_below="@id/meetUpTimeEditText"
             android:layout_centerInParent="true"
             android:background="@drawable/ripple_effect_edit_text"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="20dp"
 
-            android:layout_marginBottom="18dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:ems="10"

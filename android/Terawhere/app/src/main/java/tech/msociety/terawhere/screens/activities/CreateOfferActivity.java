@@ -1,6 +1,7 @@
 package tech.msociety.terawhere.screens.activities;
 
 import android.Manifest;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -116,7 +117,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private EditText editTextStartingLocationName;
     private EditText editTextEndingLocationName;
     private EditText editTextVehicleModel;
-
+    private EditText editTextMeetUpTime;
     private TimePicker timePickerMeetUpTime;
     private GoogleApiClient googleApiClient;
 
@@ -133,15 +134,14 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         startingLocationTextViewListener();
         endingLocationTextViewListener();
 
+        initializeMeetUpTimeEditText();
         initializeStartingLocationTextView();
         initializeEndingLocationTextView();
         initializeSeatsAvailableEditText();
         initializeRemarksEditText();
         initialializeVehicleDescriptionEditText(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.colors_array)));
-        initializeStartingLocationNameEditText();
-        initializeEndingLocationNameEditText();
+
         initializeVehicleModelEditText();
-        initializeMeetUpTimePicker();
         initializeVehicleNumberEditText();
 
 
@@ -192,6 +192,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             setCreateOfferButton();
         }
     }
+
 
     private void initializeOfferId(Intent intent) {
         offerId = intent.getExtras().getInt(OFFER_ID);
@@ -303,21 +304,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
     }
 
-    private void initializeMeetUpTimePicker() {
-        timePickerMeetUpTime = (TimePicker) findViewById(R.id.pickUpTimePicker);
-    }
 
     private void initializeVehicleModelEditText() {
         editTextVehicleModel = (EditText) findViewById(R.id.vehicleModelEditText);
     }
 
-    private void initializeEndingLocationNameEditText() {
-        editTextEndingLocationName = (EditText) findViewById(R.id.endingLocationNameEditText);
-    }
-
-    private void initializeStartingLocationNameEditText() {
-        editTextStartingLocationName = (EditText) findViewById(R.id.startingLocationNameEditText);
-    }
 
     private void initialializeVehicleDescriptionEditText(ArrayAdapter<String> adapter) {
         editTextVehicleDescription = (AutoCompleteTextView) findViewById(R.id.vehicleDescriptionEditText);
@@ -339,6 +330,46 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
     private void initializeStartingLocationTextView() {
         textViewStartingLocation = (TextView) findViewById(R.id.locationTextView);
+    }
+
+    private void initializeMeetUpTimeEditText() {
+        editTextMeetUpTime = (EditText) findViewById(R.id.meetUpTimeEditText);
+
+        editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+
+                mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        String AM_PM = " AM";
+                        String mm_precede = "";
+                        if (selectedHour >= 12) {
+                            AM_PM = " PM";
+                            if (selectedHour >= 13 && selectedHour < 24) {
+                                selectedHour -= 12;
+                            } else {
+                                selectedHour = 12;
+                            }
+                        } else if (selectedHour == 0) {
+                            selectedHour = 12;
+                        }
+                        if (selectedMinute < 10) {
+                            mm_precede = "0";
+                        }
+                        editTextMeetUpTime.setText("Meet up time: " + selectedHour + ":" + selectedMinute + " " + AM_PM);
+                    }
+                }, hour, minute, false);//Yes 24 hour time
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+
+            }
+        });
     }
 
     private void trackCurrentLocation() {
