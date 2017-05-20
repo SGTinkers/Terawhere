@@ -184,9 +184,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {
-                                    offers.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position, getItemCount());
+                                    deleteOffer(position);
 
                                 } else {
                                     try {
@@ -207,14 +205,24 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 AlertDialog alert = deleteConfirmationDialog.create();
                 alert.show();
 
-                Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
-                nbutton.setTextColor(Color.BLACK);
-                nbutton.setText(CANCEL);
-                Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
-                pbutton.setTextColor(Color.parseColor(TERAWHERE_PRIMARY_COLOR));
-                pbutton.setText(CONFIRM);
+                decorateAlertDialog(alert);
             }
         });
+    }
+
+    private void deleteOffer(int position) {
+        offers.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
+    }
+
+    private void decorateAlertDialog(AlertDialog alert) {
+        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(Color.BLACK);
+        nbutton.setText(CANCEL);
+        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(Color.parseColor(TERAWHERE_PRIMARY_COLOR));
+        pbutton.setText(CONFIRM);
     }
 
     @Override
