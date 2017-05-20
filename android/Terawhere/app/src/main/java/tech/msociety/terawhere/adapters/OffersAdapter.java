@@ -26,7 +26,6 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OfferDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 import tech.msociety.terawhere.utils.DateUtils;
@@ -160,10 +159,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                     public void onClick(DialogInterface dialog, int which) {
                         // do the acknowledged action, beware, this is run on UI thread
                         Log.i("CLICK", "OK");
-                        Call<OfferDatum> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
-                        deleteRequest.enqueue(new Callback<OfferDatum>() {
+                        Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
+                        deleteRequest.enqueue(new Callback<Void>() {
                             @Override
-                            public void onResponse(Call<OfferDatum> call, Response<OfferDatum> response) {
+                            public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {
                                     Log.i("DELETING: ", Integer.toString(position));
 
@@ -186,7 +185,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                             }
 
                             @Override
-                            public void onFailure(Call<OfferDatum> call, Throwable t) {
+                            public void onFailure(Call<Void> call, Throwable t) {
                                 // handle failure
                             }
                         });

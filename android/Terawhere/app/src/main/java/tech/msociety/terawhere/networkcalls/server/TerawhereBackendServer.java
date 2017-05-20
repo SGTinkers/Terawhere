@@ -22,7 +22,6 @@ import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookU
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OfferDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.PostOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
@@ -99,7 +98,7 @@ public class TerawhereBackendServer {
         Call<BookingDatum> createBooking(@Body BookingDatum booking);
 
         @DELETE("api/v1/offers/{offer}")
-        Call<OfferDatum> deleteOffer(@Path("offer") Integer id);
+        Call<Void> deleteOffer(@Path("offer") Integer id);
 
         @PUT("api/v1/offers/{offer}")
         Call<Void> editOffer(@Path("offer") Integer id, @Body PostOffers offers);
