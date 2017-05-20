@@ -7,8 +7,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
 
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 import tech.msociety.terawhere.screens.fragments.HomeFragment;
 import tech.msociety.terawhere.screens.fragments.MyBookingsFragment;
@@ -30,7 +37,22 @@ public class MainActivity extends BaseActivity {
         initializeTabLayout();
         initPagerView();
     }
-    
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.logout) {
+            EventBus.getDefault().post(new LogoutEvent());
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void initializeToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

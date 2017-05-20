@@ -3,16 +3,14 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="Refresh"
-        android:id="@+id/refresh" />
-
-    <item
         android:title="Logout"
-        android:id="@+id/logout" />
+        android:id="@+id/logout"
+        android:orderInCategory="999" />
     <item
-
-        android:id="@+id/action_search"
+        android:id="@+id/action_info"
         android:icon="@drawable/info_button"
-        android:title="info"
-        compat:showAsAction="always" />
+        android:title="Help"
+        compat:showAsAction="always"
+        android:orderInCategory="998" />
+
 </menu>

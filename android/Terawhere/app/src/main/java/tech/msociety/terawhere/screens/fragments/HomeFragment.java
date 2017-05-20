@@ -438,7 +438,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_home_fragment, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
     
@@ -447,9 +447,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         if (item.getItemId() == R.id.refresh) {
             Toast.makeText(getContext(), "Refreshing...", Toast.LENGTH_LONG).show();
             initMarkers();
-        } else if (item.getItemId() == R.id.logout) {
-            EventBus.getDefault().post(new LogoutEvent());
         }
+
         return super.onOptionsItemSelected(item);
     }
     
