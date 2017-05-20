@@ -219,17 +219,17 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
         private ViewHolder(View view) {
             super(view);
-            endingLocationTextView = (TextView) view.findViewById(R.id.offersItemTextViewEndingLocation);
-            startingLocationTextView = (TextView) view.findViewById(R.id.offersItemTextViewStartingLocation);
-            meetUpTimeTextView = (TextView) view.findViewById(R.id.offersItemTextViewMeetUpTime);
-            seatsOfferedTextView = (TextView) view.findViewById(R.id.offersItemTextViewSeatsOffered);
-            seatsLeftTextView = (TextView) view.findViewById(R.id.offersItemTextViewSeatsLeft);
-            dayTextView = (TextView) view.findViewById(R.id.offersItemTextViewDay);
-            remarksTextView = (TextView) view.findViewById(R.id.offersItemTextViewRemarks);
-            monthTextView = (TextView) view.findViewById(R.id.offersItemTextViewMonth);
-            editButton = (ImageButton) view.findViewById(R.id.offersItemButtonEdit);
-            deleteButton = (ImageButton) view.findViewById(R.id.offersItemButtonDelete);
-            detailsTextView = (TextView) view.findViewById(R.id.offersItemTextViewDetails);
+            endingLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_end_location);
+            startingLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_start_location);
+            meetUpTimeTextView = (TextView) view.findViewById(R.id.text_view_offer_meet_up_time);
+            seatsOfferedTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_offered);
+            seatsLeftTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_left);
+            dayTextView = (TextView) view.findViewById(R.id.text_view_offer_day);
+            remarksTextView = (TextView) view.findViewById(R.id.text_view_offer_remarks);
+            monthTextView = (TextView) view.findViewById(R.id.text_view_offer_month);
+            editButton = (ImageButton) view.findViewById(R.id.image_button_offer_edit);
+            deleteButton = (ImageButton) view.findViewById(R.id.image_button_offer_delete);
+            detailsTextView = (TextView) view.findViewById(R.id.text_view_offer_view_more);
             linearLayout = (LinearLayout) view.findViewById(R.id.offersItemLinearLayout);
         }
     }

@@ -33,7 +33,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/offersItemTextViewDay"
+                        android:id="@+id/text_view_offer_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -46,7 +46,7 @@
                         android:textStyle="normal"/>
 
                     <TextView
-                        android:id="@+id/offersItemTextViewMonth"
+                        android:id="@+id/text_view_offer_month"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/offersItemTextViewEndingLocation"
+                        android:id="@+id/text_view_offer_end_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -83,7 +83,7 @@
                         android:textStyle="normal"/>
 
                     <TextView
-                        android:id="@+id/offersItemTextViewStartingLocation"
+                        android:id="@+id/text_view_offer_start_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -94,7 +94,7 @@
                         android:textStyle="normal"/>
 
                     <TextView
-                        android:id="@+id/offersItemTextViewMeetUpTime"
+                        android:id="@+id/text_view_offer_meet_up_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -105,7 +105,7 @@
                         android:textStyle="normal"/>
 
                     <TextView
-                        android:id="@+id/offersItemTextViewSeatsOffered"
+                        android:id="@+id/text_view_offer_seats_offered"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -116,7 +116,7 @@
                         android:textStyle="normal"/>
 
                     <TextView
-                        android:id="@+id/offersItemTextViewSeatsLeft"
+                        android:id="@+id/text_view_offer_seats_left"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -127,7 +127,7 @@
                         android:textStyle="normal"/>
 
                     <TextView
-                        android:id="@+id/offersItemTextViewRemarks"
+                        android:id="@+id/text_view_offer_remarks"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -144,7 +144,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/offersItemTextViewDetails"
+            android:id="@+id/text_view_offer_view_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -163,7 +163,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/offersItemButtonEdit"
+                android:id="@+id/image_button_offer_edit"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginRight="30dp"
@@ -171,7 +171,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless" />
 
             <ImageButton
-                android:id="@+id/offersItemButtonDelete"
+                android:id="@+id/image_button_offer_delete"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/garbage"

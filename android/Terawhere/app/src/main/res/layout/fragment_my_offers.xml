@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:paddingBottom="50dp"
         android:scrollbars="vertical" />
 
     <include layout="@layout/floating_action_button_add_record" />
