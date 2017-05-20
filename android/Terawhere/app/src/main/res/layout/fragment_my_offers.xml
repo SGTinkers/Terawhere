@@ -8,9 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:paddingBottom="50dp"
+        android:paddingBottom="48dp"
+        android:clipToPadding="false"
         android:scrollbars="vertical" />
 
-    <include layout="@layout/floating_action_button_add_record" />
+    <include layout="@layout/floating_action_button_create_offer" />
 
 </android.support.design.widget.CoordinatorLayout>
