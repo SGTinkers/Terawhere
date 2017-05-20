@@ -1,39 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/createOfferRelativeLayout"
+        android:id="@+id/relative_layout_create_offer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
+        android:layout_height="wrap_content"
         tools:context=".screens.activities.CreateOfferActivity">
 
         <include
             android:id="@+id/includeToolbar"
             layout="@layout/toolbar" />
 
-
         <Button
             android:id="@+id/button_start_location"
-            android:layout_below="@id/includeToolbar"
-
             android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/includeToolbar"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-
-
+            android:layout_marginTop="20dp"
             android:background="@drawable/ripple_effect"
             android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:lines="3"
-                android:text="Where are you now?"
+            android:gravity="center"
+            android:lines="3"
+            android:text="@string/where_are_you_now"
             android:textColor="#434343"
             android:textSize="15sp"
             android:textStyle="italic" />
@@ -42,154 +36,133 @@
         <Button
             android:id="@+id/button_end_location"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/button_start_location"
-
-            android:layout_marginTop="20dp"
             android:layout_marginBottom="30dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-
-                android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@drawable/ripple_effect"
+            android:focusableInTouchMode="true"
             android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:lines="3"
-                android:text="Where do you want to go?"
+            android:gravity="center"
+            android:lines="3"
+            android:text="@string/where_do_you_want_to_go"
             android:textColor="#434343"
             android:textSize="15sp"
-            android:focusableInTouchMode="true"
             android:textStyle="italic" />
 
 
         <EditText
-
-            android:id="@+id/meetUpTimeEditText"
+            android:id="@+id/edit_text_meet_up_time"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
             android:layout_below="@id/button_end_location"
             android:layout_centerInParent="true"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/color_terawhere_primary"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/color_terawhere_primary"
             android:ems="10"
-            android:hint="Meet Up Time"
-            android:imeOptions="actionNext"
-            android:focusable="false">
-
-        </EditText>
+            android:focusable="false"
+            android:hint="@string/meet_up_time"
+            android:imeOptions="actionNext" />
 
 
         <EditText
-            android:id="@+id/seatsAvailableEditText"
+            android:id="@+id/edit_text_seats_available"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:layout_below="@id/meetUpTimeEditText"
+            android:layout_below="@id/edit_text_meet_up_time"
             android:layout_centerInParent="true"
-            android:backgroundTint="@color/color_terawhere_primary"
-            android:layout_marginTop="20dp"
-
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/color_terawhere_primary"
             android:ems="10"
-            android:hint="Number of seats available"
+            android:hint="@string/number_of_seats_available"
             android:imeOptions="actionNext"
-
             android:inputType="number"
             android:maxLength="1" />
 
 
         <AutoCompleteTextView
-            android:id="@+id/vehicleDescriptionEditText"
+            android:id="@+id/edit_text_vehicle_description"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:layout_below="@id/seatsAvailableEditText"
+            android:layout_below="@id/edit_text_seats_available"
             android:layout_centerInParent="true"
-            android:backgroundTint="@color/color_terawhere_primary"
-
             android:layout_marginLeft="30dp"
-
             android:layout_marginRight="30dp"
             android:layout_marginTop="70dp"
+            android:backgroundTint="@color/color_terawhere_primary"
             android:ems="10"
-            android:hint="Vehicle color"
+            android:hint="@string/vehicle_color"
             android:imeOptions="actionNext"
             android:inputType="text" />
 
 
         <EditText
-            android:id="@+id/vehicleModelEditText"
+            android:id="@+id/edit_text_vehicle_model"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/color_terawhere_primary"
-
-            android:layout_below="@id/vehicleDescriptionEditText"
+            android:layout_below="@id/edit_text_vehicle_description"
             android:layout_centerInParent="true"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="30dp"
+            android:backgroundTint="@color/color_terawhere_primary"
             android:ems="10"
-            android:hint="Vehicle Model"
+            android:hint="@string/vehicle_model"
             android:inputType="textPersonName" />
 
 
         <EditText
-            android:id="@+id/vehiclePlateNumberEditText"
+            android:id="@+id/edit_text_vehicle_number"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:layout_below="@id/vehicleModelEditText"
+            android:layout_below="@id/edit_text_vehicle_model"
             android:layout_centerInParent="true"
-            android:backgroundTint="@color/color_terawhere_primary"
-
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="30dp"
+            android:backgroundTint="@color/color_terawhere_primary"
             android:ems="10"
-            android:hint="Vehicle number"
+            android:hint="@string/vehicle_number"
             android:imeOptions="actionNext"
-
             android:inputType="textPersonName" />
 
 
         <EditText
-            android:id="@+id/remarksEditText"
+            android:id="@+id/edit_text_remarks"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:layout_below="@id/vehiclePlateNumberEditText"
+            android:layout_below="@id/edit_text_vehicle_number"
             android:layout_centerInParent="true"
-            android:backgroundTint="@color/color_terawhere_primary"
-
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="70dp"
+            android:backgroundTint="@color/color_terawhere_primary"
             android:ems="10"
-            android:hint="Enter your remarks here"
+            android:hint="@string/enter_your_remarks_here"
             android:imeOptions="actionNext"
-
             android:inputType="textPersonName" />
 
 
         <Button
-            android:id="@+id/createOfferButton"
+            android:id="@+id/button_create_offer"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:layout_below="@id/remarksEditText"
+            android:layout_below="@id/edit_text_remarks"
             android:layout_centerInParent="true"
-            android:background="@color/color_terawhere_primary"
             android:layout_gravity="center"
+            android:layout_marginBottom="70dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="70dp"
-            android:layout_marginBottom="70dp"
-            android:textColor="@color/white"
-            android:text="Create offer" />
-
+            android:background="@color/color_terawhere_primary"
+            android:text="@string/create_offer"
+            android:textColor="@color/white" />
 
     </RelativeLayout>
 </ScrollView>

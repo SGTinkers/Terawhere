@@ -292,7 +292,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
 
     private void initializeVehicleNumberEditText() {
-        editTextVehiclePlateNumber = (EditText) findViewById(R.id.vehiclePlateNumberEditText);
+        editTextVehiclePlateNumber = (EditText) findViewById(R.id.edit_text_vehicle_number);
     }
 
     private void buildGoogleApiClient() {
@@ -301,22 +301,22 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
 
     private void initializeVehicleModelEditText() {
-        editTextVehicleModel = (EditText) findViewById(R.id.vehicleModelEditText);
+        editTextVehicleModel = (EditText) findViewById(R.id.edit_text_vehicle_model);
     }
 
 
     private void initialializeVehicleDescriptionEditText(ArrayAdapter<String> adapter) {
-        editTextVehicleDescription = (AutoCompleteTextView) findViewById(R.id.vehicleDescriptionEditText);
+        editTextVehicleDescription = (AutoCompleteTextView) findViewById(R.id.edit_text_vehicle_description);
         editTextVehicleDescription.setAdapter(adapter);
         editTextVehicleDescription.setThreshold(1);
     }
 
     private void initializeRemarksEditText() {
-        editTextRemarks = (EditText) findViewById(R.id.remarksEditText);
+        editTextRemarks = (EditText) findViewById(R.id.edit_text_remarks);
     }
 
     private void initializeSeatsAvailableEditText() {
-        editTextSeatsAvailable = (EditText) findViewById(R.id.seatsAvailableEditText);
+        editTextSeatsAvailable = (EditText) findViewById(R.id.edit_text_seats_available);
     }
 
     private void initializeEndingLocationTextView() {
@@ -328,7 +328,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private void initializeMeetUpTimeEditText() {
-        editTextMeetUpTime = (EditText) findViewById(R.id.meetUpTimeEditText);
+        editTextMeetUpTime = (EditText) findViewById(R.id.edit_text_meet_up_time);
 
 
     }
@@ -354,7 +354,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 e.printStackTrace();
             }
-        } else if (view.getId() == R.id.createOfferButton) {
+        } else if (view.getId() == R.id.button_create_offer) {
 
             if (areNotAllFieldsFilled() || !editTextVehiclePlateNumber.getText().toString().matches("^[a-zA-Z0-9]*$")) {
 
@@ -563,7 +563,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
 
     private void createOfferButtonListener() {
-        buttonCreateOffer = (Button) findViewById(R.id.createOfferButton);
+        buttonCreateOffer = (Button) findViewById(R.id.button_create_offer);
         buttonCreateOffer.setOnClickListener(this);
     }
 
