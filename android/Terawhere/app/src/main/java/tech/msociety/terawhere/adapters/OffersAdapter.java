@@ -157,22 +157,16 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 adb.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // do the acknowledged action, beware, this is run on UI thread
-                        Log.i("CLICK", "OK");
                         Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
                         deleteRequest.enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {
-                                    Log.i("DELETING: ", Integer.toString(position));
-
-                                    Log.i("DELETED", ": " + response.message());
                                     offers.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, getItemCount());
 
                                 } else {
-                                    Log.i("ERROR_DELETE", ": " + response.message());
 
                                     try {
                                         Log.i("ERROR_DELETE_MESSAGE", ": " + response.errorBody().string());
@@ -181,12 +175,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                                     }
 
                                 }
-                                // use response.code, response.headers, etc.
                             }
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
-                                // handle failure
                             }
                         });
                     }
