@@ -362,7 +362,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         if (selectedMinute < 10) {
                             mm_precede = "0";
                         }
-                        editTextMeetUpTime.setText("Meet up time: " + selectedHour + ":" + selectedMinute + " " + AM_PM);
+                        editTextMeetUpTime.setText("Meet up time: " + selectedHour + ":" + mm_precede + selectedMinute + " " + AM_PM);
                     }
                 }, hour, minute, false);//Yes 24 hour time
                 mTimePicker.setTitle("Select Time");
