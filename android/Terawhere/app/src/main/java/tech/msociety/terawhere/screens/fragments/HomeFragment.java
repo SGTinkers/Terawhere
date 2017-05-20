@@ -1,10 +1,12 @@
 package tech.msociety.terawhere.screens.fragments;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -337,6 +340,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     
                                                                                               if (response.isSuccessful()) {
                                                                                                   Log.i(LOG_RESPONSE, ": " + response.message());
+                                                                                                  final Dialog successDialog = new Dialog(getActivity());
+                                                                                                  successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                                                                                  successDialog.setContentView(R.layout.dialog_booking_successful);
+                                                                                                  successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                                                                                                  Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                                                                                  okButton.setOnClickListener(new View.OnClickListener() {
+                                                                                                      @Override
+                                                                                                      public void onClick(View v) {
+                                                                                                          successDialog.dismiss();
+                                                                                                      }
+                                                                                                  });
+                                                                                                  successDialog.show();
         
                                                                                               } else {
                                                                                                   try {
@@ -363,7 +379,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                                     System.out.println(Arrays.toString(t.getStackTrace()));
                                                                 }
                                                             });
-                                                            Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
+
+                                                            //Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                                     adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {

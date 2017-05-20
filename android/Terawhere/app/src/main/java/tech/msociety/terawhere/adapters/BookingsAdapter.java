@@ -43,9 +43,9 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
 
         private ViewHolder(View view) {
             super(view);
-            endingLocationTextView = (TextView) view.findViewById(R.id.bookingsItemTextViewEndingLocation);
-            startingLocationTextView = (TextView) view.findViewById(R.id.bookingsItemTextViewStartingLocation);
-            seatsBookedTextView = (TextView) view.findViewById(R.id.bookingsItemTextViewSeatsBooked);
+            endingLocationTextView = (TextView) view.findViewById(R.id.text_view_booking_end_location);
+            startingLocationTextView = (TextView) view.findViewById(R.id.text_view_booking_start_location);
+            seatsBookedTextView = (TextView) view.findViewById(R.id.text_view_booking_seats_booked);
         }
     }
 
