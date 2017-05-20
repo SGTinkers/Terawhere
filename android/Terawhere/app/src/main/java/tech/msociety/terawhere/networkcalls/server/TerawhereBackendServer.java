@@ -22,7 +22,8 @@ import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookU
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OfferDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.PostOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenDatum;
@@ -92,15 +93,15 @@ public class TerawhereBackendServer {
         Call<GetOffersResponse> getNearbyOffers(@Body LocationDatum location);
     
         @POST("api/v1/offers")
-        Call<OffersDatum> createOffer(@Body OffersDatum offers);
+        Call<PostOffers> createOffer(@Body PostOffers offers);
 
         @POST("api/v1/bookings")
         Call<BookingDatum> createBooking(@Body BookingDatum booking);
 
         @DELETE("api/v1/offers/{offer}")
-        Call<OffersDatum> deleteOffer(@Path("offer") Integer id);
+        Call<OfferDatum> deleteOffer(@Path("offer") Integer id);
 
         @PUT("api/v1/offers/{offer}")
-        Call<OffersDatum> editOffer(@Path("offer") Integer id, @Body OffersDatum offers);
+        Call<Void> editOffer(@Path("offer") Integer id, @Body PostOffers offers);
     }
 }

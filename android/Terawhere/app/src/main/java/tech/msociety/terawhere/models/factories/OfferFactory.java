@@ -9,28 +9,38 @@ import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OfferDatum;
 import tech.msociety.terawhere.utils.DateUtils;
 
 public class OfferFactory {
     public static List<Offer> createFromResponse(GetOffersResponse getOffersResponse) {
         List<Offer> offers = new ArrayList<>();
-        
-        for (OffersDatum offersDatum : getOffersResponse.data) {
-            TerawhereLocation startTerawhereLocation = new TerawhereLocation(offersDatum.getStartName(), offersDatum.getStartAddr(), offersDatum.getStartLat(), offersDatum.getStartLng(), offersDatum.getStartGeohash());
-            TerawhereLocation endTerawhereLocation = new TerawhereLocation(offersDatum.getEndName(), offersDatum.getEndAddr(), offersDatum.getEndLat(), offersDatum.getEndLng(), offersDatum.getEndGeohash());
-            Vehicle vehicle = new Vehicle(offersDatum.getVehicleNumber(), offersDatum.getVehicleDesc(), offersDatum.getVehicleModel());
-            
-            Date dateCreated = DateUtils.fromMysqlDateTimeString(offersDatum.getCreatedAt());
-            Date dateUpdated = DateUtils.fromMysqlDateTimeString(offersDatum.getUpdatedAt());
+        Vehicle vehicle;
+        Offer offer;
+        for (OfferDatum offersDatum : getOffersResponse.data) {
+            TerawhereLocation startTerawhereLocation = new TerawhereLocation(offersDatum.startName, offersDatum.startAddr, offersDatum.startLat, offersDatum.startLng, offersDatum.startGeohash);
+            TerawhereLocation endTerawhereLocation = new TerawhereLocation(offersDatum.endName, offersDatum.endAddr, offersDatum.endLat, offersDatum.endLng, offersDatum.endGeohash);
+            if (offersDatum.vehicleDesc == null) {
+                vehicle = new Vehicle(offersDatum.vehicleNumber, "", offersDatum.vehicleModel);
+
+            } else {
+                vehicle = new Vehicle(offersDatum.vehicleNumber, offersDatum.vehicleDesc.toString(), offersDatum.vehicleModel);
+            }
+            Date dateCreated = DateUtils.fromMysqlDateTimeString(offersDatum.createdAt);
+            Date dateUpdated = DateUtils.fromMysqlDateTimeString(offersDatum.updatedAt);
 //            Date dateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
             BackendTimestamp backendTimestamp = new BackendTimestamp(dateCreated, dateUpdated, null);
-            Date meetupTime = DateUtils.fromMysqlDateTimeString(offersDatum.getMeetupTime());
-            
-            Offer offer = new Offer(offersDatum.getId(), offersDatum.getUserId(), meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.getVacancy(), backendTimestamp, offersDatum.getRemarks());
+            Date meetupTime = DateUtils.fromMysqlDateTimeString(offersDatum.meetupTime);
+
+            if (offersDatum.remarks == null) {
+                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, "");
+
+            } else {
+                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, offersDatum.remarks.toString());
+            }
             offers.add(offer);
         }
-        
+
         return offers;
     }
 }

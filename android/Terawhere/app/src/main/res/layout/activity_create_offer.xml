@@ -18,7 +18,7 @@
 
 
         <Button
-                android:id="@+id/locationTextView"
+            android:id="@+id/button_start_location"
             android:layout_below="@id/includeToolbar"
 
             android:layout_width="match_parent"
@@ -40,9 +40,9 @@
 
 
         <Button
-                android:id="@+id/endingLocationTextView"
+            android:id="@+id/button_end_location"
             android:layout_width="match_parent"
-            android:layout_below="@id/locationTextView"
+            android:layout_below="@id/button_start_location"
 
             android:layout_marginTop="20dp"
             android:layout_marginBottom="30dp"
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content"
-            android:layout_below="@id/endingLocationTextView"
+            android:layout_below="@id/button_end_location"
             android:layout_centerInParent="true"
             android:background="@drawable/ripple_effect_edit_text"
             android:layout_marginTop="20dp"

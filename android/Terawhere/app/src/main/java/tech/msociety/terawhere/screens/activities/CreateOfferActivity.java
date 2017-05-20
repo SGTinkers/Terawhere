@@ -9,7 +9,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -23,8 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -40,6 +37,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,74 +50,76 @@ import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.PostOffers;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
 
 public class CreateOfferActivity extends ToolbarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    /******************************************************
+     *  Terawhere offer fields. Please do not remove!!! *
+     ****************************************************/
+    public static final String START_LOCATION_ADDRESS = "startLocationAddress";
+    public static final String START_LOCATION_NAME = "startLocationName";
+    public static final String START_LOCATION_LONGITUDE = "startLocationLongitude";
+    public static final String START_LOCATION_LATITUDE = "startLocationLatitude";
+    public static final String END_LOCATION_LONGITUDE = "endLocationLongitude";
+    public static final String END_LOCATION_LATITUDE = "endLocationLatitude";
+    public static final String END_LOCATION_NAME = "endLocationName";
+    public static final String END_LOCATION_ADDRESS = "endLocationAddress";
+    public static final String MEET_UP_TIME = "meetUpTime";
+    public static final String SEATS_AVAILABLE = "seatsAvailable";
+    public static final String VEHICLE_NUMBER = "vehicleNumber";
+    public static final String VEHICLE_DESCRIPTION = "vehicleDescription";
+    public static final String VEHICLE_MODEL = "vehicleModel";
+    public static final String DRIVER_REMARKS = "driverRemarks";
+
+
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
 
     private static final String TOOLBAR_TITLE = "Create Offer";
-    public static final String ENDING_LOCATION_LONGITUDE = "endingLocationLongitude";
-    public static final String ENDING_LOCATION_LATITUDE = "endingLocationLatitude";
-    public static final String ENDING_LOCATION_NAME = "endingLocationName";
-    public static final String ENDING_LOCATION_ADDRESS = "endingLocationAddress";
-    public static final String STARTING_LOCATION_ADDRESS = "startingLocationAddress";
-    public static final String STARTING_LOCATION_NAME = "startingLocationName";
-    public static final String STARTING_LOCATION_LONGITUDE = "startingLocationLongitude";
-    public static final String STARTING_LOCATION_LATITUDE = "startingLocationLatitude";
-    public static final String VEHICLE_NUMBER = "vehicleNumber";
-    public static final String VEHICLE_DESCRIPTION = "vehicleDescription";
-    public static final String MALE = "male";
-    public static final String FEMALE = "female";
-    public static final String IS_EDIT = "isEdit";
-    public static final String JWT_TOKEN = "jwtToken";
-    public static final String MEET_UP_TIME = "meetUpTime";
-    public static final String YYYY_DD_MM_HH_MM = "yyyy-dd-MM HH:mm";
-    public static final String VEHICLE_MODEL = "vehicleModel";
-    public static final String DRIVER_REMARKS = "driverRemarks";
-    public static final String SEATS_AVAILABLE = "seatsAvailable";
-    public static final String GENDER_PREFERENCE = "genderPreference";
     public static final String EDIT_OFFER = "Edit Offer";
+
+    public static final String IS_EDIT = "isEdit";
+
     public static final String MESSAGE_CREATE_OFFER_SUCCESSFUL = "SUCCESSFULLY CREATED OFFER";
-    public static final String MESSAGE_RESPONSE = "messageResponse";
-    public static final String MESSAGE_EDIT_OFFER_SUCCESSFUL = "Successfully updated offer!!";
-    public static final String MESSAGE_NETWORK_ERROR = "Network is not connected!";
-    public static final String MESSAGE_LOCATION_PERMISSION_NEEDED = "Need your location!";
+    public static final String MESSAGE_EDIT_OFFER_SUCCESSFUL = "SUCCESSFULLY UPDATED OFFER";
+
+    public static final String LOG_RESPONSE = "messageResponse";
+
     public static final String MESSAGE_YOU_ARE_AT = "You are at: ";
     public static final String FORMAT_TWO_DIGITS = "%02d";
     public static final String OFFER_ID = "id";
 
     private boolean isEditOffer = false;
 
-    private double startingLocationLatitude;
-    private double startingLocationLongitude;
-    private double endingLocationLatitude;
-    private double endingLocationLongitude;
+    private double startLocationLatitude;
+    private double startLocationLongitude;
+    private double endLocationLatitude;
+    private double endLocationLongitude;
+
+    private String startLocationName;
+    private String endLocationName;
+
 
     private int offerId;
 
     private Button buttonCreateOffer;
 
-    private RadioGroup genderRadioGroup;
-    private RadioButton radioButtonMale;
-    private RadioButton radioButtonFemale;
 
-    private TextView textViewStartingLocation;
-    private TextView textViewEndingLocation;
+    private Button startLocationButton;
+    private Button endLocationButton;
     private AutoCompleteTextView editTextVehicleDescription;
 
     private EditText editTextSeatsAvailable;
     private EditText editTextRemarks;
     private EditText editTextVehiclePlateNumber;
-    private EditText editTextStartingLocationName;
-    private EditText editTextEndingLocationName;
+
     private EditText editTextVehicleModel;
     private EditText editTextMeetUpTime;
-    private TimePicker timePickerMeetUpTime;
     private GoogleApiClient googleApiClient;
+    private String MESSAGE_LOCATION_PERMISSION_NEEDED = "Need location";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +153,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         if (isEditOffer) {
             initializeOfferId(intent);
 
-            setMeetUpTimeField(intent);
+            //setMeetUpTimeField(intent);
             setSeatsAvailableField(intent);
             setRemarksField(intent);
 
@@ -177,16 +177,14 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
             TerawhereLocation startTerawhereLocation = intent.getParcelableExtra("startTerawhereLocation");
             TerawhereLocation endTerawhereLocation = intent.getParcelableExtra("endTerawhereLocation");
-            editTextStartingLocationName.setText(startTerawhereLocation.getName());
-            textViewStartingLocation.setText(startTerawhereLocation.getAddress());
+            startLocationButton.setText(startTerawhereLocation.getAddress());
 
 
-            editTextEndingLocationName.setText(endTerawhereLocation.getName());
-            textViewEndingLocation.setText(endTerawhereLocation.getAddress());
-            startingLocationLatitude = startTerawhereLocation.getLatitude();
-            startingLocationLongitude = startTerawhereLocation.getLongitude();
-            endingLocationLatitude = endTerawhereLocation.getLatitude();
-            endingLocationLongitude = endTerawhereLocation.getLongitude();
+            endLocationButton.setText(endTerawhereLocation.getAddress());
+            startLocationLatitude = startTerawhereLocation.getLatitude();
+            startLocationLongitude = startTerawhereLocation.getLongitude();
+            endLocationLatitude = endTerawhereLocation.getLatitude();
+            endLocationLongitude = endTerawhereLocation.getLongitude();
 
             //setGenderPreferenceField(intent);
             setCreateOfferButton();
@@ -200,51 +198,35 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private void setEndingLocationLongitudeField(Intent intent) {
-        endingLocationLongitude = getDoubleValueToEdit(intent, ENDING_LOCATION_LONGITUDE);
+        endLocationLongitude = getDoubleValueToEdit(intent, END_LOCATION_LONGITUDE);
     }
 
     private void setEndingLocationLatitudeField(Intent intent) {
-        endingLocationLatitude = getDoubleValueToEdit(intent, ENDING_LOCATION_LATITUDE);
+        endLocationLatitude = getDoubleValueToEdit(intent, END_LOCATION_LATITUDE);
     }
 
     private void setStartingLocationLongitudeField(Intent intent) {
-        startingLocationLongitude = getDoubleValueToEdit(intent, STARTING_LOCATION_LONGITUDE);
+        startLocationLongitude = getDoubleValueToEdit(intent, START_LOCATION_LONGITUDE);
     }
 
     private void setStartingLocationLatitudeField(Intent intent) {
-        startingLocationLatitude = getDoubleValueToEdit(intent, STARTING_LOCATION_LATITUDE);
+        startLocationLatitude = getDoubleValueToEdit(intent, START_LOCATION_LATITUDE);
     }
 
     private void setCreateOfferButton() {
         buttonCreateOffer.setText(EDIT_OFFER);
     }
 
-    private void setGenderPreferenceField(Intent intent) {
-        String gender = getStringValueToEdit(intent, GENDER_PREFERENCE);
-        if (gender.toLowerCase().equals(MALE)) {
-            radioButtonMale.setChecked(true);
-        } else if (gender.toLowerCase().equals(FEMALE)) {
-            radioButtonFemale.setChecked(true);
-        }
-    }
-
-
 
     private void setEndingLocationAddressField(Intent intent) {
-        textViewEndingLocation.setText(getStringValueToEdit(intent, ENDING_LOCATION_ADDRESS));
+        endLocationButton.setText(getStringValueToEdit(intent, END_LOCATION_ADDRESS));
     }
 
-    private void setEndingLocationNameField(Intent intent) {
-        editTextEndingLocationName.setText(getStringValueToEdit(intent, ENDING_LOCATION_NAME));
-    }
 
     private void setStartingLocationAddressField(Intent intent) {
-        textViewStartingLocation.setText(getStringValueToEdit(intent, STARTING_LOCATION_ADDRESS));
+        startLocationButton.setText(getStringValueToEdit(intent, START_LOCATION_ADDRESS));
     }
 
-    private void setStartingLocationNameField(Intent intent) {
-        editTextStartingLocationName.setText(getStringValueToEdit(intent, STARTING_LOCATION_NAME));
-    }
 
     private void setVehicleModelField(Intent intent) {
         editTextVehicleModel.setText(getStringValueToEdit(intent, VEHICLE_MODEL));
@@ -266,20 +248,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         editTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", intent.getExtras().getInt(SEATS_AVAILABLE)));
     }
 
-    private void setMeetUpTimeField(Intent intent) {
-        Date meetUpTime = (Date) intent.getSerializableExtra(MEET_UP_TIME);
-        //SimpleDateFormat dateFormat = new SimpleDateFormat(YYYY_DD_MM_HH_MM);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            timePickerMeetUpTime.setHour(meetUpTime.getHours());
-            timePickerMeetUpTime.setMinute(meetUpTime.getMinutes());
-
-        } else {
-            timePickerMeetUpTime.setCurrentHour(meetUpTime.getHours());
-            timePickerMeetUpTime.setCurrentMinute(meetUpTime.getMinutes());
-        }
-    }
 
     private double getDoubleValueToEdit(Intent intent, String key) {
         return intent.getExtras().getDouble(key);
@@ -325,11 +293,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private void initializeEndingLocationTextView() {
-        textViewEndingLocation = (TextView) findViewById(R.id.endingLocationTextView);
+        endLocationButton = (Button) findViewById(R.id.button_end_location);
     }
 
     private void initializeStartingLocationTextView() {
-        textViewStartingLocation = (TextView) findViewById(R.id.locationTextView);
+        startLocationButton = (Button) findViewById(R.id.button_start_location);
     }
 
     private void initializeMeetUpTimeEditText() {
@@ -347,10 +315,10 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                 mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        String AM_PM = " AM";
+                        String AM_PM = " am";
                         String mm_precede = "";
                         if (selectedHour >= 12) {
-                            AM_PM = " PM";
+                            AM_PM = " pm";
                             if (selectedHour >= 13 && selectedHour < 24) {
                                 selectedHour -= 12;
                             } else {
@@ -362,7 +330,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         if (selectedMinute < 10) {
                             mm_precede = "0";
                         }
-                        editTextMeetUpTime.setText("Meet up time: " + selectedHour + ":" + mm_precede + selectedMinute + " " + AM_PM);
+
+                        editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
                     }
                 }, hour, minute, false);//Yes 24 hour time
                 mTimePicker.setTitle("Select Time");
@@ -381,133 +350,136 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     @Override
     public void onClick(View view) {
 
-        if (view.getId() == R.id.locationTextView) {
+        if (view.getId() == R.id.button_start_location) {
             try {
                 showStartingPlacePickerActivity();
             } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 e.printStackTrace();
             }
-        } else if (view.getId() == R.id.endingLocationTextView) {
+        } else if (view.getId() == R.id.button_end_location) {
             try {
                 showEndingPlacePickerActivity();
             } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 e.printStackTrace();
             }
         } else if (view.getId() == R.id.createOfferButton) {
-            if (isNetworkConnected()) {
 
-                if (areNotAllFieldsFilled() || !editTextVehiclePlateNumber.getText().toString().matches("^[a-zA-Z0-9]*$")) {
+            if (areNotAllFieldsFilled() || !editTextVehiclePlateNumber.getText().toString().matches("^[a-zA-Z0-9]*$")) {
 
-                    Toast.makeText(CreateOfferActivity.this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (!isEditOffer) {
-                        String date = getDate();
-                        String hour = getHourToEdit();
-                        String minute = getMinuteToEdit();
+                Toast.makeText(CreateOfferActivity.this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
+            } else {
+                if (!isEditOffer) {
+                    String date = getDate(); // get todays date
+                    String time = editTextMeetUpTime.getText().toString();
 
-                        int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-                        RadioButton radioButtonGender = (RadioButton) findViewById(selectedId);
+                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+                    Date dateObj = null;
+                    try {
+                        dateObj = sdf.parse(time);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String meetUpTime = date + " " + new SimpleDateFormat("HH:mm:ss").format(dateObj);
+                    if (startLocationName == null) {
+                        startLocationName = startLocationButton.getText().toString();
+                    }
+                    if (endLocationName == null) {
+                        endLocationName = endLocationButton.getText().toString();
+                    }
+                    PostOffers postOffers = new PostOffers(meetUpTime, startLocationName,
+                            startLocationButton.getText().toString(), startLocationLatitude,
+                            startLocationLongitude, endLocationName, endLocationButton.getText().toString(),
+                            endLocationLatitude, endLocationLongitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()),
+                            editTextRemarks.getText().toString(), editTextVehiclePlateNumber.getText().toString(),
+                            editTextVehicleDescription.getText().toString(), editTextVehicleModel.getText().toString());
 
-                        String meetUpTime = date + " " + hour + ":" + minute;
-                        OffersDatum offer = new OffersDatum(meetUpTime, editTextStartingLocationName.getText().toString(), textViewStartingLocation.getText().toString(), startingLocationLatitude, startingLocationLongitude, editTextEndingLocationName.getText().toString(), textViewEndingLocation.getText().toString(), endingLocationLatitude, endingLocationLongitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()), editTextRemarks.getText().toString(), 1, radioButtonGender.getText().toString().toLowerCase(), editTextVehiclePlateNumber.getText().toString(), editTextVehicleDescription.getText().toString(), editTextVehicleModel.getText().toString());
-
-                        /*Log.i("meetUpTime"," : " + meetUpTime);
-                        Log.i("StartingName",":" + editTextStartingLocationName.getText().toString());
-                        Log.i("StartingAddress",":" + textViewStartingLocation.getText().toString());
-                        Log.i("StartingLatitude",":" + startingLocationLatitude);
-                        Log.i("StartingLongitude",":" + startingLocationLongitude);
-                        Log.i("EndingName",":" + editTextEndingLocationName.getText().toString());
-                        Log.i("EndingAddress",":" + textViewEndingLocation.getText().toString());
-                        Log.i("EndingLatitue",":" + endingLocationLatitude);
-                        Log.i("EndingLongitude",":" + endingLocationLongitude);
+                    Log.i("meetUpTime", " : " + meetUpTime);
+                    Log.i("StartingName", ":" + startLocationName);
+                    Log.i("StartingAddress", ":" + startLocationButton.getText().toString());
+                    Log.i("StartingLatitude", ":" + startLocationLatitude);
+                    Log.i("StartingLongitude", ":" + startLocationLongitude);
+                    Log.i("EndingName", ":" + endLocationName);
+                    Log.i("EndingAddress", ":" + endLocationButton.getText().toString());
+                    Log.i("EndingLatitue", ":" + endLocationLatitude);
+                    Log.i("EndingLongitude", ":" + endLocationLongitude);
                         Log.i("SeatsAvailable",":" + Integer.parseInt(editTextSeatsAvailable.getText().toString()));
                         Log.i("Remarks",":" + editTextRemarks.getText().toString());
-                        Log.i("GenderPref",":" + radioButtonGender.getText().toString());
                         Log.i("VehiclePlateNumber",":" + editTextVehiclePlateNumber.getText().toString());
                         Log.i("VehicleDesc",":" + editTextVehicleDescription.getText().toString());
                         Log.i("VehicleModel",":" + editTextVehicleModel.getText().toString());
-*/
-                        Call<OffersDatum> call = createOfferApi(offer);
-                        call.enqueue(new Callback<OffersDatum>() {
-                            @Override
-                            public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
 
-                                if (response.isSuccessful()) {
-                                    Log.i(MESSAGE_RESPONSE, ": " + response.message());
-                                    Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
+                    Call<PostOffers> call = createOfferApi(postOffers);
+                    call.enqueue(new Callback<PostOffers>() {
+                        @Override
+                        public void onResponse(Call<PostOffers> call, Response<PostOffers> response) {
 
-                                    Intent resultIntent = new Intent();
-                                    resultIntent.putExtra("FirstTab", 4);
-                                    setResult(RESULT_OK, resultIntent);
-                                    finish();
+                            if (response.isSuccessful()) {
+                                Log.i(LOG_RESPONSE, ": " + response.message());
+                                Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
 
-                                } else {
-                                    try {
-                                        Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                                Intent resultIntent = new Intent();
+                                resultIntent.putExtra("FirstTab", 4);
+                                setResult(RESULT_OK, resultIntent);
+                                finish();
+
+                            } else {
+                                try {
+                                    Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             }
-
-                            @Override
-                            public void onFailure(Call<OffersDatum> call, Throwable t) {
-                            }
-                        });
-
-                    } else {
-
-                        String date = getDate();
-                        String hour;
-                        String minute;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getHour());
-                            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getMinute());
-                        } else {
-                            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentHour());
-                            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentMinute());
                         }
 
-                        int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-                        RadioButton radioButtonGender = (RadioButton) findViewById(selectedId);
+                        @Override
+                        public void onFailure(Call<PostOffers> call, Throwable t) {
 
-                        String meetUpTime = date + " " + hour + ":" + minute;
-                        OffersDatum offer = new OffersDatum(meetUpTime, editTextStartingLocationName.getText().toString(), textViewStartingLocation.getText().toString(), startingLocationLatitude, startingLocationLongitude, editTextEndingLocationName.getText().toString(), textViewEndingLocation.getText().toString(), endingLocationLatitude, endingLocationLongitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()), editTextRemarks.getText().toString(), 1, radioButtonGender.getText().toString().toLowerCase(), editTextVehiclePlateNumber.getText().toString(), editTextVehicleDescription.getText().toString(), editTextVehicleModel.getText().toString());
+                        }
+                    });
 
-                        Call<OffersDatum> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offer);
-                        call.enqueue(new Callback<OffersDatum>() {
-                            @Override
-                            public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
+                } else {
 
-                                if (response.isSuccessful()) {
-                                    Log.i("EDIT_MESSAGE", ": " + response.message());
-                                    Toast.makeText(getApplicationContext(), MESSAGE_EDIT_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
-                                    Intent resultIntent = new Intent();
-                                    resultIntent.putExtra("FirstTab", 4);
-                                    setResult(RESULT_OK, resultIntent);
-                                    finish();
+                    String meetUpTime = "";
+                    PostOffers postOffers = new PostOffers(meetUpTime, startLocationName,
+                            startLocationButton.getText().toString(), startLocationLatitude, startLocationLongitude,
+                            endLocationName, endLocationButton.getText().toString(),
+                            endLocationLatitude, endLocationLongitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()),
+                            editTextRemarks.getText().toString(),
+                            editTextVehiclePlateNumber.getText().toString(), editTextVehicleDescription.getText().toString(),
+                            editTextVehicleModel.getText().toString());
 
-                                } else {
-                                    try {
-                                        Log.i("EDIT_ERROR", ": " + response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, postOffers);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+
+                            if (response.isSuccessful()) {
+                                Log.i("EDIT_MESSAGE", ": " + response.message());
+                                Toast.makeText(getApplicationContext(), MESSAGE_EDIT_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
+                                Intent resultIntent = new Intent();
+                                resultIntent.putExtra("FirstTab", 4);
+                                setResult(RESULT_OK, resultIntent);
+                                finish();
+
+                            } else {
+                                try {
+                                    Log.i("EDIT_ERROR", ": " + response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-
                             }
 
-                            @Override
-                            public void onFailure(Call<OffersDatum> call, Throwable t) {
+                        }
 
-                            }
-                        });
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
 
-                    }
+                        }
+                    });
+
                 }
-            } else {
-                Toast.makeText(CreateOfferActivity.this, MESSAGE_NETWORK_ERROR, Toast.LENGTH_SHORT).show();
             }
+
         }
     }
 
@@ -515,28 +487,9 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         return new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
     }
 
-    private String getMinuteToEdit() {
-        String minute;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getMinute());
-        } else {
-            minute = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentMinute());
-        }
-        return minute;
-    }
 
-    private String getHourToEdit() {
-        String hour;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getHour());
-        } else {
-            hour = String.format(FORMAT_TWO_DIGITS, timePickerMeetUpTime.getCurrentHour());
-        }
-        return hour;
-    }
-
-    private Call<OffersDatum> createOfferApi(OffersDatum offer) {
-        return TerawhereBackendServer.getApiInstance().createOffer(offer);
+    private Call<PostOffers> createOfferApi(PostOffers postOffers) {
+        return TerawhereBackendServer.getApiInstance().createOffer(postOffers);
     }
 
     @Override
@@ -557,13 +510,13 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private boolean areNotAllFieldsFilled() {
-        return (startingLocationLatitude == 0.0 || startingLocationLongitude == 0.0 || endingLocationLatitude == 0.0 || endingLocationLongitude == 0.0 || editTextSeatsAvailable.getText().toString().matches("") || editTextRemarks.getText().toString().matches("") || editTextVehicleDescription.getText().toString().matches("") || editTextVehiclePlateNumber.getText().toString().matches(""));
+        return (startLocationLatitude == 0.0 || startLocationLongitude == 0.0 || endLocationLatitude == 0.0 || endLocationLongitude == 0.0 || editTextSeatsAvailable.getText().toString().matches("") || editTextRemarks.getText().toString().matches("") || editTextVehicleDescription.getText().toString().matches("") || editTextVehiclePlateNumber.getText().toString().matches(""));
 
     }
 
     private void showStartingPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
-        initializePlacePickerMap(intentBuilder, startingLocationLatitude, startingLocationLongitude);
+        initializePlacePickerMap(intentBuilder, startLocationLatitude, startLocationLongitude);
         startPlacePickerActivity(intentBuilder, 1);
     }
 
@@ -571,15 +524,15 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
 
         if (isEndingLocationInitialized()) {
-            initializePlacePickerMap(intentBuilder, endingLocationLatitude, endingLocationLongitude);
+            initializePlacePickerMap(intentBuilder, endLocationLatitude, endLocationLongitude);
         } else {
-            initializePlacePickerMap(intentBuilder, startingLocationLatitude, startingLocationLongitude);
+            initializePlacePickerMap(intentBuilder, startLocationLatitude, startLocationLongitude);
         }
         startPlacePickerActivity(intentBuilder, 2);
     }
 
     private boolean isEndingLocationInitialized() {
-        return (endingLocationLatitude != 0.0 || endingLocationLongitude != 0.0);
+        return (endLocationLatitude != 0.0 || endLocationLongitude != 0.0);
     }
 
     private void initializePlacePickerMap(PlacePicker.IntentBuilder intentBuilder, double locationLatitude, double locationLongitude) {
@@ -607,12 +560,12 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
 
     private void startingLocationTextViewListener() {
-        TextView locationTextView = (TextView) findViewById(R.id.locationTextView);
+        TextView locationTextView = (TextView) findViewById(R.id.button_start_location);
         locationTextView.setOnClickListener(this);
     }
 
     private void endingLocationTextViewListener() {
-        TextView endingLocationTextView = (TextView) findViewById(R.id.endingLocationTextView);
+        TextView endingLocationTextView = (TextView) findViewById(R.id.button_end_location);
         endingLocationTextView.setOnClickListener(this);
     }
 
@@ -660,20 +613,20 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            startingLocationLatitude = lastLocation.getLatitude();
-            startingLocationLongitude = lastLocation.getLongitude();
+            startLocationLatitude = lastLocation.getLatitude();
+            startLocationLongitude = lastLocation.getLongitude();
             Geocoder gcd = new Geocoder(this, Locale.getDefault());
             List<Address> addresses = null;
             try {
-                addresses = gcd.getFromLocation(startingLocationLatitude, startingLocationLongitude, 1);
+                addresses = gcd.getFromLocation(startLocationLatitude, startLocationLongitude, 1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (addresses != null) {
                 if (addresses.size() > 0) {
                     if (addresses.get(0).getAddressLine(0) != null) {
-                        String strAddress = MESSAGE_YOU_ARE_AT + addresses.get(0).getAddressLine(0);
-                        textViewStartingLocation.setText(strAddress);
+                        String strAddress = addresses.get(0).getAddressLine(0);
+                        startLocationButton.setText(strAddress);
                     }
                 }
             }
@@ -695,21 +648,24 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         if (requestCode == 1 && resultCode == RESULT_OK) {
             final Place place = PlacePicker.getPlace(this, data);
             final CharSequence address = place.getAddress();
-            startingLocationLatitude = place.getLatLng().latitude;
-            startingLocationLongitude = place.getLatLng().longitude;
-            textViewStartingLocation.setText(address);
+            startLocationLatitude = place.getLatLng().latitude;
+            startLocationLongitude = place.getLatLng().longitude;
+            startLocationButton.setText(address);
             if (!(place.getName().toString().contains("\"N") || place.getName().toString().contains("\"E") || place.getName().toString().contains("\"S") || place.getName().toString().contains("\"W"))) {
-                textViewStartingLocation.append("\n" + place.getName());
+                //textViewStartingLocation.append("\n" + place.getName());
+                //startLocationName = place.getName().toString();
             }
 
         } else if (requestCode == 2 && resultCode == RESULT_OK) {
             final Place place = PlacePicker.getPlace(this, data);
             final CharSequence address = place.getAddress();
-            endingLocationLatitude = place.getLatLng().latitude;
-            endingLocationLongitude = place.getLatLng().longitude;
-            textViewEndingLocation.setText(address);
+            endLocationLatitude = place.getLatLng().latitude;
+            endLocationLongitude = place.getLatLng().longitude;
+            endLocationButton.setText(address);
             if (!(place.getName().toString().contains("\"N") || place.getName().toString().contains("\"E") || place.getName().toString().contains("\"S") || place.getName().toString().contains("\"W"))) {
-                textViewStartingLocation.append("\n" + place.getName());
+                //textViewStartingLocation.append("\n" + place.getName());
+                //endLocationName = place.getName().toString();
+
             }
 
         } else {

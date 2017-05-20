@@ -26,7 +26,7 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OffersDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OfferDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 import tech.msociety.terawhere.utils.DateUtils;
@@ -160,10 +160,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                     public void onClick(DialogInterface dialog, int which) {
                         // do the acknowledged action, beware, this is run on UI thread
                         Log.i("CLICK", "OK");
-                        Call<OffersDatum> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
-                        deleteRequest.enqueue(new Callback<OffersDatum>() {
+                        Call<OfferDatum> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
+                        deleteRequest.enqueue(new Callback<OfferDatum>() {
                             @Override
-                            public void onResponse(Call<OffersDatum> call, Response<OffersDatum> response) {
+                            public void onResponse(Call<OfferDatum> call, Response<OfferDatum> response) {
                                 if (response.isSuccessful()) {
                                     Log.i("DELETING: ", Integer.toString(position));
 
@@ -186,7 +186,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                             }
 
                             @Override
-                            public void onFailure(Call<OffersDatum> call, Throwable t) {
+                            public void onFailure(Call<OfferDatum> call, Throwable t) {
                                 // handle failure
                             }
                         });

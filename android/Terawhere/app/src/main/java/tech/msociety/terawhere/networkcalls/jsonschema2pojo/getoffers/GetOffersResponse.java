@@ -8,5 +8,5 @@ import java.util.List;
 public class GetOffersResponse {
     @SerializedName("data")
     @Expose
-    public List<OffersDatum> data = null;
+    public List<OfferDatum> data = null;
 }

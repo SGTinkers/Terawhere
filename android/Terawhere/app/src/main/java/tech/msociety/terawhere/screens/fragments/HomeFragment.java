@@ -69,7 +69,7 @@ import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.Location
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.utils.DateUtils;
 
-import static tech.msociety.terawhere.screens.activities.CreateOfferActivity.MESSAGE_RESPONSE;
+import static tech.msociety.terawhere.screens.activities.CreateOfferActivity.LOG_RESPONSE;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -336,11 +336,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                                                           public void onResponse(Call<BookingDatum> call, Response<BookingDatum> response) {
     
                                                                                               if (response.isSuccessful()) {
-                                                                                                  Log.i(MESSAGE_RESPONSE, ": " + response.message());
+                                                                                                  Log.i(LOG_RESPONSE, ": " + response.message());
         
                                                                                               } else {
                                                                                                   try {
-                                                                                                      Log.i(MESSAGE_RESPONSE, ": " + response.errorBody().string());
+                                                                                                      Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
                                                                                                   } catch (IOException e) {
                                                                                                       e.printStackTrace();
                                                                                                   }
