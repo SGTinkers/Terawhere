@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         ChangeBounds transition = new ChangeBounds();
         transition.setDuration(125);
 
-        viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
+        /*viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (shouldExpand[0]) {
@@ -78,7 +77,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 viewHolder.itemView.setActivated(shouldExpand[0]);
 
             }
-        });
+        });*/
 
         viewHolder.detailsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,7 +209,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView meetUpTimeTextView;
         private TextView remarksTextView;
 
-        private LinearLayout linearLayout;
         private TextView seatsOfferedTextView;
         private TextView seatsLeftTextView;
         private ImageButton editButton;
@@ -230,7 +228,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             editButton = (ImageButton) view.findViewById(R.id.image_button_offer_edit);
             deleteButton = (ImageButton) view.findViewById(R.id.image_button_offer_delete);
             detailsTextView = (TextView) view.findViewById(R.id.text_view_offer_view_more);
-            linearLayout = (LinearLayout) view.findViewById(R.id.offersItemLinearLayout);
         }
     }
 
