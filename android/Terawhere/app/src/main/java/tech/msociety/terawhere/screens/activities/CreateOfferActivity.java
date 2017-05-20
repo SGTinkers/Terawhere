@@ -59,19 +59,9 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     /******************************************************
      *  Terawhere offer fields. Please do not remove!!! *
      ****************************************************/
-    public static final String START_LOCATION_ADDRESS = "startLocationAddress";
-    public static final String START_LOCATION_NAME = "startLocationName";
-    public static final String START_LOCATION_LONGITUDE = "startLocationLongitude";
-    public static final String START_LOCATION_LATITUDE = "startLocationLatitude";
-    public static final String END_LOCATION_LONGITUDE = "endLocationLongitude";
-    public static final String END_LOCATION_LATITUDE = "endLocationLatitude";
-    public static final String END_LOCATION_NAME = "endLocationName";
-    public static final String END_LOCATION_ADDRESS = "endLocationAddress";
-    public static final String MEET_UP_TIME = "meetUpTime";
+
     public static final String SEATS_AVAILABLE = "seatsAvailable";
-    public static final String VEHICLE_NUMBER = "vehicleNumber";
-    public static final String VEHICLE_DESCRIPTION = "vehicleDescription";
-    public static final String VEHICLE_MODEL = "vehicleModel";
+
     public static final String DRIVER_REMARKS = "driverRemarks";
 
 
@@ -157,9 +147,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             setSeatsAvailableField(intent);
             setRemarksField(intent);
 
-          /*  setVehicleDescriptionField(intent);
-            setVehicleNumberField(intent);
-            setVehicleModelField(intent);*/
+
 
             Vehicle vehicle = intent.getParcelableExtra("vehicle");
             editTextVehicleDescription.setText(vehicle.getDescription());
@@ -186,8 +174,84 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             endLocationLatitude = endTerawhereLocation.getLatitude();
             endLocationLongitude = endTerawhereLocation.getLongitude();
 
+            final Date meetUpTime = (Date) intent.getSerializableExtra("meetUpTime");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+            editTextMeetUpTime.setText(dateFormat.format(meetUpTime));
             //setGenderPreferenceField(intent);
             setCreateOfferButton();
+
+            editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    int hour = meetUpTime.getHours();
+                    int minute = meetUpTime.getMinutes();
+                    TimePickerDialog mTimePicker;
+
+                    mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            String AM_PM = " am";
+                            String mm_precede = "";
+                            if (selectedHour >= 12) {
+                                AM_PM = " pm";
+                                if (selectedHour >= 13 && selectedHour < 24) {
+                                    selectedHour -= 12;
+                                } else {
+                                    selectedHour = 12;
+                                }
+                            } else if (selectedHour == 0) {
+                                selectedHour = 12;
+                            }
+                            if (selectedMinute < 10) {
+                                mm_precede = "0";
+                            }
+
+                            editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
+                        }
+                    }, hour, minute, false);//Yes 24 hour time
+                    mTimePicker.setTitle("Select Time");
+                    mTimePicker.show();
+
+                }
+            });
+        } else {
+            editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    int minute = mcurrentTime.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+
+                    mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            String AM_PM = " am";
+                            String mm_precede = "";
+                            if (selectedHour >= 12) {
+                                AM_PM = " pm";
+                                if (selectedHour >= 13 && selectedHour < 24) {
+                                    selectedHour -= 12;
+                                } else {
+                                    selectedHour = 12;
+                                }
+                            } else if (selectedHour == 0) {
+                                selectedHour = 12;
+                            }
+                            if (selectedMinute < 10) {
+                                mm_precede = "0";
+                            }
+
+                            editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
+                        }
+                    }, hour, minute, false);//Yes 24 hour time
+                    mTimePicker.setTitle("Select Time");
+                    mTimePicker.show();
+
+                }
+            });
         }
     }
 
@@ -197,48 +261,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         Log.i(OFFER_ID, " " + offerId);
     }
 
-    private void setEndingLocationLongitudeField(Intent intent) {
-        endLocationLongitude = getDoubleValueToEdit(intent, END_LOCATION_LONGITUDE);
-    }
-
-    private void setEndingLocationLatitudeField(Intent intent) {
-        endLocationLatitude = getDoubleValueToEdit(intent, END_LOCATION_LATITUDE);
-    }
-
-    private void setStartingLocationLongitudeField(Intent intent) {
-        startLocationLongitude = getDoubleValueToEdit(intent, START_LOCATION_LONGITUDE);
-    }
-
-    private void setStartingLocationLatitudeField(Intent intent) {
-        startLocationLatitude = getDoubleValueToEdit(intent, START_LOCATION_LATITUDE);
-    }
-
     private void setCreateOfferButton() {
         buttonCreateOffer.setText(EDIT_OFFER);
     }
 
 
-    private void setEndingLocationAddressField(Intent intent) {
-        endLocationButton.setText(getStringValueToEdit(intent, END_LOCATION_ADDRESS));
-    }
-
-
-    private void setStartingLocationAddressField(Intent intent) {
-        startLocationButton.setText(getStringValueToEdit(intent, START_LOCATION_ADDRESS));
-    }
-
-
-    private void setVehicleModelField(Intent intent) {
-        editTextVehicleModel.setText(getStringValueToEdit(intent, VEHICLE_MODEL));
-    }
-
-    private void setVehicleNumberField(Intent intent) {
-        editTextVehiclePlateNumber.setText(getStringValueToEdit(intent, VEHICLE_NUMBER));
-    }
-
-    private void setVehicleDescriptionField(Intent intent) {
-        editTextVehicleDescription.setText(getStringValueToEdit(intent, VEHICLE_DESCRIPTION));
-    }
 
     private void setRemarksField(Intent intent) {
         editTextRemarks.setText(getStringValueToEdit(intent, DRIVER_REMARKS));
@@ -303,42 +330,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private void initializeMeetUpTimeEditText() {
         editTextMeetUpTime = (EditText) findViewById(R.id.meetUpTimeEditText);
 
-        editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
-                TimePickerDialog mTimePicker;
-
-                mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        String AM_PM = " am";
-                        String mm_precede = "";
-                        if (selectedHour >= 12) {
-                            AM_PM = " pm";
-                            if (selectedHour >= 13 && selectedHour < 24) {
-                                selectedHour -= 12;
-                            } else {
-                                selectedHour = 12;
-                            }
-                        } else if (selectedHour == 0) {
-                            selectedHour = 12;
-                        }
-                        if (selectedMinute < 10) {
-                            mm_precede = "0";
-                        }
-
-                        editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
-                    }
-                }, hour, minute, false);//Yes 24 hour time
-                mTimePicker.setTitle("Select Time");
-                mTimePicker.show();
-
-            }
-        });
     }
 
     private void trackCurrentLocation() {
