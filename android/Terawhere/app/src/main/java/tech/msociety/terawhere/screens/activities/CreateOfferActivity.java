@@ -1,10 +1,13 @@
 package tech.msociety.terawhere.screens.activities;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -416,12 +420,28 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
                             if (response.isSuccessful()) {
                                 Log.i(LOG_RESPONSE, ": " + response.message());
-                                Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
+                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
+                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                successDialog.setContentView(R.layout.dialog_booking_successful);
+                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                successDialog.setCanceledOnTouchOutside(false);
+                                successDialog.setCancelable(false);
 
-                                Intent resultIntent = new Intent();
-                                resultIntent.putExtra("FirstTab", 4);
-                                setResult(RESULT_OK, resultIntent);
-                                finish();
+                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                okButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        successDialog.dismiss();
+
+                                        Intent resultIntent = new Intent();
+                                        resultIntent.putExtra("FirstTab", 4);
+                                        setResult(RESULT_OK, resultIntent);
+                                        finish();
+                                    }
+                                });
+                                successDialog.show();
+
 
                             } else {
                                 try {

@@ -344,6 +344,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                                                                   successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                                                                                   successDialog.setContentView(R.layout.dialog_booking_successful);
                                                                                                   successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                  successDialog.setCanceledOnTouchOutside(true);
 
                                                                                                   Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
                                                                                                   okButton.setOnClickListener(new View.OnClickListener() {

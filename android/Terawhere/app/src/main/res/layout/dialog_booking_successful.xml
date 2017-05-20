@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="57dp"
@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/text_view_success"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -48,11 +48,9 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_successfully_created"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="21dp"
+            android:layout_margin="15dp"
             android:background="@color/color_terawhere_primary"
             android:text="OK"
             android:textColor="#ffffff"
