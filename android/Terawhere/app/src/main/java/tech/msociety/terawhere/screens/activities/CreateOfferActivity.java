@@ -22,8 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -132,9 +130,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         trackCurrentLocation();
 
         createOfferButtonListener();
-        createOfferLinearLayoutListener();
         startingLocationTextViewListener();
-        startingLocationImageViewListener();
         endingLocationTextViewListener();
 
         initializeStartingLocationTextView();
@@ -147,9 +143,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         initializeVehicleModelEditText();
         initializeMeetUpTimePicker();
         initializeVehicleNumberEditText();
-        initializeGenderPreferenceRadioGroup();
-        initializeMaleRadioButton();
-        initializeFemaleRadioButton();
+
 
         Bundle bundle = getIntent().getExtras();
         Intent intent = getIntent();
@@ -233,13 +227,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         }
     }
 
-    private void initializeFemaleRadioButton() {
-        radioButtonFemale = (RadioButton) findViewById(R.id.radioButton2);
-    }
 
-    private void initializeMaleRadioButton() {
-        radioButtonMale = (RadioButton) findViewById(R.id.radioButton);
-    }
 
     private void setEndingLocationAddressField(Intent intent) {
         textViewEndingLocation.setText(getStringValueToEdit(intent, ENDING_LOCATION_ADDRESS));
@@ -306,9 +294,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         }
     }
 
-    private void initializeGenderPreferenceRadioGroup() {
-        genderRadioGroup = (RadioGroup) findViewById(R.id.radioGroupGender);
-    }
 
     private void initializeVehicleNumberEditText() {
         editTextVehiclePlateNumber = (EditText) findViewById(R.id.vehiclePlateNumberEditText);
@@ -365,9 +350,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     @Override
     public void onClick(View view) {
 
-        if (view.getId() == R.id.createOfferLinearLayout) {
-            hideKeyboard();
-        } else if (view.getId() == R.id.imageCurrentLocation || view.getId() == R.id.locationTextView) {
+        if (view.getId() == R.id.locationTextView) {
             try {
                 showStartingPlacePickerActivity();
             } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
@@ -591,10 +574,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
      * on click listeners
      */
 
-    private void startingLocationImageViewListener() {
-        ImageView imageCurrentLocation = (ImageView) findViewById(R.id.imageCurrentLocation);
-        imageCurrentLocation.setOnClickListener(this);
-    }
 
     private void startingLocationTextViewListener() {
         TextView locationTextView = (TextView) findViewById(R.id.locationTextView);
@@ -606,10 +585,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         endingLocationTextView.setOnClickListener(this);
     }
 
-    private void createOfferLinearLayoutListener() {
-        LinearLayout backgroundLinearLayout = (LinearLayout) findViewById(R.id.createOfferLinearLayout);
-        backgroundLinearLayout.setOnClickListener(this);
-    }
 
     private void createOfferButtonListener() {
         buttonCreateOffer = (Button) findViewById(R.id.createOfferButton);
