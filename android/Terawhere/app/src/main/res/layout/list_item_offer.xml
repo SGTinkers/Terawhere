@@ -34,16 +34,16 @@
             android:id="@+id/text_view_offer_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/text_view_offer_day"
             android:layout_gravity="center"
+            android:layout_toStartOf="@+id/view_vertical_line"
             android:fontFamily="sans-serif"
+            android:gravity="center"
             android:text="May"
             android:textColor="#000000"
             android:textSize="15sp"
-            android:textStyle="normal"
-            android:gravity="center"
-            android:layout_below="@+id/text_view_offer_day"
-            android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/view_vertical_line" />
+            android:textStyle="normal" />
 
         <View
             android:id="@+id/view_vertical_line"
@@ -58,9 +58,9 @@
             android:id="@+id/text_view_offer_end_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/view_vertical_line"
-
             android:layout_margin="5dp"
+
+            android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
             android:text="Destination:"
             android:textColor="#7e7b7b"
@@ -72,9 +72,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_offer_end_location"
-            android:layout_toEndOf="@id/view_vertical_line"
-
             android:layout_margin="5dp"
+
+            android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
             android:text="Meeting Point:"
             android:textColor="#7e7b7b"
@@ -86,9 +86,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_offer_start_location"
-            android:layout_toEndOf="@id/view_vertical_line"
-
             android:layout_margin="5dp"
+
+            android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
             android:text="Pick Up Time:"
             android:textColor="#7e7b7b"
@@ -101,9 +101,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_offer_meet_up_time"
 
-            android:layout_toEndOf="@id/view_vertical_line"
-
             android:layout_margin="5dp"
+
+            android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
             android:text="Seats Offered:"
             android:textColor="#7e7b7b"
@@ -116,8 +116,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_offer_seats_offered"
 
-            android:layout_toEndOf="@id/view_vertical_line"
             android:layout_margin="5dp"
+            android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
             android:text="Seats Left:"
             android:textColor="#7e7b7b"
@@ -130,8 +130,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_offer_seats_left"
 
-            android:layout_toEndOf="@id/view_vertical_line"
             android:layout_margin="5dp"
+            android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
             android:text="Remarks:"
             android:textColor="#7e7b7b"
@@ -144,9 +144,8 @@
             android:id="@+id/text_view_offer_view_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_offer_remarks"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
+            android:layout_below="@id/text_view_offer_remarks"
             android:fontFamily="sans-serif-light"
             android:text="+ MORE DETAILS"
             android:textColor="#7e7b7b"
@@ -157,22 +156,23 @@
             android:id="@+id/image_button_offer_delete"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/garbage"
 
-            />
+            android:contentDescription="@null" />
 
         <ImageButton
             android:id="@+id/image_button_offer_edit"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginRight="30dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_toLeftOf="@id/image_button_offer_delete"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_toStartOf="@id/image_button_offer_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@null"
             android:src="@drawable/edit_1" />
 
 
