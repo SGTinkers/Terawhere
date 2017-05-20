@@ -145,7 +145,8 @@
             android:backgroundTint="@color/color_terawhere_primary"
             android:ems="10"
             android:hint="@string/enter_your_remarks_here"
-            android:imeOptions="actionNext"
+            android:imeOptions="actionDone"
+
             android:inputType="textPersonName" />
 
 

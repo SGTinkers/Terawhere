@@ -2,6 +2,7 @@ package tech.msociety.terawhere.screens.activities;
 
 import android.Manifest;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -22,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -97,7 +99,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
     private Button buttonCreateOffer;
 
-
+    private RelativeLayout createOfferRelativeLayout;
     private Button startLocationButton;
     private Button endLocationButton;
     private AutoCompleteTextView editTextVehicleDescription;
@@ -121,6 +123,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         trackCurrentLocation();
 
         createOfferButtonListener();
+        createOfferRelativeLayoutListener();
         startingLocationTextViewListener();
         endingLocationTextViewListener();
 
@@ -146,7 +149,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             //setMeetUpTimeField(intent);
             setSeatsAvailableField(intent);
             setRemarksField(intent);
-
 
 
             Vehicle vehicle = intent.getParcelableExtra("vehicle");
@@ -208,10 +210,12 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                             }
 
                             editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
+
                         }
                     }, hour, minute, false);//Yes 24 hour time
                     mTimePicker.setTitle("Select Time");
                     mTimePicker.show();
+
 
                 }
             });
@@ -264,7 +268,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private void setCreateOfferButton() {
         buttonCreateOffer.setText(EDIT_OFFER);
     }
-
 
 
     private void setRemarksField(Intent intent) {
@@ -342,6 +345,12 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     @Override
     public void onClick(View view) {
 
+        if (view.getId() == R.id.relative_layout_create_offer) {
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
         if (view.getId() == R.id.button_start_location) {
             try {
                 showStartingPlacePickerActivity();
@@ -394,11 +403,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                     Log.i("EndingAddress", ":" + endLocationButton.getText().toString());
                     Log.i("EndingLatitue", ":" + endLocationLatitude);
                     Log.i("EndingLongitude", ":" + endLocationLongitude);
-                        Log.i("SeatsAvailable",":" + Integer.parseInt(editTextSeatsAvailable.getText().toString()));
-                        Log.i("Remarks",":" + editTextRemarks.getText().toString());
-                        Log.i("VehiclePlateNumber",":" + editTextVehiclePlateNumber.getText().toString());
-                        Log.i("VehicleDesc",":" + editTextVehicleDescription.getText().toString());
-                        Log.i("VehicleModel",":" + editTextVehicleModel.getText().toString());
+                    Log.i("SeatsAvailable", ":" + Integer.parseInt(editTextSeatsAvailable.getText().toString()));
+                    Log.i("Remarks", ":" + editTextRemarks.getText().toString());
+                    Log.i("VehiclePlateNumber", ":" + editTextVehiclePlateNumber.getText().toString());
+                    Log.i("VehicleDesc", ":" + editTextVehicleDescription.getText().toString());
+                    Log.i("VehicleModel", ":" + editTextVehicleModel.getText().toString());
 
                     Call<Void> call = createOfferApi(postOffers);
                     call.enqueue(new Callback<Void>() {
@@ -550,6 +559,10 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
      * on click listeners
      */
 
+    private void createOfferRelativeLayoutListener() {
+        createOfferRelativeLayout = (RelativeLayout) findViewById(R.id.relative_layout_create_offer);
+        createOfferRelativeLayout.setOnClickListener(this);
+    }
 
     private void startingLocationTextViewListener() {
         TextView locationTextView = (TextView) findViewById(R.id.button_start_location);

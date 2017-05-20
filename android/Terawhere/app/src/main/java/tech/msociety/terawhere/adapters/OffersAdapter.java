@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         ChangeBounds transition = new ChangeBounds();
         transition.setDuration(125);
 
-        /*viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.offerItemRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (shouldExpand[0]) {
@@ -77,7 +78,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 viewHolder.itemView.setActivated(shouldExpand[0]);
 
             }
-        });*/
+        });
 
         viewHolder.detailsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,6 +216,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private ImageButton deleteButton;
         private TextView detailsTextView;
 
+        private RelativeLayout offerItemRelativeLayout;
         private ViewHolder(View view) {
             super(view);
             endingLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_end_location);
@@ -228,6 +230,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             editButton = (ImageButton) view.findViewById(R.id.image_button_offer_edit);
             deleteButton = (ImageButton) view.findViewById(R.id.image_button_offer_delete);
             detailsTextView = (TextView) view.findViewById(R.id.text_view_offer_view_more);
+            offerItemRelativeLayout = (RelativeLayout) view.findViewById(R.id.relative_layout_offer_item);
         }
     }
 
