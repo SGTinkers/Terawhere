@@ -93,7 +93,7 @@ public class TerawhereBackendServer {
         Call<GetOffersResponse> getNearbyOffers(@Body LocationDatum location);
     
         @POST("api/v1/offers")
-        Call<PostOffers> createOffer(@Body PostOffers offers);
+        Call<Void> createOffer(@Body PostOffers offers);
 
         @POST("api/v1/bookings")
         Call<BookingDatum> createBooking(@Body BookingDatum booking);

@@ -408,10 +408,10 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         Log.i("VehicleDesc",":" + editTextVehicleDescription.getText().toString());
                         Log.i("VehicleModel",":" + editTextVehicleModel.getText().toString());
 
-                    Call<PostOffers> call = createOfferApi(postOffers);
-                    call.enqueue(new Callback<PostOffers>() {
+                    Call<Void> call = createOfferApi(postOffers);
+                    call.enqueue(new Callback<Void>() {
                         @Override
-                        public void onResponse(Call<PostOffers> call, Response<PostOffers> response) {
+                        public void onResponse(Call<Void> call, Response<Void> response) {
 
                             if (response.isSuccessful()) {
                                 Log.i(LOG_RESPONSE, ": " + response.message());
@@ -432,7 +432,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         }
 
                         @Override
-                        public void onFailure(Call<PostOffers> call, Throwable t) {
+                        public void onFailure(Call<Void> call, Throwable t) {
 
                         }
                     });
@@ -488,7 +488,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
 
-    private Call<PostOffers> createOfferApi(PostOffers postOffers) {
+    private Call<Void> createOfferApi(PostOffers postOffers) {
         return TerawhereBackendServer.getApiInstance().createOffer(postOffers);
     }
 
