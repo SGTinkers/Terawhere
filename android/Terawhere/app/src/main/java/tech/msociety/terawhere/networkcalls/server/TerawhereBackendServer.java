@@ -18,7 +18,7 @@ import tech.msociety.terawhere.networkcalls.intereptors.AuthorizationResponseInt
 import tech.msociety.terawhere.networkcalls.intereptors.ConnectivityInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.DefaultInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.LoggingInterceptor;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookings;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.PostBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
@@ -86,7 +86,7 @@ public class TerawhereBackendServer {
         Call<GetOffersResponse> getOffers();
 
         @GET("api/v1/users/me/bookings")
-        Call<GetBookings> getAllBookings();
+        Call<GetBookingsResponse> getAllBookings();
 
         @POST("api/v1/nearby-offers")
         Call<GetOffersResponse> getNearbyOffers(@Body LocationDatum location);

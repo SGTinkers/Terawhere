@@ -25,7 +25,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         Booking booking = bookings.get(position);
 
-        viewHolder.seatsBookedTextView.setText("Seats Booked: " + booking.getNumberOfSeats());
+        viewHolder.seatsBookedTextView.setText("Seats Booked: " + booking.getSeatsRemaining());
 
     }
 

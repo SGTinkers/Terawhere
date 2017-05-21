@@ -33,6 +33,20 @@ public class Offer {
         this.driverName = driverName;
     }
 
+    public Offer(Integer offerId, String offererId, Date meetupTime, TerawhereLocation startTerawhereLocation, TerawhereLocation endTerawhereLocation, Vehicle vehicle, Integer vacancy, BackendTimestamp backendTimestamp, String remarks) {
+        this.offerId = offerId;
+        this.offererId = offererId;
+        this.meetupTime = meetupTime;
+        this.startTerawhereLocation = startTerawhereLocation;
+        this.endTerawhereLocation = endTerawhereLocation;
+        this.vehicle = vehicle;
+        this.vacancy = vacancy;
+        this.backendTimestamp = backendTimestamp;
+        this.remarks = remarks;
+
+    }
+
+
     public Integer getOfferId() {
         return offerId;
     }

@@ -25,7 +25,8 @@ import tech.msociety.terawhere.events.GetBookingsHasFinishedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Booking;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookings;
+import tech.msociety.terawhere.models.factories.BookingFactory;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 
@@ -73,23 +74,24 @@ public class MyBookingsFragment extends BaseFragment {
     private void getBookingsFromServer() {
         swipeRefreshLayout.setRefreshing(true);
 
-        Call<GetBookings> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookings();
-        callGetBookings.enqueue(new Callback<GetBookings>() {
+        Call<GetBookingsResponse> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookings();
+        callGetBookings.enqueue(new Callback<GetBookingsResponse>() {
             @Override
-            public void onResponse(Call<GetBookings> call, Response<GetBookings> response) {
+            public void onResponse(Call<GetBookingsResponse> call, Response<GetBookingsResponse> response) {
                 if (response.isSuccessful()) {
-                    GetBookings getBookings = response.body();
-                    List<Booking> bookings = getBookings.getBookings();
+                    GetBookingsResponse getBookingsResponse = response.body();
+                    List<Booking> bookings = BookingFactory.createFromResponse(getBookingsResponse);
                     EventBus.getDefault().post(new GetBookingsHasFinishedEvent(bookings));
+                    swipeRefreshLayout.setRefreshing(false);
+
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
 
-                swipeRefreshLayout.setRefreshing(false);
             }
-    
+
             @Override
-            public void onFailure(Call<GetBookings> call, Throwable t) {
+            public void onFailure(Call<GetBookingsResponse> call, Throwable t) {
                 EventBus.getDefault().post(new ResponseNotSuccessfulEvent(t));
             }
         });

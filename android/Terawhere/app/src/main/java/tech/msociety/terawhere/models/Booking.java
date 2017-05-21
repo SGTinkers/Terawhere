@@ -1,53 +1,49 @@
 package tech.msociety.terawhere.models;
 
-public class Booking {
-    private String id;
-    private String passengerId;
-    private String numberOfSeats;
-    private String meetUpTime;
-    private String endingLocationName;
+public class Booking extends Offer {
+
+    private Integer bookingId;
+    private String userId;
+    private Integer offerId;
+    private Integer seatsBooked;
+    private BackendTimestamp bookingBackendTimestamp;
 
 
-    private String driverName;
+    public Booking(Integer bookingId, String userId, Integer offerId, Integer pax, BackendTimestamp bookingBackendTimestamp, Offer offer) {
+        super(offer.getOfferId(), offer.getOffererId(), offer.getMeetupTime(),
+                offer.getStartTerawhereLocation(), offer.getEndTerawhereLocation(),
+                offer.getVehicle(), offer.getVacancy(), offer.getBackendTimestamp(),
+                offer.getRemarks(), offer.getSeatsRemaining(), offer.getSeatsBooked(),
+                offer.getDriverName());
 
-    public Booking(String driverName, String id, String passengerId, String numberOfSeats, String meetUpTime, String endingLocationName) {
-        this.id = id;
-        this.passengerId = passengerId;
-        this.numberOfSeats = numberOfSeats;
-        this.meetUpTime = meetUpTime;
-        this.endingLocationName = endingLocationName;
-        this.driverName = driverName;
+        this.bookingId = bookingId;
+        this.userId = userId;
+        this.seatsBooked = pax;
+        this.bookingBackendTimestamp = bookingBackendTimestamp;
+
     }
 
-    public Booking(String driverName, String id, String passengerId, String numberOfSeats) {
-        this.driverName = driverName;
-        this.id = id;
-        this.passengerId = passengerId;
-        this.numberOfSeats = numberOfSeats;
+    public Integer getBookingId() {
+        return bookingId;
     }
 
-    public String getDriverName() {
-        return driverName;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getId() {
-        return id;
+    @Override
+    public Integer getOfferId() {
+        return offerId;
     }
 
-    public String getPassengerId() {
-        return passengerId;
+    @Override
+    public Integer getSeatsBooked() {
+        return seatsBooked;
     }
 
-    public String getNumberOfSeats() {
-        return numberOfSeats;
+    public BackendTimestamp getBookingBackendTimestamp() {
+        return bookingBackendTimestamp;
     }
 
-    public String getMeetUpTime() {
-        return meetUpTime;
-    }
-
-    public String getEndingLocationName() {
-        return endingLocationName;
-    }
 
 }

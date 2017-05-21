@@ -44,8 +44,11 @@ public class BackendMock {
             Integer numberOfSeats = (int) faker.number(1);
             String timestamp = faker.words(2);
             String destination = "DESTINATION";
-            
+            Booking booking = null;
+
+/*
             Booking booking = new Booking("DRIVERNAME", bookingId, passengerId, "0", timestamp, destination);
+*/
             bookings.add(booking);
         }
         
