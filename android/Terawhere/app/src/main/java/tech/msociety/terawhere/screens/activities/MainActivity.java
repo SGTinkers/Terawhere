@@ -1,5 +1,7 @@
 package tech.msociety.terawhere.screens.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -48,6 +50,13 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.logout) {
             EventBus.getDefault().post(new LogoutEvent());
+        }
+
+        if(item.getItemId() == R.id.action_info){
+
+            Uri uri = Uri.parse("https://terawhere.com/#features"); // missing 'http://' will cause crashed
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
