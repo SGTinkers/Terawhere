@@ -95,7 +95,7 @@ public class TerawhereBackendServer {
         Call<Void> createOffer(@Body PostOffers offers);
 
         @POST("api/v1/bookings")
-        Call<BookingDatum> createBooking(@Body BookingDatum booking);
+        Call<Void> createBooking(@Body BookingDatum booking);
 
         @DELETE("api/v1/offers/{offer}")
         Call<Void> deleteOffer(@Path("offer") Integer id);
