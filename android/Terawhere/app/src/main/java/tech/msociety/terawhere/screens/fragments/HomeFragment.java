@@ -18,9 +18,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -42,8 +39,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +53,6 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereApplication;
 import tech.msociety.terawhere.TerawherePermissionChecker;
 import tech.msociety.terawhere.adapters.OfferInfoViewAdapter;
-import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.maps.ClusterRenderer;
@@ -66,7 +60,6 @@ import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.factories.OfferFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.PostBookings;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -321,7 +314,52 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                                                     adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int which) {
-                                                            Call<GetUserDetailsResponse> callUser = TerawhereBackendServer.getApiInstance().getStatus();
+
+                                                            int offerId = currentOffer.getOfferId();
+                                                            String seats = spinner.getSelectedItem().toString();
+                                                            Log.i("offerId", ":" + offerId);
+                                                            Log.i("seats", ":" + Integer.parseInt(seats));
+
+                                                            int seatsBooked = Integer.parseInt(seats);
+                                                            Call<Void> callBooking = createBookingApi(new PostBookings(offerId));
+                                                            callBooking.enqueue(new Callback<Void>() {
+                                                                                    @Override
+                                                                                    public void onResponse(Call<Void> call, Response<Void> response) {
+
+                                                                                        if (response.isSuccessful()) {
+                                                                                            Log.i(LOG_RESPONSE, ": " + response.message());
+                                                                                            final Dialog successDialog = new Dialog(getActivity());
+                                                                                            successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                                                                            successDialog.setContentView(R.layout.dialog_booking_successful);
+                                                                                            successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                            successDialog.setCanceledOnTouchOutside(true);
+
+                                                                                            Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                                                                            okButton.setOnClickListener(new View.OnClickListener() {
+                                                                                                @Override
+                                                                                                public void onClick(View v) {
+                                                                                                    successDialog.dismiss();
+                                                                                                }
+                                                                                            });
+                                                                                            successDialog.show();
+
+                                                                                        } else {
+                                                                                            try {
+                                                                                                Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
+                                                                                            } catch (IOException e) {
+                                                                                                e.printStackTrace();
+                                                                                            }
+                                                                                        }
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFailure(Call<Void> call, Throwable t) {
+                                                                                        System.out.println(Arrays.toString(t.getStackTrace()));
+
+                                                                                    }
+                                                                                }
+                                                            );
+                                                            /*Call<GetUserDetailsResponse> callUser = TerawhereBackendServer.getApiInstance().getStatus();
                                                             callUser.enqueue(new Callback<GetUserDetailsResponse>() {
                                                                 @Override
                                                                 public void onResponse(Call<GetUserDetailsResponse> call, Response<GetUserDetailsResponse> response) {
@@ -333,8 +371,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                                         Log.i("offerId", ":" + offerId);
                                                                         Log.i("seats", ":" + Integer.parseInt(seats));
 
-                                                                        PostBookings booking = new PostBookings(offerId, Integer.parseInt(seats));
-                                                                        Call<Void> call2 = createBookingApi(booking);
+                                                                        PostBookings booking = ;
+                                                                        Call<Void> call2 = createBookingApi(new PostBookings(offerId, Integer.parseInt(seats)));
                                                                         call2.enqueue(new Callback<Void>() {
                                                                                           @Override
                                                                                           public void onResponse(Call<Void> call, Response<Void> response) {
@@ -367,7 +405,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                                                                                           @Override
                                                                                           public void onFailure(Call<Void> call, Throwable t) {
-                                                                                              System.out.println(t.getMessage());
                                                                                               System.out.println(Arrays.toString(t.getStackTrace()));
 
                                                                                           }
@@ -383,7 +420,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                                 public void onFailure(Call<GetUserDetailsResponse> call, Throwable t) {
                                                                     System.out.println(Arrays.toString(t.getStackTrace()));
                                                                 }
-                                                            });
+                                                            });*/
 
                                                             //Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
                                                         }
@@ -440,22 +477,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         return TerawhereBackendServer.getApiInstance().createBooking(booking);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.refresh) {
-            Toast.makeText(getContext(), "Refreshing...", Toast.LENGTH_LONG).show();
-            initMarkers();
-        } else if (item.getItemId() == R.id.logout) {
-            EventBus.getDefault().post(new LogoutEvent());
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

@@ -13,6 +13,7 @@ public class PostBookings {
     @Expose
     public Integer offerId;
 
+
     @SerializedName("pax")
     @Expose
     public Integer pax;
@@ -21,6 +22,11 @@ public class PostBookings {
         this.offerId = offerId;
         this.pax = pax;
     }
+
+    public PostBookings(Integer offerId) {
+        this.offerId = offerId;
+    }
+
 
 
 }
