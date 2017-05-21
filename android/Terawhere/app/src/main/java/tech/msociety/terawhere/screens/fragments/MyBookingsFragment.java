@@ -25,7 +25,7 @@ import tech.msociety.terawhere.events.GetBookingsHasFinishedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Booking;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookings;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 

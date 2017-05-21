@@ -65,9 +65,9 @@ import tech.msociety.terawhere.maps.ClusterRenderer;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.factories.OfferFactory;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.PostBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.utils.DateUtils;
@@ -330,9 +330,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                                                         Log.i("user id", response.body().user.id);
                                                                         int offerId = currentOffer.getOfferId();
                                                                         String seats = spinner.getSelectedItem().toString();
-                                                                        String userId = response.body().user.id;
+                                                                        Log.i("offerId", ":" + offerId);
+                                                                        Log.i("seats", ":" + Integer.parseInt(seats));
 
-                                                                        BookingDatum booking = new BookingDatum(Integer.toString(offerId), userId, seats);
+                                                                        PostBookings booking = new PostBookings(offerId, Integer.parseInt(seats));
                                                                         Call<Void> call2 = createBookingApi(booking);
                                                                         call2.enqueue(new Callback<Void>() {
                                                                                           @Override
@@ -366,6 +367,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
                                                                                           @Override
                                                                                           public void onFailure(Call<Void> call, Throwable t) {
+                                                                                              System.out.println(t.getMessage());
+                                                                                              System.out.println(Arrays.toString(t.getStackTrace()));
+
                                                                                           }
                                                                                       }
                                                                         );
@@ -432,7 +436,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         });
     }
 
-    private Call<Void> createBookingApi(BookingDatum booking) {
+    private Call<Void> createBookingApi(PostBookings booking) {
         return TerawhereBackendServer.getApiInstance().createBooking(booking);
     }
 

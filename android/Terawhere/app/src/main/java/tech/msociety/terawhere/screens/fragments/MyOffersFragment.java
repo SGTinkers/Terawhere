@@ -29,7 +29,7 @@ import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.factories.OfferFactory;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;

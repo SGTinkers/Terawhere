@@ -18,12 +18,12 @@ import tech.msociety.terawhere.networkcalls.intereptors.AuthorizationResponseInt
 import tech.msociety.terawhere.networkcalls.intereptors.ConnectivityInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.DefaultInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.LoggingInterceptor;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookings;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.PostBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.BookingDatum;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getbookings.GetBookings;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.PostOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.PostOffers;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
@@ -95,7 +95,7 @@ public class TerawhereBackendServer {
         Call<Void> createOffer(@Body PostOffers offers);
 
         @POST("api/v1/bookings")
-        Call<Void> createBooking(@Body BookingDatum booking);
+        Call<Void> createBooking(@Body PostBookings bookings);
 
         @DELETE("api/v1/offers/{offer}")
         Call<Void> deleteOffer(@Path("offer") Integer id);

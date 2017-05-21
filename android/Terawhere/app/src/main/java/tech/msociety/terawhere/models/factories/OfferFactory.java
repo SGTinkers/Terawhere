@@ -8,8 +8,8 @@ import tech.msociety.terawhere.models.BackendTimestamp;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.GetOffersResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.OfferDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferDatum;
 import tech.msociety.terawhere.utils.DateUtils;
 
 public class OfferFactory {

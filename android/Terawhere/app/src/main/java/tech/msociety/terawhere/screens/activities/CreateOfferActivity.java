@@ -56,7 +56,7 @@ import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.Vehicle;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers.PostOffers;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.PostOffers;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
 

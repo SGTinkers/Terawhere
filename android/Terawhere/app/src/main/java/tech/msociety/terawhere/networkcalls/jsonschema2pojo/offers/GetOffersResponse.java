@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.networkcalls.jsonschema2pojo.getoffers;
+package tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
