@@ -26,7 +26,7 @@ public class ClusterMarkerLocation implements ClusterItem {
     public int getId() {
         return mId;
     }
-    public void setmPosition(LatLng mPosition) {
+    public void setPosition(LatLng mPosition) {
         this.mPosition = mPosition;
     }
 }

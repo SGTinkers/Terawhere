@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="173dp"
+    android:layout_height="300dp"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
+
+    <TextView
+        android:id="@+id/textViewEndingLocation"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:fontFamily="sans-serif"
+        android:text="An-Nur Mosque"
+        android:textColor="#434343"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewMeetUpTime"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:fontFamily="sans-serif"
+        android:text="Meet at 7pm"
+        android:textColor="#434343"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textViewSeatsAvailable"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:fontFamily="sans-serif"
+        android:text="3 seats left"
+        android:textColor="#434343"
+        android:textSize="14sp" />
+
+</LinearLayout>
