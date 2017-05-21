@@ -33,10 +33,10 @@ public class OfferFactory {
             Date meetupTime = DateUtils.fromMysqlDateTimeString(offersDatum.meetupTime);
 
             if (offersDatum.remarks == null) {
-                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, "");
+                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, "", offersDatum.seatsRemaining, offersDatum.seatsBooked, offersDatum.driverName);
 
             } else {
-                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, offersDatum.remarks.toString());
+                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, offersDatum.remarks.toString(), offersDatum.seatsRemaining, offersDatum.seatsBooked, offersDatum.driverName);
             }
             offers.add(offer);
         }

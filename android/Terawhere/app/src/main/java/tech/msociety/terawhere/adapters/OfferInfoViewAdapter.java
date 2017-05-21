@@ -1,8 +1,6 @@
 package tech.msociety.terawhere.adapters;
 
 import android.text.Html;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -11,7 +9,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import tech.msociety.terawhere.R;
@@ -57,7 +54,7 @@ public class OfferInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         if (offer.getVacancy() == 1) {
             color = "#F44336";
         }
-        seatsAvailableTextView.setText(Html.fromHtml("<font color='" + color + "'>" + offer.getVacancy() + "</font> seat" + (offer.getVacancy() > 1 ? "s" : "") + " left"));
+        seatsAvailableTextView.setText(Html.fromHtml("<font color='" + color + "'>" + offer.getSeatsRemaining() + "</font> seat" + (offer.getSeatsRemaining() > 1 ? "s" : "") + " left"));
         
         return popup;
     }

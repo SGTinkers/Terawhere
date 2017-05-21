@@ -276,7 +276,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                                         dialogDay.setText(day);
                                         dialogMonth.setText(month);
 
-                                        dialogSeatsAvailable.setText("Seats Left: " + Integer.toString(currentOffer.getVacancy()));
+                                        dialogSeatsAvailable.setText("Seats Left: " + Integer.toString(currentOffer.getSeatsRemaining()));
 
                                         List<String> categories = new ArrayList<String>();
                                         int seatsAvailable = currentOffer.getVacancy();

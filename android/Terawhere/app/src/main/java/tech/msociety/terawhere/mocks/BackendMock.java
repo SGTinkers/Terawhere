@@ -27,8 +27,8 @@ public class BackendMock {
             Integer vacancy = (int) faker.number(1);
             BackendTimestamp backendTimestamp = BackendTimestampMock.getRandomBackendTimestamp();
             String remarks = faker.words(1);
-    
-            Offer offer = new Offer(offerId, offererId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, vacancy, backendTimestamp, remarks);
+
+            Offer offer = new Offer(offerId, offererId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, vacancy, backendTimestamp, remarks, 0, 0, "");
             offers.add(offer);
         }
         

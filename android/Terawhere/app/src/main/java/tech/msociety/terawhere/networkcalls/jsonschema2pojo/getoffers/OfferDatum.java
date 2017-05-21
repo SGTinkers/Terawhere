@@ -64,6 +64,15 @@ public class OfferDatum {
     @SerializedName("vehicle_model")
     @Expose
     public String vehicleModel;
+    @SerializedName("seats_booked")
+    @Expose
+    public Integer seatsBooked;
+    @SerializedName("seats_remaining")
+    @Expose
+    public Integer seatsRemaining;
+    @SerializedName("name")
+    @Expose
+    public String driverName;
     @SerializedName("deleted_at")
     @Expose
     public String deletedAt;
@@ -73,5 +82,6 @@ public class OfferDatum {
     @SerializedName("updated_at")
     @Expose
     public String updatedAt;
+
 
 }
