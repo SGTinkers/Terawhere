@@ -42,19 +42,19 @@
     </string-array>
 
     <string-array name="colors_array">
-        <item>red</item>
-        <item>blue</item>
-        <item>black</item>
-        <item>white</item>
-        <item>yellow</item>
-        <item>gray</item>
-        <item>green</item>
-        <item>silver</item>
-        <item>dark blue</item>
-        <item>dark green</item>
-        <item>purple</item>
-        <item>orange</item>
-        <item>brown</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Black</item>
+        <item>White</item>
+        <item>Yellow</item>
+        <item>Gray</item>
+        <item>Green</item>
+        <item>Silver</item>
+        <item>Dark Blue</item>
+        <item>Dark Green</item>
+        <item>Purple</item>
+        <item>Orange</item>
+        <item>Brown</item>
     </string-array>
     <string name="title_activity_navigation_drawer">NavigationDrawer</string>
 
@@ -62,14 +62,15 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="where_are_you_now">Where are you now?</string>
-    <string name="where_do_you_want_to_go">Where do you want to go?</string>
-    <string name="meet_up_time">Meet Up Time</string>
-    <string name="number_of_seats_available">Number of seats available</string>
-    <string name="vehicle_color">Vehicle color</string>
+
+    <string name="meetup_place">Meetup Place</string>
+    <string name="meetup_time">Meetup Time</string>
+    <string name="destination">Destination</string>
+    <string name="number_of_seats">Number of Seats</string>
+    <string name="vehicle_number">Vehicle Number</string>
     <string name="vehicle_model">Vehicle Model</string>
-    <string name="vehicle_number">Vehicle number</string>
-    <string name="enter_your_remarks_here">Enter your remarks here</string>
-    <string name="create_offer">Create offer</string>
+    <string name="vehicle_color">Vehicle Color</string>
+    <string name="remarks">Remarks (optional)</string>
+    <string name="create_offer">Create Offer</string>
 
 </resources>
