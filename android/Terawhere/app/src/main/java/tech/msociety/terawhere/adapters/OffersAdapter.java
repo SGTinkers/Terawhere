@@ -31,28 +31,28 @@ import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 import tech.msociety.terawhere.utils.DateUtils;
 
 public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
-    public static final String DESTINATION = "Destination: ";
-    public static final String MEETING_POINT = "Meeting Point: ";
-    public static final String PICK_UP_TIME = "Pick Up Time: ";
-    public static final String REMARKS = "Remarks: ";
-    public static final String LESS_DETAILS = "\u2014 LESS DETAILS";
-    public static final String MORE_DETAILS = "+ MORE DETAILS";
-    public static final String IS_EDIT = "isEdit";
-    public static final String START_TERAWHERE_LOCATION = "startTerawhereLocation";
-    public static final String END_TERAWHERE_LOCATION = "endTerawhereLocation";
-    public static final String VEHICLE = "vehicle";
-    public static final String ID = "id";
-    public static final String DRIVER_ID = "driverId";
-    public static final String MEET_UP_TIME = "meetUpTime";
-    public static final String DRIVER_REMARKS = "driverRemarks";
-    public static final String SEATS_AVAILABLE = "seatsAvailable";
-    public static final String DELETE_OFFER = "Delete Offer?";
-    public static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER = "Are you sure you want to delete your offer?";
-    public static final String CANCEL = "Cancel";
-    public static final String DELETE = "Delete";
-    public static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
-    public static final String CONFIRM = "Confirm";
-    public static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
+    private static final String DESTINATION = "Destination: ";
+    private static final String MEETING_POINT = "Meeting Point: ";
+    private static final String PICK_UP_TIME = "Pick Up Time: ";
+    private static final String REMARKS = "Remarks: ";
+    private static final String LESS_DETAILS = "\u2014 LESS DETAILS";
+    private static final String MORE_DETAILS = "+ MORE DETAILS";
+    private static final String IS_EDIT = "isEdit";
+    private static final String START_TERAWHERE_LOCATION = "startTerawhereLocation";
+    private static final String END_TERAWHERE_LOCATION = "endTerawhereLocation";
+    private static final String VEHICLE = "vehicle";
+    private static final String ID = "id";
+    private static final String DRIVER_ID = "driverId";
+    private static final String MEET_UP_TIME = "meetUpTime";
+    private static final String DRIVER_REMARKS = "driverRemarks";
+    private static final String SEATS_AVAILABLE = "seatsAvailable";
+    private static final String DELETE_OFFER = "Delete Offer?";
+    private static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER = "Are you sure you want to delete your offer?";
+    private static final String CANCEL = "Cancel";
+    private static final String DELETE = "Delete";
+    private static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
+    private static final String CONFIRM = "Confirm";
+    private static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
 
     private List<Offer> offers;
 
@@ -69,17 +69,17 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
 
-        /***** set offer object *****/
+        // set offer object
         final Offer offer = offers.get(position);
 
-        /***** set meet up time to be in hh:mm am/pm format *****/
+        // set meet up time to be in hh:mm am/pm format
         String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
 
-        /***** set meet up date to be in day and month abbreviated format *****/
+        // set meet up date to be in day and month abbreviated format
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
 
-        /***** offer fields setText *****/
+        // offer fields setText
         setTextEndLocation(viewHolder, offer);
         setTextStartLocation(viewHolder, offer);
         setTextMeetUpTime(viewHolder, meetUpTime);
@@ -87,14 +87,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         setTextMonth(viewHolder, month);
         setTextRemarks(viewHolder, offer);
 
-        /***** check card collapse/expand *****/
+        // check card collapse/expand
         final boolean[] shouldExpand = isCollapse(viewHolder);
 
-        /***** set listeners for collapse/expand offer details *****/
+        // set listeners for collapse/expand offer details
         setOfferItemRelativeLayoutListener(viewHolder, shouldExpand);
         setDetailsTextViewListener(viewHolder, shouldExpand);
 
-        /***** set listeners for edit/delete offer *****/
+        // set listeners for edit/delete offer
         setEditOfferButtonListener(viewHolder, offer);
         setDeleteOfferButtonListener(viewHolder, position);
 
@@ -177,7 +177,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             @Override
             public void onClick(View v) {
 
-                /*********** start location ************/
+                // start location
                 TerawhereLocation startTerawhereLocation = new TerawhereLocation(
                         offer.getStartTerawhereLocation().getName(),
                         offer.getStartTerawhereLocation().getAddress(),
@@ -185,7 +185,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                         offer.getStartTerawhereLocation().getLongitude(),
                         offer.getStartTerawhereLocation().getGeohash());
 
-                /*********** end location ************/
+                // end location
                 TerawhereLocation endTerawhereLocation = new TerawhereLocation(
                         offer.getEndTerawhereLocation().getName(),
                         offer.getEndTerawhereLocation().getAddress(),
@@ -193,13 +193,13 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                         offer.getEndTerawhereLocation().getLongitude(),
                         offer.getEndTerawhereLocation().getGeohash());
 
-                /*********** vehicle info ************/
+                // vehicle info
                 Vehicle vehicle = new Vehicle(
                         offer.getVehicle().getPlateNumber(),
                         offer.getVehicle().getDescription(),
                         offer.getVehicle().getModel());
 
-                /******** store values for create offer activity *******/
+                // store values for create offer activity
                 Intent intent = new Intent(new Intent(viewGroup.getContext(), CreateOfferActivity.class));
                 intent.putExtra(IS_EDIT, true);
                 intent.putExtra(START_TERAWHERE_LOCATION, startTerawhereLocation);
@@ -212,7 +212,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 intent.putExtra(SEATS_AVAILABLE, offer.getVacancy());
 
 
-                /******** start create offer activity *******/
+                // start create offer activity
                 viewGroup.getContext().startActivity(intent);
             }
         });
@@ -335,24 +335,24 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView startLocationTextView;
         private TextView meetUpTimeTextView;
         private TextView remarksTextView;
+        private TextView detailsTextView;
 
-        private TextView seatsOfferedTextView;
-        private TextView seatsLeftTextView;
+        // Using this soon
+        /*private TextView seatsOfferedTextView;
+        private TextView seatsLeftTextView;*/
+
         private ImageButton editOfferButton;
         private ImageButton deleteOfferButton;
-        private TextView detailsTextView;
 
         private RelativeLayout offerItemRelativeLayout;
 
         private ViewHolder(View view) {
             super(view);
 
-            /***** initialization *****/
+            // initialization
             initializeEndLocationTextView(view);
             initializeStartLocationTextView(view);
             initializeMeetUpTimeTextView(view);
-            initializeSeatsOfferedTextView(view);
-            initializeSeatsLeftTextView(view);
             initializeDayTextView(view);
             initializeRemarksTextView(view);
             initializeMonthTextView(view);
@@ -360,6 +360,12 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             initializeDeleteOfferButton(view);
             initializeDetailsTextView(view);
             initializeOfferItemRelativeLayout(view);
+
+            // Using this soon
+            /*initializeSeatsOfferedTextView(view);
+            initializeSeatsLeftTextView(view);*/
+
+
 
         }
 
@@ -391,13 +397,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             dayTextView = (TextView) view.findViewById(R.id.text_view_offer_day);
         }
 
-        private void initializeSeatsLeftTextView(View view) {
+        // Using this soon
+        /*private void initializeSeatsLeftTextView(View view) {
             seatsLeftTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_left);
         }
 
         private void initializeSeatsOfferedTextView(View view) {
             seatsOfferedTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_offered);
-        }
+        }*/
 
         private void initializeMeetUpTimeTextView(View view) {
             meetUpTimeTextView = (TextView) view.findViewById(R.id.text_view_offer_meet_up_time);
