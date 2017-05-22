@@ -161,6 +161,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 intent.putExtra(DRIVER_REMARKS, offer.getRemarks());
                 intent.putExtra(SEATS_AVAILABLE, offer.getVacancy());
 
+
                 /******** start create offer activity *******/
                 viewGroup.getContext().startActivity(intent);
             }
@@ -215,6 +216,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
     }
+
 
     private void decorateAlertDialog(AlertDialog alert) {
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
