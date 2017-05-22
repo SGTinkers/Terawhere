@@ -117,109 +117,155 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
+        Bundle bundle = getIntent().getExtras();
+        Intent intent = getIntent();
+
         initToolbar(TOOLBAR_TITLE, true);
 
         trackCurrentLocation();
 
-        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        Location location;
-
-        if (network_enabled) {
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-            if (location != null) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-            }
-
-            Log.i("LATITUDE", ":" + latitude);
-            Log.i("LONGITUDE", ":" + longitude);
-
-        }
-
+        // set listener
         createOfferButtonListener();
         createOfferRelativeLayoutListener();
         startingLocationTextViewListener();
         endingLocationTextViewListener();
 
+        // initialization
         initializeMeetUpTimeEditText();
         initializeStartingLocationTextView();
         initializeEndingLocationTextView();
         initializeSeatsAvailableEditText();
         initializeRemarksEditText();
         initialializeVehicleDescriptionEditText(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.colors_array)));
-
         initializeVehicleModelEditText();
         initializeVehicleNumberEditText();
-
-
-        Bundle bundle = getIntent().getExtras();
-        Intent intent = getIntent();
-
         initializeIsEditOffer(bundle, intent);
 
         if (isEditOffer) {
             initializeOfferId(intent);
-
-
             setSeatsAvailableField(intent);
             setRemarksField(intent);
 
+            // set vehicle details
+            Vehicle vehicle = getVehicle(intent);
+            setTextVehicleDescriptionEditText(vehicle);
+            setTextVehicleModelEditText(vehicle);
+            setTextVehiclePlateNumber(vehicle);
 
-            Vehicle vehicle = intent.getParcelableExtra("vehicle");
-            editTextVehicleDescription.setText(vehicle.getDescription());
-            editTextVehicleModel.setText(vehicle.getModel());
-            editTextVehiclePlateNumber.setText(vehicle.getPlateNumber());
+            //  set location details
+            TerawhereLocation startTerawhereLocation = getStartTerawhereLocation(intent);
+            TerawhereLocation endTerawhereLocation = getEndTerawhereLocation(intent);
+            setTextStartLocationEditText(startTerawhereLocation);
+            setTextEndLocationEditText(endTerawhereLocation);
 
+            // initialize location details
+            setStartLatitude(startTerawhereLocation);
+            setEndLatitude(endTerawhereLocation);
+            setStartLongitude(startTerawhereLocation);
+            setEndLongitude(startTerawhereLocation);
+            setStartLocationName(startTerawhereLocation);
+            setEndLocationName(endTerawhereLocation);
 
-            TerawhereLocation startTerawhereLocation = intent.getParcelableExtra("startTerawhereLocation");
-            TerawhereLocation endTerawhereLocation = intent.getParcelableExtra("endTerawhereLocation");
-            startLocationEditText.setText(startTerawhereLocation.getAddress());
-            endLocationEditText.setText(endTerawhereLocation.getAddress());
-            startLatitude = startTerawhereLocation.getLatitude();
-            endLatitude = endTerawhereLocation.getLatitude();
-            startLongitude = startTerawhereLocation.getLongitude();
-            endLongitude = startTerawhereLocation.getLongitude();
-            startLocationName = startTerawhereLocation.getName();
-            endLocationName = endTerawhereLocation.getName();
+            // set meet up time
+            final Date meetUpTime = getMeetUpTime(intent);
+            setTextMeetUpTimeEditText(meetUpTime);
 
-            final Date meetUpTime = (Date) intent.getSerializableExtra("meetUpTime");
-            editTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
+            //set button
             setCreateOfferButton();
 
-            editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
+            // set listener
+            setMeetUpTimeEditTextListener(meetUpTime);
 
-                @Override
-                public void onClick(View v) {
-                    TimePickerDialog tpdMeetUpTime = getTimePickerDialog(meetUpTime);
-                    showTpdMeetUpTime(tpdMeetUpTime);
-                }
-            });
         } else {
-            editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    TimePickerDialog tpdMeetUpTime = getTimePickerDialog();
-                    showTpdMeetUpTime(tpdMeetUpTime);
-
-                }
-            });
+            setMeetUpTimeEditTextListener();
         }
+    }
+
+    private void setMeetUpTimeEditTextListener() {
+        editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog tpdMeetUpTime = getTimePickerDialog();
+                showTpdMeetUpTime(tpdMeetUpTime);
+
+            }
+        });
+    }
+
+    private void setMeetUpTimeEditTextListener(final Date meetUpTime) {
+        editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog tpdMeetUpTime = getTimePickerDialog(meetUpTime);
+                showTpdMeetUpTime(tpdMeetUpTime);
+            }
+        });
+    }
+
+    private void setTextMeetUpTimeEditText(Date meetUpTime) {
+        editTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
+    }
+
+    private Date getMeetUpTime(Intent intent) {
+        return (Date) intent.getSerializableExtra("meetUpTime");
+    }
+
+    private void setEndLocationName(TerawhereLocation endTerawhereLocation) {
+        endLocationName = endTerawhereLocation.getName();
+    }
+
+    private void setStartLocationName(TerawhereLocation startTerawhereLocation) {
+        startLocationName = startTerawhereLocation.getName();
+    }
+
+    private void setEndLongitude(TerawhereLocation startTerawhereLocation) {
+        endLongitude = startTerawhereLocation.getLongitude();
+    }
+
+    private void setStartLongitude(TerawhereLocation startTerawhereLocation) {
+        startLongitude = startTerawhereLocation.getLongitude();
+    }
+
+    private void setEndLatitude(TerawhereLocation endTerawhereLocation) {
+        endLatitude = endTerawhereLocation.getLatitude();
+    }
+
+    private void setStartLatitude(TerawhereLocation startTerawhereLocation) {
+        startLatitude = startTerawhereLocation.getLatitude();
+    }
+
+    private void setTextEndLocationEditText(TerawhereLocation endTerawhereLocation) {
+        endLocationEditText.setText(endTerawhereLocation.getAddress());
+    }
+
+    private void setTextStartLocationEditText(TerawhereLocation startTerawhereLocation) {
+        startLocationEditText.setText(startTerawhereLocation.getAddress());
+    }
+
+    private TerawhereLocation getEndTerawhereLocation(Intent intent) {
+        return intent.getParcelableExtra("endTerawhereLocation");
+    }
+
+    private TerawhereLocation getStartTerawhereLocation(Intent intent) {
+        return intent.getParcelableExtra("startTerawhereLocation");
+    }
+
+    private void setTextVehiclePlateNumber(Vehicle vehicle) {
+        editTextVehiclePlateNumber.setText(vehicle.getPlateNumber());
+    }
+
+    private void setTextVehicleModelEditText(Vehicle vehicle) {
+        editTextVehicleModel.setText(vehicle.getModel());
+    }
+
+    private void setTextVehicleDescriptionEditText(Vehicle vehicle) {
+        editTextVehicleDescription.setText(vehicle.getDescription());
+    }
+
+    private Vehicle getVehicle(Intent intent) {
+        return intent.getParcelableExtra("vehicle");
     }
 
     @NonNull
@@ -348,6 +394,13 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private void trackCurrentLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+
+        Location location = ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        if (location != null) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
         }
     }
 
