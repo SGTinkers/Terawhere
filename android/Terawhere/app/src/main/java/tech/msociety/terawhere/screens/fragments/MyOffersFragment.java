@@ -122,4 +122,14 @@ public class MyOffersFragment extends BaseFragment {
     public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
         Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            getOffersFromServer();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

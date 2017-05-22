@@ -183,9 +183,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void onLocationChanged(Location location) {
         this.location = location;
 
-//        Log.i("LATITUDES", ":" + location.getLatitude());
-//        Log.i("LONGITUDES", ":" + location.getLongitude());
-
         // Alternative entry point for data loading
         if (!firstLoadInit) {
             loadMarkers();
@@ -193,24 +190,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
     }
 
-    // Faruq: Shouldn't need this as in the BaseActivity we already have a guard for requireLocationServices
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_LOCATION: {
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//                        if (googleApiClient == null) {
-//                            buildGoogleApiClient();
-//                        }
-//                        googleMap.setMyLocationEnabled(true);
-//                    }
-//                } else {
-//                    Toast.makeText(getContext(), "Terawhere needs location services to work optimally", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        }
-//    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -259,7 +239,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     clusterManager.clearItems();
 
                     GetOffersResponse getOffersResponse = response.body();
-                    Log.i("GET_OFFERS", ":" + getOffersResponse.toString());
                     offers = OfferFactory.createFromResponse(getOffersResponse);
 
                     mapLocationOffer = new HashMap<>();
@@ -370,6 +349,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 dialog.dismiss();
             }
         });
+
+        decorateAlertDialog(builder);
+    }
+
+    private void decorateAlertDialog(AlertDialog.Builder builder) {
         AlertDialog alert = builder.create();
         alert.show();
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
@@ -380,7 +364,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         pbutton.setText("Confirm");
     }
 
-    // TODO: Can clean code up further
     private void showConfirmBookDialog(final Offer offer, final String numSeats) {
         if (numSeats.matches("")) {
             Toast.makeText(getContext(), "Please enter number of seats", Toast.LENGTH_SHORT).show();
@@ -431,9 +414,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 public void onFailure(Call<Void> call, Throwable t) {
                 }
             });
-
-            //Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
-
 
         }
     }
