@@ -174,7 +174,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                     int minute = meetUpTime.getMinutes();
                     TimePickerDialog mTimePicker;
 
-                    mTimePicker = new TimePickerDialog(CreateOfferActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                             String AM_PM = " am";
