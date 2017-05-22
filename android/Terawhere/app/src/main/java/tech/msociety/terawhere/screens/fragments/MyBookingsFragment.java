@@ -82,12 +82,11 @@ public class MyBookingsFragment extends BaseFragment {
                     GetBookingsResponse getBookingsResponse = response.body();
                     List<Booking> bookings = BookingFactory.createFromResponse(getBookingsResponse);
                     EventBus.getDefault().post(new GetBookingsHasFinishedEvent(bookings));
-                    swipeRefreshLayout.setRefreshing(false);
 
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
-
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override

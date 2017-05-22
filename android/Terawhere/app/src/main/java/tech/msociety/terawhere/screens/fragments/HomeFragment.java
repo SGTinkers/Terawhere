@@ -2,22 +2,21 @@ package tech.msociety.terawhere.screens.fragments;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -41,7 +40,6 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,63 +51,74 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.TerawhereApplication;
 import tech.msociety.terawhere.TerawherePermissionChecker;
 import tech.msociety.terawhere.adapters.OfferInfoViewAdapter;
+import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.maps.ClusterRenderer;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.models.TerawhereLocation;
 import tech.msociety.terawhere.models.factories.OfferFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.PostBookings;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
+import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 import tech.msociety.terawhere.utils.DateUtils;
 
 import static tech.msociety.terawhere.screens.activities.CreateOfferActivity.LOG_RESPONSE;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    protected GoogleMap googleMap;
+public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
     private GoogleApiClient googleApiClient;
-    private double latitude = 0.0;
-    private double longitude = 0.0;
+
+    private Location location;
+
+    private boolean firstLoadInit;
+
     private ViewPager viewPager;
-    
+
+    private ClusterManager<ClusterMarkerLocation> clusterManager;
+
+    private List<Offer> offers;
+
+    private HashMap<LatLng, Offer> mapLocationOffer;
+
+    private GoogleMap googleMap;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        
+
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
-    
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         viewPager = (ViewPager) getActivity().findViewById(R.id.pager);
 
+        // Faruq: Shouldn't need this as in the BaseActivity we already have a guard for requireLocationServices
+        // It is here to pass Android IDE inspection
         if (AndroidSdkChecker.isMarshmallow()) {
             TerawherePermissionChecker.checkPermission(getActivity());
         }
 
-        LocationManager locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        buildGoogleApiClient();
 
-        boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        Location location;
-
-        if (network_enabled) {
-            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (location != null) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-            }
-        }
-
-        Log.i("LATITUDES", ":" + latitude);
-        Log.i("LONGITUDES", ":" + longitude);
         initializeSupportMapFragment();
     }
-    
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        googleApiClient.disconnect();
+    }
+
     private void initializeSupportMapFragment() {
         SupportMapFragment supportMapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map_container);
         if (supportMapFragment == null) {
@@ -118,22 +127,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         }
         supportMapFragment.getMapAsync(this);
     }
-    
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
 
         if (AndroidSdkChecker.isMarshmallow()) {
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                buildGoogleApiClient();
-                this.googleMap.setMyLocationEnabled(true);
+                googleMap.setMyLocationEnabled(true);
             }
         } else {
-            buildGoogleApiClient();
-            this.googleMap.setMyLocationEnabled(true);
+            googleMap.setMyLocationEnabled(true);
         }
 
-        initMarkers();
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+        initClusterManager();
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -142,13 +152,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        googleApiClient.connect();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(10);
+        locationRequest.setInterval(60);
         locationRequest.setFastestInterval(10);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(getContext(),
@@ -161,6 +170,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onConnectionSuspended(int i) {
+        if (googleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        }
     }
 
     @Override
@@ -169,306 +181,112 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(18));
-        if (googleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-        }
-    }
-    
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        if (googleApiClient == null) {
-                            buildGoogleApiClient();
-                        }
-                        googleMap.setMyLocationEnabled(true);
-                    }
-                } else {
-                    Toast.makeText(getContext(), "Terawhere needs location services to work optimally", Toast.LENGTH_LONG).show();
-                }
-            }
+        this.location = location;
+
+//        Log.i("LATITUDES", ":" + location.getLatitude());
+//        Log.i("LONGITUDES", ":" + location.getLongitude());
+
+        // Alternative entry point for data loading
+        if (!firstLoadInit) {
+            loadMarkers();
+            firstLoadInit = true;
         }
     }
 
-    private void initMarkers() {
-        final String userId = AppPrefs.with(TerawhereApplication.ApplicationContext).getUserId();
-        Log.i("USER_ID", ":" + userId);
-        Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationDatum(latitude, longitude));
+    // Faruq: Shouldn't need this as in the BaseActivity we already have a guard for requireLocationServices
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_LOCATION: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                        if (googleApiClient == null) {
+//                            buildGoogleApiClient();
+//                        }
+//                        googleMap.setMyLocationEnabled(true);
+//                    }
+//                } else {
+//                    Toast.makeText(getContext(), "Terawhere needs location services to work optimally", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        }
+//    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_home_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.refresh) {
+            Toast.makeText(getContext(), "Refreshing...", Toast.LENGTH_SHORT).show();
+            loadMarkers();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void initClusterManager() {
+        clusterManager = new ClusterManager<>(getContext(), googleMap);
+        clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
+            @Override
+            public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
+                Offer offer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+
+                if (AppPrefs.with(TerawhereApplication.ApplicationContext).getUserId().equals(offer.getOffererId())) {
+                    viewPager.setCurrentItem(1);
+                } else {
+                    showBookingDialog(offer);
+                }
+            }
+        });
+        clusterManager.setRenderer(new ClusterRenderer(getContext(), googleMap, clusterManager));
+        googleMap.setOnCameraIdleListener(clusterManager);
+        googleMap.setOnInfoWindowClickListener(clusterManager);
+        googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+        googleMap.setOnMarkerClickListener(clusterManager);
+    }
+
+    private void loadMarkers() {
+        Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationDatum(location.getLatitude(), location.getLongitude()));
         callGetOffers.enqueue(new Callback<GetOffersResponse>() {
             @Override
             public void onResponse(Call<GetOffersResponse> call, Response<GetOffersResponse> response) {
-
                 if (response.isSuccessful()) {
-                    final ClusterManager<ClusterMarkerLocation> clusterManager = new ClusterManager<ClusterMarkerLocation>(getContext(), googleMap);
                     googleMap.clear();
                     clusterManager.clearItems();
-                    googleMap.setOnCameraIdleListener(clusterManager);
-                    googleMap.getUiSettings().setMapToolbarEnabled(true);
-                    googleMap.getUiSettings().setZoomControlsEnabled(true);
-        
+
                     GetOffersResponse getOffersResponse = response.body();
                     Log.i("GET_OFFERS", ":" + getOffersResponse.toString());
-                    List<Offer> offers = OfferFactory.createFromResponse(getOffersResponse);
+                    offers = OfferFactory.createFromResponse(getOffersResponse);
 
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(latitude, longitude), 16));
-                    final HashMap<LatLng, Offer> mapLocationOffer = new HashMap<>();
+                    mapLocationOffer = new HashMap<>();
                     for (int i = 0; i < offers.size(); i++) {
-                        TerawhereLocation startLocation = offers.get(i).getStartTerawhereLocation();
-                        LatLng startLatLng = new LatLng(startLocation.getLatitude(), startLocation.getLongitude());
+                        Offer offer = offers.get(i);
+                        LatLng startLatLng = new LatLng(offer.getStartTerawhereLocation().getLatitude(), offer.getStartTerawhereLocation().getLongitude());
 
-                        clusterManager.addItem(new ClusterMarkerLocation(offers.get(i).getOfferId(), startLatLng));
+                        clusterManager.addItem(new ClusterMarkerLocation(offer.getOfferId(), startLatLng));
                         mapLocationOffer.put(startLatLng, offers.get(i));
                     }
                     clusterManager.getMarkerCollection().setOnInfoWindowAdapter(new OfferInfoViewAdapter(LayoutInflater.from(getContext()), mapLocationOffer));
-                    clusterManager.setOnClusterItemInfoWindowClickListener(
-                            new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
-                                @Override
-                                public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
-                                    final Offer currentOffer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
-                                    Log.i("USER_ID2", ":" + currentOffer.getOffererId());
 
-                                    if (userId.equals(currentOffer.getOffererId())) {
-                                        viewPager.setCurrentItem(1);
-                                    } else {
-                                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    // Zoom in after markers loaded
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
-                                        final LayoutInflater inflater = getActivity().getLayoutInflater();
-                                        final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
-                                        builder.setView(dialogView);
-
-                                        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
-                                        TextView dialogStartingLocation = (TextView) dialogView.findViewById(R.id.dialogTextViewStartingLocation);
-
-                                        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogTextViewEndingLocation);
-                                        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogTextViewRemarks);
-                                        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTextViewMeetUpTime);
-                                        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogTextViewSeatsAvailable);
-                                        TextView dialogMonth = (TextView) dialogView.findViewById(R.id.dialogTextViewMonth);
-                                        TextView dialogDay = (TextView) dialogView.findViewById(R.id.dialogTextViewDay);
-
-                                        if (currentOffer.getRemarks().matches("")) {
-                                            dialogRemarks.setText("Remarks: NIL");
-
-                                        } else {
-                                            dialogRemarks.setText("Remarks: " + currentOffer.getRemarks());
-                                        }
-                                        dialogStartingLocation.setText("Meeting Point: " + currentOffer.getStartTerawhereLocation().getAddress());
-                                        dialogDestination.setText("Destination: " + currentOffer.getEndTerawhereLocation().getAddress());
-                                        String meetUpTime = DateUtils.toFriendlyDateTimeString(currentOffer.getMeetupTime());
-                                        String day = DateUtils.toString(currentOffer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
-                                        String month = DateUtils.toString(currentOffer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
-                                        if (!meetUpTime.matches("")) {
-                                            dialogTimestamp.setText("Pick Up Time: " + meetUpTime);
-                                        }
-                                        dialogDay.setText(day);
-                                        dialogMonth.setText(month);
-
-                                        dialogSeatsAvailable.setText("Seats Left: " + Integer.toString(currentOffer.getSeatsRemaining()));
-
-                                        List<String> categories = new ArrayList<String>();
-                                        int seatsAvailable = currentOffer.getVacancy();
-                                        for (int i = 1; i <= seatsAvailable; i++) {
-                                            categories.add(Integer.toString(i));
-                                        }
-                                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
-                                            @Override
-                                            public View getView(int position, View convertView, ViewGroup parent) {
-                                                return setCentered(super.getView(position, convertView, parent));
-                                            }
-
-                                            @Override
-                                            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                                                return setCentered(super.getDropDownView(position, convertView, parent));
-                                            }
-
-                                            private View setCentered(View view) {
-                                                view.setPadding(10, 20, 10, 10);
-                                                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                                                textView.setTextSize(20);
-                                                textView.setGravity(Gravity.CENTER);
-                                                return view;
-                                            }
-                                        };
-
-                                        spinner.setAdapter(dataAdapter);
-
-                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                                if (spinner.getSelectedItem().toString().matches("")) {
-                                                    Toast.makeText(getContext(), "Please enter number of seats", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    AlertDialog.Builder adb2 = new AlertDialog.Builder(getContext());
-
-                                                    LayoutInflater inflater = getActivity().getLayoutInflater();
-
-                                                    adb2.setTitle("Are you sure you want to book " + spinner.getSelectedItem().toString() + " seats?");
-
-                                                    adb2.setIcon(android.R.drawable.ic_dialog_alert);
-
-                                                    adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int which) {
-
-                                                            int offerId = currentOffer.getOfferId();
-                                                            String seats = spinner.getSelectedItem().toString();
-                                                            Log.i("offerId", ":" + offerId);
-                                                            Log.i("seats", ":" + Integer.parseInt(seats));
-
-                                                            int seatsBooked = Integer.parseInt(seats);
-                                                            Call<Void> callBooking = createBookingApi(new PostBookings(offerId));
-                                                            callBooking.enqueue(new Callback<Void>() {
-                                                                                    @Override
-                                                                                    public void onResponse(Call<Void> call, Response<Void> response) {
-
-                                                                                        if (response.isSuccessful()) {
-                                                                                            Log.i(LOG_RESPONSE, ": " + response.message());
-                                                                                            final Dialog successDialog = new Dialog(getActivity());
-                                                                                            successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                                                            successDialog.setContentView(R.layout.dialog_booking_successful);
-                                                                                            successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                                                                            successDialog.setCanceledOnTouchOutside(true);
-
-                                                                                            Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
-                                                                                            okButton.setOnClickListener(new View.OnClickListener() {
-                                                                                                @Override
-                                                                                                public void onClick(View v) {
-                                                                                                    successDialog.dismiss();
-                                                                                                }
-                                                                                            });
-                                                                                            successDialog.show();
-
-                                                                                        } else {
-                                                                                            try {
-                                                                                                Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
-                                                                                            } catch (IOException e) {
-                                                                                                e.printStackTrace();
-                                                                                            }
-                                                                                        }
-                                                                                    }
-
-                                                                                    @Override
-                                                                                    public void onFailure(Call<Void> call, Throwable t) {
-                                                                                        System.out.println(Arrays.toString(t.getStackTrace()));
-
-                                                                                    }
-                                                                                }
-                                                            );
-                                                            /*Call<GetUserDetailsResponse> callUser = TerawhereBackendServer.getApiInstance().getStatus();
-                                                            callUser.enqueue(new Callback<GetUserDetailsResponse>() {
-                                                                @Override
-                                                                public void onResponse(Call<GetUserDetailsResponse> call, Response<GetUserDetailsResponse> response) {
-                                                                    if (response.isSuccessful()) {
-                                                                        Log.i("RESPONSE", response.body().toString());
-                                                                        Log.i("user id", response.body().user.id);
-                                                                        int offerId = currentOffer.getOfferId();
-                                                                        String seats = spinner.getSelectedItem().toString();
-                                                                        Log.i("offerId", ":" + offerId);
-                                                                        Log.i("seats", ":" + Integer.parseInt(seats));
-
-                                                                        PostBookings booking = ;
-                                                                        Call<Void> call2 = createBookingApi(new PostBookings(offerId, Integer.parseInt(seats)));
-                                                                        call2.enqueue(new Callback<Void>() {
-                                                                                          @Override
-                                                                                          public void onResponse(Call<Void> call, Response<Void> response) {
-
-                                                                                              if (response.isSuccessful()) {
-                                                                                                  Log.i(LOG_RESPONSE, ": " + response.message());
-                                                                                                  final Dialog successDialog = new Dialog(getActivity());
-                                                                                                  successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                                                                  successDialog.setContentView(R.layout.dialog_booking_successful);
-                                                                                                  successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                                                                                  successDialog.setCanceledOnTouchOutside(true);
-
-                                                                                                  Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
-                                                                                                  okButton.setOnClickListener(new View.OnClickListener() {
-                                                                                                      @Override
-                                                                                                      public void onClick(View v) {
-                                                                                                          successDialog.dismiss();
-                                                                                                      }
-                                                                                                  });
-                                                                                                  successDialog.show();
-
-                                                                                              } else {
-                                                                                                  try {
-                                                                                                      Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
-                                                                                                  } catch (IOException e) {
-                                                                                                      e.printStackTrace();
-                                                                                                  }
-                                                                                              }
-                                                                                          }
-
-                                                                                          @Override
-                                                                                          public void onFailure(Call<Void> call, Throwable t) {
-                                                                                              System.out.println(Arrays.toString(t.getStackTrace()));
-
-                                                                                          }
-                                                                                      }
-                                                                        );
-
-                                                                    } else {
-                                                                        Log.i("RESPONSE", response.errorBody().toString());
-                                                                    }
-                                                                }
-
-                                                                @Override
-                                                                public void onFailure(Call<GetUserDetailsResponse> call, Throwable t) {
-                                                                    System.out.println(Arrays.toString(t.getStackTrace()));
-                                                                }
-                                                            });*/
-
-                                                            //Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-                                                    adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
-                                                    adb2.show();
-                                                }
-                                            }
-                                        });
-
-                                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                        AlertDialog alert = builder.create();
-                                        alert.show();
-                                        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
-                                        nbutton.setTextColor(Color.BLACK);
-                                        nbutton.setText("Cancel");
-                                        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
-                                        pbutton.setTextColor(Color.parseColor("#54d8bd"));
-                                        pbutton.setText("Confirm");
-                                    }
-                                }
-                            });
-                    clusterManager.setRenderer(new ClusterRenderer(getContext(), googleMap,
-                            clusterManager));
-                    googleMap.setOnInfoWindowClickListener(clusterManager);
-                    googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
-                    googleMap.setOnMarkerClickListener(clusterManager);
+                    // Update cluster (needed for refresh)
+                    clusterManager.cluster();
                 } else {
-                    try {
-                        Log.i("ERROR_OFFER", ": " + response.errorBody().string());
-                        Log.i("ERROR_OFFER2", ": " + response.message());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
             }
 
             @Override
             public void onFailure(Call<GetOffersResponse> call, Throwable t) {
-                System.out.println(Arrays.toString(t.getStackTrace()));
+                Log.e(TAG, "failed to fetch offers via network call", t);
             }
         });
     }
@@ -477,14 +295,147 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
         return TerawhereBackendServer.getApiInstance().createBooking(booking);
     }
 
+    // TODO: Can clean code up further
+    private void showBookingDialog(final Offer offer) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (getContext() != null) {
-                initMarkers();
+        final LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_booking, null);
+        builder.setView(dialogView);
+
+        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
+        TextView dialogStartingLocation = (TextView) dialogView.findViewById(R.id.dialogTextViewStartingLocation);
+
+        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogTextViewEndingLocation);
+        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogTextViewRemarks);
+        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTextViewMeetUpTime);
+        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogTextViewSeatsAvailable);
+        TextView dialogMonth = (TextView) dialogView.findViewById(R.id.dialogTextViewMonth);
+        TextView dialogDay = (TextView) dialogView.findViewById(R.id.dialogTextViewDay);
+
+        if (offer.getRemarks().matches("")) {
+            dialogRemarks.setText("Remarks: NIL");
+
+        } else {
+            dialogRemarks.setText("Remarks: " + offer.getRemarks());
+        }
+        dialogStartingLocation.setText("Meeting Point: " + offer.getStartTerawhereLocation().getAddress());
+        dialogDestination.setText("Destination: " + offer.getEndTerawhereLocation().getAddress());
+        String meetUpTime = DateUtils.toFriendlyDateTimeString(offer.getMeetupTime());
+        String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
+        String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
+        if (!meetUpTime.matches("")) {
+            dialogTimestamp.setText("Pick Up Time: " + meetUpTime);
+        }
+        dialogDay.setText(day);
+        dialogMonth.setText(month);
+
+        dialogSeatsAvailable.setText("Seats Left: " + Integer.toString(offer.getSeatsRemaining()));
+
+        List<String> categories = new ArrayList<String>();
+        int seatsAvailable = offer.getSeatsRemaining();
+        for (int i = 1; i <= seatsAvailable; i++) {
+            categories.add(Integer.toString(i));
+        }
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                return setCentered(super.getView(position, convertView, parent));
             }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                return setCentered(super.getDropDownView(position, convertView, parent));
+            }
+
+            private View setCentered(View view) {
+                view.setPadding(10, 20, 10, 10);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                textView.setTextSize(20);
+                textView.setGravity(Gravity.CENTER);
+                return view;
+            }
+        };
+
+        spinner.setAdapter(dataAdapter);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                showConfirmBookDialog(offer, spinner.getSelectedItem().toString());
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(Color.BLACK);
+        nbutton.setText("Cancel");
+        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(Color.parseColor("#54d8bd"));
+        pbutton.setText("Confirm");
+    }
+
+    // TODO: Can clean code up further
+    private void showConfirmBookDialog(final Offer offer, final String numSeats) {
+        if (numSeats.matches("")) {
+            Toast.makeText(getContext(), "Please enter number of seats", Toast.LENGTH_SHORT).show();
+        } else {
+            AlertDialog.Builder adb2 = new AlertDialog.Builder(getContext());
+            adb2.setTitle("Are you sure you want to book " + numSeats + " seats?");
+            adb2.setIcon(android.R.drawable.ic_dialog_alert);
+            adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    int offerId = offer.getOfferId();
+
+                    createBookingApi(new PostBookings(offerId)).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+
+                            if (response.isSuccessful()) {
+                                Log.i(LOG_RESPONSE, ": " + response.message());
+                                final Dialog successDialog = new Dialog(getActivity());
+                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                successDialog.setContentView(R.layout.dialog_booking_successful);
+                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                successDialog.setCanceledOnTouchOutside(true);
+
+                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                okButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        successDialog.dismiss();
+                                    }
+                                });
+                                successDialog.show();
+
+                            } else {
+                                try {
+                                    Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                        }
+                    });
+
+                    //Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            adb2.show();
         }
     }
 }

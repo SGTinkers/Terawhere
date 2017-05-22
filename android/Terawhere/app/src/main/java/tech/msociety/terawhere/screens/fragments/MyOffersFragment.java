@@ -99,12 +99,10 @@ public class MyOffersFragment extends BaseFragment {
                     GetOffersResponse getOffersResponse = response.body();
                     List<Offer> offers = OfferFactory.createFromResponse(getOffersResponse);
                     EventBus.getDefault().post(new GetOffersHasFinishedEvent(offers));
-                    swipeRefreshLayout.setRefreshing(false);
-
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
-
+                swipeRefreshLayout.setRefreshing(false);
             }
     
             @Override
