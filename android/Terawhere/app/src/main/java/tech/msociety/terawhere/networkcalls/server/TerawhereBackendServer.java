@@ -100,6 +100,9 @@ public class TerawhereBackendServer {
         @DELETE("api/v1/offers/{offer}")
         Call<Void> deleteOffer(@Path("offer") Integer id);
 
+        @DELETE("api/v1/bookings/{booking}")
+        Call<Void> deleteBooking(@Path("booking") Integer id);
+
         @PUT("api/v1/offers/{offer}")
         Call<Void> editOffer(@Path("offer") Integer id, @Body PostOffers offers);
     }
