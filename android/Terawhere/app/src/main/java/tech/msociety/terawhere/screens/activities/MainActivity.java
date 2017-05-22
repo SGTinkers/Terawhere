@@ -3,6 +3,8 @@ package tech.msociety.terawhere.screens.activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -15,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -60,13 +63,46 @@ public class MainActivity extends BaseActivity {
 
         if(item.getItemId() == R.id.action_info){
 
-            Uri uri = Uri.parse("https://terawhere.com/#features"); // missing 'http://' will cause crashed
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(intent);
+            onDialogInfoPressed();
+            return true;
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onDialogInfoPressed() {
+
+        final Dialog infoButtonDialog = new Dialog(context);
+        infoButtonDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        infoButtonDialog.setContentView(R.layout.dialog_info_button);
+        infoButtonDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        infoButtonDialog.setCanceledOnTouchOutside(false);
+
+        Button okButton = (Button) infoButtonDialog.findViewById(R.id.button_ok);
+        Button cancelButton = (Button) infoButtonDialog.findViewById(R.id.button_cancel);
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Uri uri = Uri.parse("https://terawhere.com/#features"); // missing 'http://' will cause crashed
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoButtonDialog.dismiss();
+            }
+        });
+        infoButtonDialog.show();
+
+
+
     }
 
     private void initializeToolbar() {
