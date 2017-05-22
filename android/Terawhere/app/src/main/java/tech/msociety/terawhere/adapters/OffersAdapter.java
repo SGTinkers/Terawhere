@@ -3,7 +3,7 @@ package tech.msociety.terawhere.adapters;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.transition.ChangeBounds;
+import android.support.annotation.NonNull;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +53,9 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     public static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
     public static final String CONFIRM = "Confirm";
     public static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
+
     private List<Offer> offers;
+
     private ViewGroup viewGroup;
 
     @Override
@@ -66,23 +68,67 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
+
+        /***** set offer object *****/
         final Offer offer = offers.get(position);
 
+        /***** set meet up time to be in hh:mm am/pm format *****/
         String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
+
+        /***** set meet up date to be in day and month abbreviated format *****/
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
 
-        viewHolder.endLocationTextView.setText(DESTINATION + offer.getEndTerawhereLocation().getAddress());
-        viewHolder.startLocationTextView.setText(MEETING_POINT + offer.getStartTerawhereLocation().getAddress());
-        viewHolder.meetUpTimeTextView.setText(PICK_UP_TIME + meetUpTime);
-        viewHolder.dayTextView.setText(day);
+        /***** offer fields setText *****/
+        setTextEndLocation(viewHolder, offer);
+        setTextStartLocation(viewHolder, offer);
+        setTextMeetUpTime(viewHolder, meetUpTime);
+        setTextDay(viewHolder, day);
+        setTextMonth(viewHolder, month);
+        setTextRemarks(viewHolder, offer);
+
+        /***** check card collapse/expand *****/
+        final boolean[] shouldExpand = isCollapse(viewHolder);
+
+        /***** set listeners for collapse/expand offer details *****/
+        setOfferItemRelativeLayoutListener(viewHolder, shouldExpand);
+        setDetailsTextViewListener(viewHolder, shouldExpand);
+
+        /***** set listeners for edit/delete offer *****/
+        setEditOfferButtonListener(viewHolder, offer);
+        setDeleteOfferButtonListener(viewHolder, position);
+
+    }
+
+    private void setTextRemarks(ViewHolder viewHolder, Offer offer) {
+        viewHolder.remarksTextView.setText(getOfferRemarksText(offer));
+    }
+
+    private void setTextMonth(ViewHolder viewHolder, String month) {
         viewHolder.monthTextView.setText(month);
-        viewHolder.remarksTextView.setText(REMARKS + offer.getRemarks());
+    }
 
-        final boolean[] shouldExpand = {viewHolder.remarksTextView.getVisibility() == View.GONE};
-        ChangeBounds transition = new ChangeBounds();
-        transition.setDuration(125);
+    private void setTextDay(ViewHolder viewHolder, String day) {
+        viewHolder.dayTextView.setText(day);
+    }
 
+    private void setTextMeetUpTime(ViewHolder viewHolder, String meetUpTime) {
+        viewHolder.meetUpTimeTextView.setText(getOfferMeetUpTimeText(meetUpTime));
+    }
+
+    private void setTextStartLocation(ViewHolder viewHolder, Offer offer) {
+        viewHolder.startLocationTextView.setText(getOfferStartLocationText(offer));
+    }
+
+    private void setTextEndLocation(ViewHolder viewHolder, Offer offer) {
+        viewHolder.endLocationTextView.setText(getOfferEndLocationText(offer));
+    }
+
+    private boolean[] isCollapse(ViewHolder viewHolder) {
+        return new boolean[]{viewHolder.remarksTextView.getVisibility() == View.GONE};
+    }
+
+    private void setOfferItemRelativeLayoutListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
         viewHolder.offerItemRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +147,9 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
             }
         });
+    }
 
+    private void setDetailsTextViewListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
         viewHolder.detailsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +170,9 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
             }
         });
+    }
 
+    private void setEditOfferButtonListener(ViewHolder viewHolder, final Offer offer) {
         viewHolder.editOfferButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,49 +216,91 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 viewGroup.getContext().startActivity(intent);
             }
         });
+    }
 
-        viewHolder.deleteOfferButton.setOnClickListener(new View.OnClickListener()
-
-        {
+    private void setDeleteOfferButtonListener(ViewHolder viewHolder, final int position) {
+        viewHolder.deleteOfferButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog.Builder deleteConfirmationDialog = new AlertDialog.Builder(viewGroup.getContext());
+                final AlertDialog.Builder adbDeleteOffer = new AlertDialog.Builder(viewGroup.getContext());
+                createAdbDeleteOffer(adbDeleteOffer, position);
 
-                deleteConfirmationDialog.setTitle(DELETE_OFFER);
-                deleteConfirmationDialog.setMessage(ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER);
-                deleteConfirmationDialog.setNegativeButton(CANCEL, null); // dismisses by default
-                deleteConfirmationDialog.setPositiveButton(DELETE, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
-                        deleteRequest.enqueue(new Callback<Void>() {
-                            @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
-                                if (response.isSuccessful()) {
-                                    deleteOffer(position);
-
-                                } else {
-                                    try {
-                                        Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
-                            }
-                        });
-                    }
-                });
-
-                AlertDialog alert = deleteConfirmationDialog.create();
-                alert.show();
-
-                decorateAlertDialog(alert);
             }
         });
+    }
+
+    private void createAdbDeleteOffer(AlertDialog.Builder adbDeleteOffer, final int position) {
+        setAdbDeleteOfferTitle(adbDeleteOffer);
+        setAdbDeleteOfferMessage(adbDeleteOffer);
+        setAdbDeleteOfferCancelButton(adbDeleteOffer);
+        setAdbDeleteOfferConfirmButton(adbDeleteOffer, position);
+        setAdbDeleteOfferStyle(adbDeleteOffer);
+    }
+
+    private void setAdbDeleteOfferConfirmButton(AlertDialog.Builder adbDeleteOffer, final int position) {
+        adbDeleteOffer.setPositiveButton(DELETE, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
+                deleteRequest.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            deleteOffer(position);
+
+                        } else {
+                            try {
+                                Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                    }
+                });
+            }
+        });
+    }
+
+    private void setAdbDeleteOfferCancelButton(AlertDialog.Builder adbDeleteOffer) {
+        adbDeleteOffer.setNegativeButton(CANCEL, null);
+    }
+
+    private void setAdbDeleteOfferMessage(AlertDialog.Builder adbDeleteOffer) {
+        adbDeleteOffer.setMessage(ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER);
+    }
+
+    private void setAdbDeleteOfferTitle(AlertDialog.Builder adbDeleteOffer) {
+        adbDeleteOffer.setTitle(DELETE_OFFER);
+    }
+
+    private void setAdbDeleteOfferStyle(AlertDialog.Builder adbDeleteOffer) {
+        AlertDialog deleteOfferAlertDialog = adbDeleteOffer.create();
+        deleteOfferAlertDialog.show();
+        setDeleteOfferDialogStyle(deleteOfferAlertDialog);
+    }
+
+    @NonNull
+    private String getOfferRemarksText(Offer offer) {
+        return REMARKS + offer.getRemarks();
+    }
+
+    @NonNull
+    private String getOfferMeetUpTimeText(String meetUpTime) {
+        return PICK_UP_TIME + meetUpTime;
+    }
+
+    @NonNull
+    private String getOfferStartLocationText(Offer offer) {
+        return MEETING_POINT + offer.getStartTerawhereLocation().getAddress();
+    }
+
+    @NonNull
+    private String getOfferEndLocationText(Offer offer) {
+        return DESTINATION + offer.getEndTerawhereLocation().getAddress();
     }
 
     private void deleteOffer(int position) {
@@ -218,13 +310,17 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
 
-    private void decorateAlertDialog(AlertDialog alert) {
+    private void setDeleteOfferDialogStyle(AlertDialog alert) {
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
         nbutton.setTextColor(Color.BLACK);
         nbutton.setText(CANCEL);
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
         pbutton.setTextColor(Color.parseColor(TERAWHERE_PRIMARY_COLOR));
         pbutton.setText(CONFIRM);
+    }
+
+    public void setOffers(List<Offer> offers) {
+        this.offers = offers;
     }
 
     @Override
@@ -250,22 +346,70 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
         private ViewHolder(View view) {
             super(view);
-            endLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_end_location);
-            startLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_start_location);
-            meetUpTimeTextView = (TextView) view.findViewById(R.id.text_view_offer_meet_up_time);
-            seatsOfferedTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_offered);
-            seatsLeftTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_left);
-            dayTextView = (TextView) view.findViewById(R.id.text_view_offer_day);
-            remarksTextView = (TextView) view.findViewById(R.id.text_view_offer_remarks);
-            monthTextView = (TextView) view.findViewById(R.id.text_view_offer_month);
-            editOfferButton = (ImageButton) view.findViewById(R.id.image_button_offer_edit);
-            deleteOfferButton = (ImageButton) view.findViewById(R.id.image_button_offer_delete);
-            detailsTextView = (TextView) view.findViewById(R.id.text_view_offer_view_more);
+
+            /***** initialization *****/
+            initializeEndLocationTextView(view);
+            initializeStartLocationTextView(view);
+            initializeMeetUpTimeTextView(view);
+            initializeSeatsOfferedTextView(view);
+            initializeSeatsLeftTextView(view);
+            initializeDayTextView(view);
+            initializeRemarksTextView(view);
+            initializeMonthTextView(view);
+            initializeEditOfferButton(view);
+            initializeDeleteOfferButton(view);
+            initializeDetailsTextView(view);
+            initializeOfferItemRelativeLayout(view);
+
+        }
+
+        private void initializeOfferItemRelativeLayout(View view) {
             offerItemRelativeLayout = (RelativeLayout) view.findViewById(R.id.relative_layout_offer_item);
+        }
+
+        private void initializeDetailsTextView(View view) {
+            detailsTextView = (TextView) view.findViewById(R.id.text_view_offer_view_more);
+        }
+
+        private void initializeDeleteOfferButton(View view) {
+            deleteOfferButton = (ImageButton) view.findViewById(R.id.image_button_offer_delete);
+        }
+
+        private void initializeEditOfferButton(View view) {
+            editOfferButton = (ImageButton) view.findViewById(R.id.image_button_offer_edit);
+        }
+
+        private void initializeMonthTextView(View view) {
+            monthTextView = (TextView) view.findViewById(R.id.text_view_offer_month);
+        }
+
+        private void initializeRemarksTextView(View view) {
+            remarksTextView = (TextView) view.findViewById(R.id.text_view_offer_remarks);
+        }
+
+        private void initializeDayTextView(View view) {
+            dayTextView = (TextView) view.findViewById(R.id.text_view_offer_day);
+        }
+
+        private void initializeSeatsLeftTextView(View view) {
+            seatsLeftTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_left);
+        }
+
+        private void initializeSeatsOfferedTextView(View view) {
+            seatsOfferedTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_offered);
+        }
+
+        private void initializeMeetUpTimeTextView(View view) {
+            meetUpTimeTextView = (TextView) view.findViewById(R.id.text_view_offer_meet_up_time);
+        }
+
+        private void initializeStartLocationTextView(View view) {
+            startLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_start_location);
+        }
+
+        private void initializeEndLocationTextView(View view) {
+            endLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_end_location);
         }
     }
 
-    public void setOffers(List<Offer> offers) {
-        this.offers = offers;
-    }
 }
