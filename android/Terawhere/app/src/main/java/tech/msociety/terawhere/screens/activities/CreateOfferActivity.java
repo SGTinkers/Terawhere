@@ -8,9 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -27,16 +24,13 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
@@ -47,7 +41,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -395,12 +388,14 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                 //Toast.makeText(getApplicationContext(), MESSAGE_CREATE_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
                                 successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                successDialog.setContentView(R.layout.dialog_booking_successful);
+                                successDialog.setContentView(R.layout.dialog_offer_successful);
                                 successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 successDialog.setCanceledOnTouchOutside(false);
                                 successDialog.setCancelable(false);
 
                                 Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
+                                dialogInfo.setText("Your offer has been successfully created");
                                 okButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {

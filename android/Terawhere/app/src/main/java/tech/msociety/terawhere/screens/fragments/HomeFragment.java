@@ -385,57 +385,56 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         if (numSeats.matches("")) {
             Toast.makeText(getContext(), "Please enter number of seats", Toast.LENGTH_SHORT).show();
         } else {
-            AlertDialog.Builder adb2 = new AlertDialog.Builder(getContext());
-            adb2.setTitle("Are you sure you want to book " + numSeats + " seats?");
-            adb2.setIcon(android.R.drawable.ic_dialog_alert);
-            adb2.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    int offerId = offer.getOfferId();
 
-                    createBookingApi(new PostBookings(offerId)).enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
+            int offerId = offer.getOfferId();
 
-                            if (response.isSuccessful()) {
-                                Log.i(LOG_RESPONSE, ": " + response.message());
-                                final Dialog successDialog = new Dialog(getActivity());
-                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                successDialog.setContentView(R.layout.dialog_booking_successful);
-                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                successDialog.setCanceledOnTouchOutside(true);
+            createBookingApi(new PostBookings(offerId)).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
 
-                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
-                                okButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        successDialog.dismiss();
-                                    }
-                                });
-                                successDialog.show();
+                    if (response.isSuccessful()) {
+                        Log.i(LOG_RESPONSE, ": " + response.message());
+                        final Dialog successDialog = new Dialog(getActivity());
+                        successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        successDialog.setContentView(R.layout.dialog_offer_successful);
+                        successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        successDialog.setCanceledOnTouchOutside(false);
+                        successDialog.setCancelable(false);
 
-                            } else {
-                                try {
-                                    Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                        Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                        TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
+                        TextView dialogExtraInfo = (TextView) successDialog.findViewById(R.id.text_view_extra_info);
+
+                        dialogInfo.setText("You just booked a ride" + "\n" + "Here are the car details");
+                        dialogExtraInfo.setText("Car Type: " + offer.getVehicle().getModel()
+                                + "\nColour : " + offer.getVehicle().getDescription()
+                                + "\nPlate No: " + offer.getVehicle().getPlateNumber());
+                        okButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                successDialog.dismiss();
                             }
-                        }
+                        });
+                        successDialog.show();
 
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                        }
-                    });
 
-                    //Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        try {
+                            Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
                 }
             });
-            adb2.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            adb2.show();
+
+            //Toast.makeText(getContext(), spinner.getSelectedItem().toString() + " SEATS HAVE BEEN BOOKED!", Toast.LENGTH_SHORT).show();
+
+
         }
     }
 }
