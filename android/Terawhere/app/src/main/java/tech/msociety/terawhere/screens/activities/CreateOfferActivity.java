@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -90,8 +91,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
     private Button buttonCreateOffer;
 
-    private EditText startLocationButton;
-    private EditText endLocationButton;
+    private TextInputEditText startLocationEditText;
+    private TextInputEditText endLocationEditText;
     private AutoCompleteTextView editTextVehicleDescription;
 
     private EditText editTextSeatsAvailable;
@@ -102,6 +103,9 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private EditText editTextMeetUpTime;
     private GoogleApiClient googleApiClient;
     private String MESSAGE_LOCATION_PERMISSION_NEEDED = "Need location";
+
+    double startLatitude, endLatitude, startLongitude, endLongitude;
+    String startLocationName, endLocationName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,11 +158,16 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             setEndingLocationNameField(intent);
             setEndingLocationAddressField(intent);*/
 
-            // TODO: Fix editing
             TerawhereLocation startTerawhereLocation = intent.getParcelableExtra("startTerawhereLocation");
             TerawhereLocation endTerawhereLocation = intent.getParcelableExtra("endTerawhereLocation");
-            startLocationButton.setText(startTerawhereLocation.getAddress());
-            endLocationButton.setText(endTerawhereLocation.getAddress());
+            startLocationEditText.setText(startTerawhereLocation.getAddress());
+            endLocationEditText.setText(endTerawhereLocation.getAddress());
+            startLatitude = startTerawhereLocation.getLatitude();
+            endLatitude = endTerawhereLocation.getLatitude();
+            startLongitude = startTerawhereLocation.getLongitude();
+            endLongitude = startTerawhereLocation.getLongitude();
+            startLocationName = startTerawhereLocation.getName();
+            endLocationName = endTerawhereLocation.getName();
 
             final Date meetUpTime = (Date) intent.getSerializableExtra("meetUpTime");
             SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
@@ -298,11 +307,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private void initializeEndingLocationTextView() {
-        endLocationButton = (EditText) findViewById(R.id.edit_text_end_location);
+        endLocationEditText = (TextInputEditText) findViewById(R.id.edit_text_end_location);
     }
 
     private void initializeStartingLocationTextView() {
-        startLocationButton = (EditText) findViewById(R.id.edit_text_start_location);
+        startLocationEditText = (TextInputEditText) findViewById(R.id.edit_text_start_location);
     }
 
     private void initializeMeetUpTimeEditText() {
@@ -341,7 +350,37 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         } else if (view.getId() == R.id.button_create_offer) {
 
             if (areNotAllFieldsFilled() || !editTextVehiclePlateNumber.getText().toString().matches("^[a-zA-Z0-9]*$")) {
+                Log.i("meetUpTime", " : " + editTextMeetUpTime.getText());
 
+                Log.i("StartingAddress", ":" + startLocationEditText.getText().toString());
+                if (selectedStartPlace == null) {
+                    Log.i("StartingName", ":" + startLocationName);
+
+                    Log.i("StartingLatitude", ":" + startLatitude);
+                    Log.i("StartingLongitude", ":" + startLongitude);
+                } else {
+                    Log.i("StartingName", ":" + getPlaceName(selectedStartPlace));
+
+                    Log.i("StartingLatitude", ":" + selectedStartPlace.getLatLng().latitude);
+                    Log.i("StartingLongitude", ":" + selectedStartPlace.getLatLng().longitude);
+                }
+                Log.i("EndingAddress", ":" + endLocationEditText.getText().toString());
+                if (selectedEndPlace == null) {
+                    Log.i("EndingLocationName", ":" + endLocationName);
+
+                    Log.i("EndingLatitue", ":" + endLatitude);
+                    Log.i("EndingLongitude", ":" + endLongitude);
+                } else {
+                    Log.i("EndingLocationName", ":" + getPlaceName(selectedEndPlace));
+
+                    Log.i("EndingLatitue", ":" + selectedEndPlace.getLatLng().latitude);
+                    Log.i("EndingLongitude", ":" + selectedEndPlace.getLatLng().longitude);
+                }
+                Log.i("SeatsAvailable", ":" + Integer.parseInt(editTextSeatsAvailable.getText().toString()));
+                Log.i("Remarks", ":" + editTextRemarks.getText().toString());
+                Log.i("VehiclePlateNumber", ":" + editTextVehiclePlateNumber.getText().toString());
+                Log.i("VehicleDesc", ":" + editTextVehicleDescription.getText().toString());
+                Log.i("VehicleModel", ":" + editTextVehicleModel.getText().toString());
                 Toast.makeText(CreateOfferActivity.this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
             } else {
                 if (!isEditOffer) {
@@ -365,11 +404,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
                     Log.i("meetUpTime", " : " + meetUpTime);
                     Log.i("StartingName", ":" + getPlaceName(selectedStartPlace));
-                    Log.i("StartingAddress", ":" + startLocationButton.getText().toString());
+                    Log.i("StartingAddress", ":" + startLocationEditText.getText().toString());
                     Log.i("StartingLatitude", ":" + selectedStartPlace.getLatLng().latitude);
                     Log.i("StartingLongitude", ":" + selectedStartPlace.getLatLng().longitude);
                     Log.i("EndingName", ":" + getPlaceName(selectedEndPlace));
-                    Log.i("EndingAddress", ":" + endLocationButton.getText().toString());
+                    Log.i("EndingAddress", ":" + endLocationEditText.getText().toString());
                     Log.i("EndingLatitue", ":" + selectedEndPlace.getLatLng().latitude);
                     Log.i("EndingLongitude", ":" + selectedEndPlace.getLatLng().longitude);
                     Log.i("SeatsAvailable", ":" + Integer.parseInt(editTextSeatsAvailable.getText().toString()));
@@ -426,11 +465,39 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                     });
 
                 } else {
-                    String meetUpTime = "";
-                    PostOffers postOffers = new PostOffers(meetUpTime, getPlaceName(selectedStartPlace),
-                            selectedStartPlace.getAddress().toString(), selectedStartPlace.getLatLng().latitude, selectedStartPlace.getLatLng().longitude,
-                            getPlaceName(selectedEndPlace), selectedEndPlace.getAddress().toString(),
-                            selectedEndPlace.getLatLng().latitude, selectedEndPlace.getLatLng().longitude, Integer.parseInt(editTextSeatsAvailable.getText().toString()),
+                    String date = getDate(); // get todays date
+                    String time = editTextMeetUpTime.getText().toString();
+
+                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+                    Date dateObj = null;
+                    try {
+                        dateObj = sdf.parse(time);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String meetUpTime = date + " " + new SimpleDateFormat("HH:mm:ss").format(dateObj);
+
+                    String startName, endName;
+
+                    if (selectedStartPlace == null) {
+                        startName = startLocationName;
+                    } else {
+                        startName = getPlaceName(selectedStartPlace);
+
+                    }
+                    if (selectedEndPlace == null) {
+                        endName = endLocationName;
+                    } else {
+                        endName = getPlaceName(selectedEndPlace);
+
+                    }
+
+
+                    PostOffers postOffers = new PostOffers(meetUpTime, startName,
+                            startLocationEditText.getText().toString(), getStartLatitude(selectedStartPlace), getStartLongitude(selectedStartPlace),
+                            endName, endLocationEditText.getText().toString(),
+                            getEndLatitude(selectedEndPlace), getEndLongitude(selectedEndPlace),
+                            Integer.parseInt(editTextSeatsAvailable.getText().toString()),
                             editTextRemarks.getText().toString(),
                             editTextVehiclePlateNumber.getText().toString(), editTextVehicleDescription.getText().toString(),
                             editTextVehicleModel.getText().toString());
@@ -442,11 +509,31 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
                             if (response.isSuccessful()) {
                                 Log.i("EDIT_MESSAGE", ": " + response.message());
-                                Toast.makeText(getApplicationContext(), MESSAGE_EDIT_OFFER_SUCCESSFUL, Toast.LENGTH_SHORT).show();
-                                Intent resultIntent = new Intent();
-                                resultIntent.putExtra("FirstTab", 4);
-                                setResult(RESULT_OK, resultIntent);
-                                finish();
+                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
+                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                successDialog.setContentView(R.layout.dialog_offer_successful);
+                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                successDialog.setCanceledOnTouchOutside(false);
+                                successDialog.setCancelable(false);
+
+                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
+                                dialogInfo.setText("Your offer has been successfully updated");
+
+                                okButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        successDialog.dismiss();
+
+                                        Intent resultIntent = new Intent();
+                                        resultIntent.putExtra("FirstTab", 4);
+                                        setResult(RESULT_OK, resultIntent);
+                                        finish();
+                                    }
+                                });
+                                successDialog.show();
+
+
 
                             } else {
                                 try {
@@ -497,7 +584,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private boolean areNotAllFieldsFilled() {
-        return (selectedStartPlace == null || selectedEndPlace == null || editTextSeatsAvailable.getText().toString().matches("") || editTextVehicleDescription.getText().toString().matches("") || editTextVehiclePlateNumber.getText().toString().matches(""));
+        return (startLocationEditText.getText().toString().matches("") || endLocationEditText.getText().toString().matches("") || editTextSeatsAvailable.getText().toString().matches("") || editTextVehicleDescription.getText().toString().matches("") || editTextVehiclePlateNumber.getText().toString().matches(""));
 
     }
 
@@ -584,7 +671,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(this, data);
             selectedStartPlace = place;
-            startLocationButton.setText(getPlaceName(place));
+            startLocationEditText.setText(getPlaceName(place));
         } else if (requestCode == 2 && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(this, data);
             selectedEndPlace = place;
@@ -592,17 +679,54 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             if (name.contains("\"N") || name.contains("\"E") || name.contains("\"S") || name.contains("\"W")) {
                 name = place.getAddress().toString();
             }
-            endLocationButton.setText(getPlaceName(place));
+            endLocationEditText.setText(getPlaceName(place));
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     private String getPlaceName(Place place) {
-        String name = place.getName().toString();
-        if (name.contains("\"N") || name.contains("\"E") || name.contains("\"S") || name.contains("\"W")) {
-            name = place.getAddress().toString();
+        String name = null;
+        if (place != null) {
+            name = place.getName().toString();
+            if (name.contains("\"N") || name.contains("\"E") || name.contains("\"S") || name.contains("\"W")) {
+                name = place.getAddress().toString();
+            }
         }
+
         return name;
+    }
+
+
+    private double getStartLatitude(Place place) {
+        if (place == null) {
+            return startLatitude;
+        } else {
+            return selectedStartPlace.getLatLng().latitude;
+        }
+    }
+
+    private double getEndLatitude(Place place) {
+        if (place == null) {
+            return endLatitude;
+        } else {
+            return selectedEndPlace.getLatLng().latitude;
+        }
+    }
+
+    private double getStartLongitude(Place place) {
+        if (place == null) {
+            return startLongitude;
+        } else {
+            return selectedStartPlace.getLatLng().longitude;
+        }
+    }
+
+    private double getEndLongitude(Place place) {
+        if (place == null) {
+            return endLongitude;
+        } else {
+            return selectedEndPlace.getLatLng().longitude;
+        }
     }
 }
