@@ -5,10 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by musa on 13/5/17.
- */
-
 public class GetBookingsResponse {
     @SerializedName("data")
     @Expose

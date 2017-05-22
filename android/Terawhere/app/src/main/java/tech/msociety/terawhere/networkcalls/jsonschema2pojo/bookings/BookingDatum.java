@@ -5,10 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferDatum;
 
-/**
- * Created by musa on 13/5/17.
- */
-
 public class BookingDatum {
 
     @SerializedName("offer_id")

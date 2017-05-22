@@ -8,11 +8,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -53,6 +54,7 @@ import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.PostOffers;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
+import tech.msociety.terawhere.utils.DateUtils;
 
 public class CreateOfferActivity extends ToolbarActivity implements View.OnClickListener {
 
@@ -81,6 +83,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     public static final String MESSAGE_YOU_ARE_AT = "You are at: ";
     public static final String FORMAT_TWO_DIGITS = "%02d";
     public static final String OFFER_ID = "id";
+    public static final String SELECT_TIME = "Select Time";
 
     private boolean isEditOffer = false;
 
@@ -91,8 +94,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
     private Button buttonCreateOffer;
 
-    private TextInputEditText startLocationEditText;
-    private TextInputEditText endLocationEditText;
+    private EditText startLocationEditText;
+    private EditText endLocationEditText;
     private AutoCompleteTextView editTextVehicleDescription;
 
     private EditText editTextSeatsAvailable;
@@ -107,6 +110,9 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     double startLatitude, endLatitude, startLongitude, endLongitude;
     String startLocationName, endLocationName;
 
+    double latitude, longitude;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +120,36 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         initToolbar(TOOLBAR_TITLE, true);
 
         trackCurrentLocation();
+
+        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Location location;
+
+        if (network_enabled) {
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (location != null) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+            }
+
+            Log.i("LATITUDE", ":" + latitude);
+            Log.i("LONGITUDE", ":" + longitude);
+
+        }
 
         createOfferButtonListener();
         createOfferRelativeLayoutListener();
@@ -139,7 +175,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         if (isEditOffer) {
             initializeOfferId(intent);
 
-            //setMeetUpTimeField(intent);
+
             setSeatsAvailableField(intent);
             setRemarksField(intent);
 
@@ -149,14 +185,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             editTextVehicleModel.setText(vehicle.getModel());
             editTextVehiclePlateNumber.setText(vehicle.getPlateNumber());
 
-            /*setStartingLocationLatitudeField(intent);
-            setStartingLocationLongitudeField(intent);
-            setStartingLocationNameField(intent);
-            setStartingLocationAddressField(intent);
-            setEndingLocationLatitudeField(intent);
-            setEndingLocationLongitudeField(intent);
-            setEndingLocationNameField(intent);
-            setEndingLocationAddressField(intent);*/
 
             TerawhereLocation startTerawhereLocation = intent.getParcelableExtra("startTerawhereLocation");
             TerawhereLocation endTerawhereLocation = intent.getParcelableExtra("endTerawhereLocation");
@@ -170,44 +198,15 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             endLocationName = endTerawhereLocation.getName();
 
             final Date meetUpTime = (Date) intent.getSerializableExtra("meetUpTime");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
-            editTextMeetUpTime.setText(dateFormat.format(meetUpTime));
-            //setGenderPreferenceField(intent);
+            editTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
             setCreateOfferButton();
 
             editTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    int hour = meetUpTime.getHours();
-                    int minute = meetUpTime.getMinutes();
-                    TimePickerDialog mTimePicker;
-
-                    mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                            String AM_PM = " am";
-                            String mm_precede = "";
-                            if (selectedHour >= 12) {
-                                AM_PM = " pm";
-                                if (selectedHour >= 13 && selectedHour < 24) {
-                                    selectedHour -= 12;
-                                } else {
-                                    selectedHour = 12;
-                                }
-                            } else if (selectedHour == 0) {
-                                selectedHour = 12;
-                            }
-                            if (selectedMinute < 10) {
-                                mm_precede = "0";
-                            }
-
-                            editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
-
-                        }
-                    }, hour, minute, false);//Yes 24 hour time
-                    mTimePicker.setTitle("Select Time");
-                    mTimePicker.show();
+                    TimePickerDialog tpdMeetUpTime = getTimePickerDialog(meetUpTime);
+                    showTpdMeetUpTime(tpdMeetUpTime);
                 }
             });
         } else {
@@ -215,38 +214,64 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
                 @Override
                 public void onClick(View v) {
-                    int hour = 19;
-                    int minute = 30;
-                    TimePickerDialog mTimePicker;
-
-                    mTimePicker = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                            String AM_PM = " am";
-                            String mm_precede = "";
-                            if (selectedHour >= 12) {
-                                AM_PM = " pm";
-                                if (selectedHour >= 13 && selectedHour < 24) {
-                                    selectedHour -= 12;
-                                } else {
-                                    selectedHour = 12;
-                                }
-                            } else if (selectedHour == 0) {
-                                selectedHour = 12;
-                            }
-                            if (selectedMinute < 10) {
-                                mm_precede = "0";
-                            }
-
-                            editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
-                        }
-                    }, hour, minute, false);//Yes 24 hour time
-                    mTimePicker.setTitle("Select Time");
-                    mTimePicker.show();
+                    TimePickerDialog tpdMeetUpTime = getTimePickerDialog();
+                    showTpdMeetUpTime(tpdMeetUpTime);
 
                 }
             });
         }
+    }
+
+    @NonNull
+    private TimePickerDialog getTimePickerDialog() {
+        TimePickerDialog tpdMeetUpTime;
+        tpdMeetUpTime = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                setTextMeetUpTimeEditText(selectedHour, selectedMinute);
+
+            }
+        }, Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), false);
+        tpdMeetUpTime.setTitle(SELECT_TIME);
+        return tpdMeetUpTime;
+    }
+
+    private void showTpdMeetUpTime(TimePickerDialog tpdMeetUpTime) {
+        tpdMeetUpTime.show();
+    }
+
+    @NonNull
+    private TimePickerDialog getTimePickerDialog(Date meetUpTime) {
+        TimePickerDialog tpdMeetUpTime;
+        tpdMeetUpTime = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                setTextMeetUpTimeEditText(selectedHour, selectedMinute);
+
+            }
+        }, meetUpTime.getHours(), meetUpTime.getMinutes(), false);
+        tpdMeetUpTime.setTitle(SELECT_TIME);
+        return tpdMeetUpTime;
+    }
+
+    private void setTextMeetUpTimeEditText(int selectedHour, int selectedMinute) {
+        String AM_PM = " am";
+        String mm_precede = "";
+        if (selectedHour >= 12) {
+            AM_PM = " pm";
+            if (selectedHour >= 13 && selectedHour < 24) {
+                selectedHour -= 12;
+            } else {
+                selectedHour = 12;
+            }
+        } else if (selectedHour == 0) {
+            selectedHour = 12;
+        }
+        if (selectedMinute < 10) {
+            mm_precede = "0";
+        }
+
+        editTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
     }
 
 
@@ -307,11 +332,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private void initializeEndingLocationTextView() {
-        endLocationEditText = (TextInputEditText) findViewById(R.id.edit_text_end_location);
+        endLocationEditText = (EditText) findViewById(R.id.edit_text_end_location);
     }
 
     private void initializeStartingLocationTextView() {
-        startLocationEditText = (TextInputEditText) findViewById(R.id.edit_text_start_location);
+        startLocationEditText = (EditText) findViewById(R.id.edit_text_start_location);
     }
 
     private void initializeMeetUpTimeEditText() {
@@ -534,7 +559,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                 successDialog.show();
 
 
-
                             } else {
                                 try {
                                     Log.i("EDIT_ERROR", ": " + response.errorBody().string());
@@ -592,6 +616,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
         if (selectedStartPlace != null) {
             initializePlacePickerMap(intentBuilder, selectedStartPlace.getLatLng().latitude, selectedStartPlace.getLatLng().longitude);
+        } else {
+            initializePlacePickerMap(intentBuilder, latitude, longitude);
         }
         startPlacePickerActivity(intentBuilder, 1);
     }
@@ -600,6 +626,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
         if (selectedEndPlace != null) {
             initializePlacePickerMap(intentBuilder, selectedEndPlace.getLatLng().latitude, selectedEndPlace.getLatLng().longitude);
+        } else {
+            initializePlacePickerMap(intentBuilder, latitude, longitude);
         }
         startPlacePickerActivity(intentBuilder, 2);
     }
