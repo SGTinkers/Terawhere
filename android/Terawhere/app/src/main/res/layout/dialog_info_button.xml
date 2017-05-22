@@ -16,7 +16,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/text_view_success"
+            android:id="@+id/terawhere_is_developed_by_MSociety"
             android:layout_marginTop="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,11 +26,11 @@
             android:textColor="#434343"
             android:lineSpacingExtra="5sp"
             android:layout_centerHorizontal="true"
-            android:text="Success!" />
+            android:text="Terawhere is developed by MSociety" />
 
         <TextView
-            android:id="@+id/text_view_successfully_created"
-            android:layout_below="@id/text_view_success"
+            android:id="@+id/visit_our_website"
+            android:layout_below="@id/terawhere_is_developed_by_MSociety"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -40,22 +40,44 @@
             android:textStyle="normal"
             android:textColor="#434343"
             android:lineSpacingExtra="9sp"
-            android:text="Your offer has been successfully created" />
+            android:text="Visit our website to learn more" />
 
-        <Button
-            android:id="@+id/button_ok"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_below="@id/visit_our_website"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_centerHorizontal="true">
+
+            <Button
+                android:id="@+id/button_ok"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/visit_our_website"
+                android:layout_margin="15dp"
+                android:background="@color/colorTerawherePrimary"
+                android:text="OK"
+                android:textColor="#ffffff"
+                android:textSize="17sp"
+
+
+                />
+
+            <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:background="@color/colorTerawherePrimary"
-            android:text="OK"
+            android:text="Cancel"
             android:textColor="#ffffff"
             android:textSize="17sp"
-
-
+            android:layout_below="@id/visit_our_website"
             />
+
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -65,6 +87,6 @@
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/success" />
+        android:src="@drawable/msociety_logo_transparent" />
 
 </RelativeLayout>

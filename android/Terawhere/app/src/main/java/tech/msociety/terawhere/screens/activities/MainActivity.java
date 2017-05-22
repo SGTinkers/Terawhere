@@ -1,5 +1,7 @@
 package tech.msociety.terawhere.screens.activities;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,6 +33,8 @@ public class MainActivity extends BaseActivity {
     private TabLayout tabLayout;
 
     private ViewPager viewPager;
+
+    private Context context = this;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,7 @@ public class MainActivity extends BaseActivity {
             Uri uri = Uri.parse("https://terawhere.com/#features"); // missing 'http://' will cause crashed
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
+
         }
 
         return super.onOptionsItemSelected(item);
