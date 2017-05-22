@@ -36,7 +36,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         viewHolder.bookingMonthTextView.setText(month);
         viewHolder.bookingMeetUpTimeTextView.setText("Pick Up Time: " + meetUpTime);
 
-        viewHolder.seatsBookedTextView.setText("Seats Booked: " + booking.getSeatsRemaining());
+        viewHolder.seatsBookedTextView.setText("Seats Booked: " + booking.getSeatsBooked());
 
     }
 
