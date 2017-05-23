@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -286,8 +287,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         builder.setView(dialogView);
 
         final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
-        TextView dialogStartingLocation = (TextView) dialogView.findViewById(R.id.dialogTextViewStartingLocation);
 
+        TextView dialogStartingLocation = (TextView) dialogView.findViewById(R.id.dialogTextViewStartingLocation);
         TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogTextViewEndingLocation);
         TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogTextViewRemarks);
         TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTextViewMeetUpTime);
@@ -299,20 +300,20 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             dialogRemarks.setText("Remarks: NIL");
 
         } else {
-            dialogRemarks.setText(Html.fromHtml("Remarks: <b>" + offer.getRemarks() + "</b>"));
+            dialogRemarks.setText("Remarks: " + offer.getRemarks());
         }
-        dialogStartingLocation.setText(Html.fromHtml("Meeting Point: <b>" + offer.getStartTerawhereLocation().getAddress() + "</b>"));
-        dialogDestination.setText("Destination: " + offer.getEndTerawhereLocation().getAddress());
-        String meetUpTime = DateUtils.toFriendlyDateTimeString(offer.getMeetupTime());
+        dialogStartingLocation.setText(setTextBold("Meeting Point: ", offer.getStartTerawhereLocation().getAddress()));
+        dialogDestination.setText(setTextBold("Destination: ", offer.getEndTerawhereLocation().getAddress()));
+        String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
         if (!meetUpTime.matches("")) {
-            dialogTimestamp.setText("Pick Up Time: " + meetUpTime);
+            dialogTimestamp.setText(setTextBold("Pick Up Time: ", meetUpTime));
         }
         dialogDay.setText(day);
         dialogMonth.setText(month);
 
-        dialogSeatsAvailable.setText("Seats Left: " + Integer.toString(offer.getSeatsRemaining()));
+        dialogSeatsAvailable.setText(setTextBold("Seats Left: ", Integer.toString(offer.getSeatsRemaining())));
 
         List<String> categories = new ArrayList<String>();
         int seatsAvailable = offer.getSeatsRemaining();
@@ -356,6 +357,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         decorateAlertDialog(builder);
     }
 
+    private Spanned setTextBold(String title, String text) {
+        return Html.fromHtml(title + "<b>" + text + "</b>");
+    }
+
     private void decorateAlertDialog(AlertDialog.Builder builder) {
         AlertDialog alert = builder.create();
         alert.show();
@@ -392,9 +397,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         TextView dialogExtraInfo = (TextView) successDialog.findViewById(R.id.text_view_extra_info);
 
                         dialogInfo.setText("You just booked a ride" + "\n" + "Here are the car details");
-                        dialogExtraInfo.setText("Car Type: " + offer.getVehicle().getModel()
-                                + "\nColour : " + offer.getVehicle().getDescription()
-                                + "\nPlate No: " + offer.getVehicle().getPlateNumber());
+                        dialogExtraInfo.setText(Html.fromHtml("Driver Name: <b>" + offer.getDriverName() + "</b>"
+                                + "<br/>Car Type : <b>" + offer.getVehicle().getModel() + "</b>"
+                                + "<br/>Colour : <b>" + offer.getVehicle().getDescription() + "</b>"
+                                + "<br/>Plate No: <b>" + offer.getVehicle().getPlateNumber() + "</b>"));
                         okButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
