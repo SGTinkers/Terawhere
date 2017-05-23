@@ -1,5 +1,6 @@
 package tech.msociety.terawhere.screens.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -105,5 +106,31 @@ public class MyBookingsFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
         Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        getBookingsFromServer();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && isResumed()) {
+            onResume();
+
+
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
+
+        getBookingsFromServer();
     }
 }
