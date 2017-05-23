@@ -316,7 +316,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         List<String> categories = new ArrayList<String>();
         int seatsAvailable = offer.getSeatsRemaining();
-        for (int i = 1; i <= seatsAvailable; i++) {
+        for (int i = 1; i <= 2; i++) {
             categories.add(Integer.toString(i));
         }
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {

@@ -670,7 +670,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
     }
 
-    private void showStartingPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
+    /*private void showStartingPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
 
         if (selectedStartPlace != null) {
@@ -689,9 +689,9 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             initializePlacePickerMap(intentBuilder, latitude, longitude);
         }
         startPlacePickerActivity(intentBuilder, 2);
-    }
+    }*/
 
-    private void initializePlacePickerMap(PlacePicker.IntentBuilder intentBuilder, double locationLatitude, double locationLongitude) {
+    /*private void initializePlacePickerMap(PlacePicker.IntentBuilder intentBuilder, double locationLatitude, double locationLongitude) {
         LatLng minimumBound = new LatLng(locationLatitude - OFFSET_LATITUDE, locationLongitude - OFFSET_LONGITUDE);
         LatLng maximumBound = new LatLng(locationLatitude + OFFSET_LATITUDE, locationLongitude + OFFSET_LONGITUDE);
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
@@ -701,7 +701,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private void startPlacePickerActivity(PlacePicker.IntentBuilder intentBuilder, int requestCode) throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         Intent intent = intentBuilder.build(CreateOfferActivity.this);
         startActivityForResult(intent, requestCode);
-    }
+    }*/
 
     private void hideKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -800,11 +800,13 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         } else if (requestCode == 2 && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(this, data);
             selectedEndPlace = place;
-            String name = place.getName().toString();
+            endLocationEditText.setText(getPlaceName(place));
+
+            // don't need as of now
+            /*String name = place.getName().toString();
             if (name.contains("\"N") || name.contains("\"E") || name.contains("\"S") || name.contains("\"W")) {
                 name = place.getAddress().toString();
-            }
-            endLocationEditText.setText(getPlaceName(place));
+            }*/
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -816,9 +818,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         String name = null;
         if (place != null) {
             name = place.getName().toString();
-            if (name.contains("\"N") || name.contains("\"E") || name.contains("\"S") || name.contains("\"W")) {
+
+            // don't need as of now
+            /*if (name.contains("\"N") || name.contains("\"E") || name.contains("\"S") || name.contains("\"W")) {
                 name = place.getAddress().toString();
-            }
+            }*/
         }
 
         return name;
