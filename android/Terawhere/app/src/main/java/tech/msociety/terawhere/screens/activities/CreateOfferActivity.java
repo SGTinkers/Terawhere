@@ -239,11 +239,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
 
     private void setTextEndLocationEditText(TerawhereLocation endTerawhereLocation) {
-        endLocationEditText.setText(endTerawhereLocation.getAddress());
+        endLocationEditText.setText(endTerawhereLocation.getName());
     }
 
     private void setTextStartLocationEditText(TerawhereLocation startTerawhereLocation) {
-        startLocationEditText.setText(startTerawhereLocation.getAddress());
+        startLocationEditText.setText(startTerawhereLocation.getName());
     }
 
     private TerawhereLocation getEndTerawhereLocation(Intent intent) {
