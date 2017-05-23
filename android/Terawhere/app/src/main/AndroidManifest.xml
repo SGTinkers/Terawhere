@@ -24,10 +24,10 @@
           android:value="@string/facebook_app_id" />
         <meta-data
           android:name="com.google.firebase.messaging.default_notification_icon"
-          android:resource="@android:drawable/ic_dialog_info" />
+          android:resource="@mipmap/ic_notification" />
         <meta-data
           android:name="com.google.firebase.messaging.default_notification_color"
-          android:resource="@color/colorAccent" />
+          android:resource="@color/colorPrimary" />
 
         <!-- Our Activities -->
         <activity android:name=".screens.activities.MainActivity">
