@@ -246,8 +246,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         Offer offer = offers.get(i);
                         LatLng startLatLng = new LatLng(offer.getStartTerawhereLocation().getLatitude(), offer.getStartTerawhereLocation().getLongitude());
 
-                        clusterManager.addItem(new ClusterMarkerLocation(offer.getOfferId(), startLatLng));
-                        mapLocationOffer.put(startLatLng, offers.get(i));
+                        if (offers.get(i).getSeatsRemaining() > 0) {
+                            clusterManager.addItem(new ClusterMarkerLocation(offer.getOfferId(), startLatLng));
+                            mapLocationOffer.put(startLatLng, offers.get(i));
+                        }
                     }
                     clusterManager.getMarkerCollection().setOnInfoWindowAdapter(new OfferInfoViewAdapter(LayoutInflater.from(getContext()), mapLocationOffer));
 
