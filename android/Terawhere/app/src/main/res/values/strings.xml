@@ -73,6 +73,6 @@
     <string name="remarks">Remarks (optional)</string>
     <string name="create_offer">Create Offer</string>
     <string name="no_offers_available">No offers available.\n\nOwn a vehicle? Touch the + button \nto start your first ride!</string>
-    <string name="no_bookings_available">No bookings available</string>
+    <string name="no_bookings_available">No bookings available.\n\nMake your first booking now \nin \"Find a Ride\" tab!</string>
 
 </resources>
