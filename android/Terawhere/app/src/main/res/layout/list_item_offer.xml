@@ -3,12 +3,12 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="16dp"
     card_view:cardCornerRadius="4dp"
-    card_view:cardUseCompatPadding="true"
-    card_view:contentPaddingBottom="@dimen/activity_vertical_margin">
+    card_view:cardUseCompatPadding="true">
 
     <RelativeLayout
-        android:id="@+id/relative_layout_offer_item"
+        android:id="@+id/relative_layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/activity_vertical_margin"
@@ -16,165 +16,285 @@
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
+        <View
+            android:id="@+id/view_vertical_line"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toEndOf="@+id/text_view_day"
+            android:layout_alignTop="@+id/text_view_end_location_name_label"
+            android:layout_above="@+id/text_view_view_more"
+            android:background="#979797" />
 
         <TextView
-            android:id="@+id/text_view_offer_day"
+            android:id="@+id/text_view_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:fontFamily="sans-serif"
             android:gravity="center_horizontal"
-            android:lineSpacingExtra="-28sp"
             android:text="26"
             android:textColor="#000000"
             android:textSize="48sp"
             android:textStyle="normal" />
 
-
         <TextView
-            android:id="@+id/text_view_offer_month"
+            android:id="@+id/text_view_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="-8dp"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/text_view_offer_day"
+            android:layout_below="@+id/text_view_day"
             android:layout_gravity="center"
             android:layout_toStartOf="@+id/view_vertical_line"
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:text="May"
-            android:textColor="#000000"
+            android:textColor="#7e7b7b"
             android:textSize="15sp"
             android:textStyle="normal" />
 
-        <View
-            android:id="@+id/view_vertical_line"
-            android:layout_width="1dip"
-            android:layout_height="120dp"
-            android:layout_margin="10dp"
-            android:layout_toEndOf="@id/text_view_offer_day"
-            android:background="#FF000000" />
-
-
         <TextView
-            android:id="@+id/text_view_offer_end_location"
+            android:id="@+id/text_view_meetup_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-
-            android:layout_toEndOf="@id/view_vertical_line"
+            android:layout_below="@id/text_view_month"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/view_vertical_line"
             android:fontFamily="sans-serif"
-            android:text="Destination:"
-            android:textColor="#7e7b7b"
+            android:gravity="center"
+            android:text="07:00pm"
+            android:textColor="#000000"
             android:textSize="13sp"
             android:textStyle="normal" />
 
         <TextView
-            android:id="@+id/text_view_offer_start_location"
+            android:id="@+id/text_view_end_location_name_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_offer_end_location"
-            android:layout_margin="5dp"
-
             android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
-            android:text="Meeting Point:"
+            android:text="Destination"
             android:textColor="#7e7b7b"
+            android:textSize="10sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/text_view_end_location_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_end_location_name_label"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:fontFamily="sans-serif"
+            android:text="An-Nur Mosque"
+            android:textColor="#000000"
             android:textSize="13sp"
             android:textStyle="normal" />
 
         <TextView
-            android:id="@+id/text_view_offer_meet_up_time"
+            android:id="@+id/text_view_end_location_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_offer_start_location"
-            android:layout_margin="5dp"
+            android:layout_below="@id/text_view_end_location_name"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:drawableRight="@drawable/ic_directions_black_24dp"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:fontFamily="sans-serif"
+            android:text="6 Admiralty Rd, Singapore 739983"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/text_view_start_location_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_end_location_address"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:text="Meetup Place"
+            android:textColor="#7e7b7b"
+            android:textSize="10sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/text_view_start_location_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_start_location_name_label"
             android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
-            android:text="Pick Up Time:"
-            android:textColor="#7e7b7b"
+            android:text="Blk 406 Bus Stop"
+            android:textColor="#000000"
             android:textSize="13sp"
             android:textStyle="normal" />
 
         <TextView
-            android:id="@+id/text_view_offer_seats_offered"
+            android:id="@+id/text_view_start_location_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_offer_meet_up_time"
+            android:layout_below="@id/text_view_start_location_name"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:drawableRight="@drawable/ic_directions_black_24dp"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:fontFamily="sans-serif"
+            android:text="406 Woodlands Street 41"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:visibility="gone" />
 
-            android:layout_margin="5dp"
-
+        <TextView
+            android:id="@+id/text_view_seats_left_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_start_location_address"
+            android:layout_marginTop="4dp"
             android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
-            android:text="Seats Offered:"
+            android:text="Seats Left"
             android:textColor="#7e7b7b"
+            android:textSize="10sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/text_view_seats_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_seats_left_label"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:fontFamily="sans-serif"
+            android:text="2 out of 4"
+            android:textColor="#000000"
             android:textSize="13sp"
             android:textStyle="normal" />
 
         <TextView
-            android:id="@+id/text_view_offer_seats_left"
+            android:id="@+id/text_view_remarks_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_offer_seats_offered"
-
-            android:layout_margin="5dp"
+            android:layout_below="@id/text_view_seats_left"
             android:layout_toEndOf="@id/view_vertical_line"
+            android:layout_marginTop="4dp"
             android:fontFamily="sans-serif"
-            android:text="Seats Left:"
+            android:text="Remarks"
             android:textColor="#7e7b7b"
-            android:textSize="13sp"
-            android:textStyle="normal" />
+            android:textSize="10sp"
+            android:textStyle="normal"
+            android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/text_view_offer_remarks"
+            android:id="@+id/text_view_remarks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_offer_seats_left"
-
-            android:layout_margin="5dp"
+            android:layout_below="@id/text_view_remarks_label"
             android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
-            android:text="Remarks:"
-            android:textColor="#7e7b7b"
+            android:text="Remarks here"
+            android:textColor="#000000"
             android:textSize="13sp"
             android:textStyle="normal"
             android:visibility="gone" />
 
-
         <TextView
-            android:id="@+id/text_view_offer_view_more"
+            android:id="@+id/text_view_vehicle_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/text_view_offer_remarks"
+            android:layout_below="@id/text_view_remarks"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:text="Vehicle"
+            android:textColor="#7e7b7b"
+            android:textSize="10sp"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_view_vehicle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_vehicle_label"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:fontFamily="sans-serif"
+            android:text="Red / SGD8888Z"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_view_vehicle_model_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_vehicle"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:text="Model"
+            android:textColor="#7e7b7b"
+            android:textSize="10sp"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_view_vehicle_model"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_vehicle_model_label"
+            android:layout_toEndOf="@id/view_vertical_line"
+            android:fontFamily="sans-serif"
+            android:text="Toyota Camry"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_view_view_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_vehicle_model"
+            android:layout_alignBottom="@+id/text_view_cancel"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
             android:fontFamily="sans-serif-light"
             android:text="+ MORE DETAILS"
             android:textColor="#7e7b7b"
             android:textSize="13sp"
             android:textStyle="normal" />
 
-        <ImageButton
-            android:id="@+id/image_button_offer_delete"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
+        <TextView
+            android:id="@+id/text_view_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_vehicle_model"
+            android:layout_toStartOf="@+id/text_view_edit"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/garbage"
+            android:text="CANCEL" />
 
-            android:contentDescription="@null" />
-
-        <ImageButton
-            android:id="@+id/image_button_offer_edit"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
+        <TextView
+            android:id="@+id/text_view_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_vehicle_model"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="30dp"
-            android:layout_toStartOf="@id/image_button_offer_delete"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@null"
-            android:src="@drawable/edit_1" />
+            android:text="EDIT" />
 
 
     </RelativeLayout>

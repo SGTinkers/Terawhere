@@ -1,8 +1,10 @@
 package tech.msociety.terawhere.adapters;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
@@ -14,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -58,9 +59,15 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     public static final String SEATS_OFFERED = "Seats Offered: ";
     public static final String SEATS_LEFT = "Seats Left: ";
 
+    private Context context;
+
     private List<Offer> offers;
 
     private ViewGroup viewGroup;
+
+    public OffersAdapter(Context context) {
+        this.context = context;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -72,7 +79,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
-
         // set offer object
         final Offer offer = offers.get(position);
 
@@ -83,119 +89,126 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
 
-        // offer fields setText
-        setTextEndLocation(viewHolder, offer);
-        setTextStartLocation(viewHolder, offer);
-        setTextMeetUpTime(viewHolder, meetUpTime);
-        setTextDay(viewHolder, day);
-        setTextMonth(viewHolder, month);
-        setTextRemarks(viewHolder, offer);
-        setTextSeatsOffered(viewHolder, offer);
+        // Set the value of the text
+        viewHolder.textViewMonth.setText(month);
+        viewHolder.textViewDay.setText(day);
+        viewHolder.textViewMeetupTime.setText(meetUpTime);
+        viewHolder.textViewEndLocationName.setText(offer.getEndTerawhereLocation().getName());
+        viewHolder.textViewEndLocationAddress.setText(offer.getEndTerawhereLocation().getAddress());
+        viewHolder.textViewStartLocationName.setText(offer.getStartTerawhereLocation().getName());
+        viewHolder.textViewStartLocationAddress.setText(offer.getStartTerawhereLocation().getAddress());
+        viewHolder.textViewSeatsLeft.setText(offer.getSeatsBooked() + " of " + offer.getVacancy());
+        if (offer.getRemarks() != null && !offer.getRemarks().isEmpty()) {
+            viewHolder.textViewRemarks.setText(offer.getRemarks());
+            viewHolder.textViewRemarksLabel.setVisibility(View.VISIBLE);
+            viewHolder.textViewRemarks.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.textViewRemarksLabel.setVisibility(View.GONE);
+            viewHolder.textViewRemarks.setVisibility(View.GONE);
+        }
+        viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " / " + offer.getVehicle().getPlateNumber());
+        viewHolder.textViewVehicleModel.setText(offer.getVehicle().getModel());
 
         // check card collapse/expand
-        final boolean[] shouldExpand = isCollapse(viewHolder);
+        final boolean[] shouldExpand = isCollapse(viewHolder, offer);
 
         // set listeners for collapse/expand offer details
         setOfferItemRelativeLayoutListener(viewHolder, shouldExpand);
         setDetailsTextViewListener(viewHolder, shouldExpand);
 
+        // set listeners for directions
+        viewHolder.textViewEndLocationAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("geo:" + offer.getEndTerawhereLocation().getLatitude() + "," + offer.getEndTerawhereLocation().getLongitude() + "?q=" + offer.getEndTerawhereLocation().getName());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(mapIntent);
+                }
+            }
+        });
+        viewHolder.textViewStartLocationAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("geo:" + offer.getStartTerawhereLocation().getLatitude() + "," + offer.getStartTerawhereLocation().getLongitude() + "?q=" + offer.getStartTerawhereLocation().getName());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(mapIntent);
+                }
+            }
+        });
+
         // set listeners for edit/delete offer
         setEditOfferButtonListener(viewHolder, offer);
         setDeleteOfferButtonListener(viewHolder, position);
-
-    }
-
-    private void setTextSeatsOffered(ViewHolder viewHolder, Offer offer) {
-        viewHolder.seatsOfferedTextView.setText(getOfferSeatsOfferedText(offer));
-
-    }
-
-    private void setTextSeatsRemaining(ViewHolder viewHolder, Offer offer) {
-        viewHolder.seatsLeftTextView.setText(getOfferSeatsRemaining(offer));
-
     }
 
     private Spanned setTextBold(String title, String text) {
         return Html.fromHtml(title + "<b>" + text + "</b>");
     }
 
-    private void setTextRemarks(ViewHolder viewHolder, Offer offer) {
-        viewHolder.remarksTextView.setText(getOfferRemarksText(offer));
-    }
-
-    private void setTextMonth(ViewHolder viewHolder, String month) {
-        viewHolder.monthTextView.setText(month);
-    }
-
-    private void setTextDay(ViewHolder viewHolder, String day) {
-        viewHolder.dayTextView.setText(day);
-    }
-
-    private void setTextMeetUpTime(ViewHolder viewHolder, String meetUpTime) {
-        viewHolder.meetUpTimeTextView.setText(getOfferMeetUpTimeText(meetUpTime));
-    }
-
-    private void setTextStartLocation(ViewHolder viewHolder, Offer offer) {
-        viewHolder.startLocationTextView.setText(getOfferStartLocationText(offer));
-    }
-
-    private void setTextEndLocation(ViewHolder viewHolder, Offer offer) {
-        viewHolder.endLocationTextView.setText(getOfferEndLocationText(offer));
-    }
-
-    private boolean[] isCollapse(ViewHolder viewHolder) {
-        return new boolean[]{viewHolder.remarksTextView.getVisibility() == View.GONE};
+    private boolean[] isCollapse(ViewHolder viewHolder, Offer offer) {
+        return new boolean[]{
+                viewHolder.textViewEndLocationAddress.getVisibility() == View.GONE,
+                viewHolder.textViewStartLocationAddress.getVisibility() == View.GONE,
+                offer.getRemarks() != null && !offer.getRemarks().isEmpty() && viewHolder.textViewRemarks.getVisibility() == View.GONE,
+                viewHolder.textViewVehicleLabel.getVisibility() == View.GONE,
+                viewHolder.textViewVehicle.getVisibility() == View.GONE,
+                viewHolder.textViewVehicleModelLabel.getVisibility() == View.GONE,
+                viewHolder.textViewVehicleModel.getVisibility() == View.GONE,
+        };
     }
 
     private void setOfferItemRelativeLayoutListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
-        viewHolder.offerItemRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.relativeLayoutItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shouldExpand[0]) {
-                    viewHolder.remarksTextView.setVisibility(View.VISIBLE);
-                    viewHolder.detailsTextView.setText(LESS_DETAILS);
-                    shouldExpand[0] = false;
-                } else {
-                    viewHolder.remarksTextView.setVisibility(View.GONE);
-                    viewHolder.detailsTextView.setText(MORE_DETAILS);
-                    shouldExpand[0] = true;
-                }
-
-                TransitionManager.beginDelayedTransition(viewGroup);
-                viewHolder.itemView.setActivated(shouldExpand[0]);
-
+                toggleExpand(viewHolder, shouldExpand);
             }
         });
     }
 
     private void setDetailsTextViewListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
-        viewHolder.detailsTextView.setOnClickListener(new View.OnClickListener() {
+        viewHolder.textViewViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shouldExpand[0]) {
-                    viewHolder.remarksTextView.setVisibility(View.VISIBLE);
-                    viewHolder.detailsTextView.setText(LESS_DETAILS);
-
-                    shouldExpand[0] = false;
-                } else {
-                    viewHolder.remarksTextView.setVisibility(View.GONE);
-                    viewHolder.detailsTextView.setText(MORE_DETAILS);
-
-                    shouldExpand[0] = true;
-                }
-
-                TransitionManager.beginDelayedTransition(viewGroup);
-                viewHolder.itemView.setActivated(shouldExpand[0]);
-
+                toggleExpand(viewHolder, shouldExpand);
             }
         });
     }
 
+    private void toggleExpand(final ViewHolder viewHolder, final boolean[] shouldExpand) {
+        if (shouldExpand[0]) {
+            viewHolder.textViewEndLocationAddress.setVisibility(View.VISIBLE);
+            viewHolder.textViewStartLocationAddress.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicleLabel.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicle.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicleModelLabel.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicleModel.setVisibility(View.VISIBLE);
+            viewHolder.textViewViewMore.setText(LESS_DETAILS);
+            shouldExpand[0] = false;
+        } else {
+            viewHolder.textViewEndLocationAddress.setVisibility(View.GONE);
+            viewHolder.textViewStartLocationAddress.setVisibility(View.GONE);
+            viewHolder.textViewRemarks.setVisibility(View.GONE);
+            viewHolder.textViewVehicleLabel.setVisibility(View.GONE);
+            viewHolder.textViewVehicle.setVisibility(View.GONE);
+            viewHolder.textViewVehicleModelLabel.setVisibility(View.GONE);
+            viewHolder.textViewVehicleModel.setVisibility(View.GONE);
+            viewHolder.textViewViewMore.setText(MORE_DETAILS);
+            shouldExpand[0] = true;
+        }
+
+        TransitionManager.beginDelayedTransition(viewGroup);
+        viewHolder.itemView.setActivated(shouldExpand[0]);
+    }
+
     private void setEditOfferButtonListener(ViewHolder viewHolder, final Offer offer) {
-        viewHolder.editOfferButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.textViewEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 // start location
                 TerawhereLocation startTerawhereLocation = new TerawhereLocation(
                         offer.getStartTerawhereLocation().getName(),
@@ -233,7 +246,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 intent.putExtra(DRIVER_REMARKS, offer.getRemarks());
                 intent.putExtra(SEATS_AVAILABLE, offer.getVacancy());*/
 
-
                 // start create offer activity
                 viewGroup.getContext().startActivity(intent);
             }
@@ -241,12 +253,11 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
     private void setDeleteOfferButtonListener(ViewHolder viewHolder, final int position) {
-        viewHolder.deleteOfferButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.textViewCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final AlertDialog.Builder adbDeleteOffer = new AlertDialog.Builder(viewGroup.getContext());
                 createAdbDeleteOffer(adbDeleteOffer, position);
-
             }
         });
     }
@@ -269,7 +280,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             deleteOffer(position);
-
                         } else {
                             try {
                                 Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
@@ -305,42 +315,11 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         setDeleteOfferDialogStyle(deleteOfferAlertDialog);
     }
 
-    @NonNull
-    private Spanned getOfferSeatsOfferedText(Offer offer) {
-        return setTextBold(SEATS_OFFERED, Integer.toString(offer.getVacancy()));
-    }
-
-    @NonNull
-    private Spanned getOfferSeatsRemaining(Offer offer) {
-        return setTextBold(SEATS_LEFT, Integer.toString(offer.getSeatsRemaining()));
-    }
-
-    @NonNull
-    private Spanned getOfferRemarksText(Offer offer) {
-        return setTextBold(REMARKS, offer.getRemarks());
-    }
-
-    @NonNull
-    private Spanned getOfferMeetUpTimeText(String meetUpTime) {
-        return setTextBold(PICK_UP_TIME, meetUpTime);
-    }
-
-    @NonNull
-    private Spanned getOfferStartLocationText(Offer offer) {
-        return setTextBold(MEETING_POINT, offer.getStartTerawhereLocation().getAddress());
-    }
-
-    @NonNull
-    private Spanned getOfferEndLocationText(Offer offer) {
-        return setTextBold(DESTINATION, offer.getEndTerawhereLocation().getAddress());
-    }
-
     private void deleteOffer(int position) {
         offers.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
     }
-
 
     private void setDeleteOfferDialogStyle(AlertDialog alert) {
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
@@ -361,91 +340,49 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView dayTextView;
-        private TextView monthTextView;
-        private TextView endLocationTextView;
-        private TextView startLocationTextView;
-        private TextView meetUpTimeTextView;
-        private TextView remarksTextView;
-        private TextView detailsTextView;
+        private TextView textViewDay;
+        private TextView textViewMonth;
+        private TextView textViewEndLocationName;
+        private TextView textViewEndLocationAddress;
+        private TextView textViewStartLocationName;
+        private TextView textViewStartLocationAddress;
+        private TextView textViewMeetupTime;
+        private TextView textViewRemarksLabel;
+        private TextView textViewRemarks;
+        private TextView textViewSeatsLeft;
 
-        private TextView seatsOfferedTextView;
-        private TextView seatsLeftTextView;
+        private TextView textViewVehicleLabel;
+        private TextView textViewVehicle;
+        private TextView textViewVehicleModelLabel;
+        private TextView textViewVehicleModel;
 
-        private ImageButton editOfferButton;
-        private ImageButton deleteOfferButton;
+        private TextView textViewViewMore;
+        private TextView textViewEdit;
+        private TextView textViewCancel;
 
-        private RelativeLayout offerItemRelativeLayout;
+        private RelativeLayout relativeLayoutItem;
 
         private ViewHolder(View view) {
             super(view);
 
-            // initialization
-            initializeEndLocationTextView(view);
-            initializeStartLocationTextView(view);
-            initializeMeetUpTimeTextView(view);
-            initializeDayTextView(view);
-            initializeRemarksTextView(view);
-            initializeMonthTextView(view);
-            initializeEditOfferButton(view);
-            initializeDeleteOfferButton(view);
-            initializeDetailsTextView(view);
-            initializeOfferItemRelativeLayout(view);
-
-            // Using this soon
-            initializeSeatsOfferedTextView(view);
-            initializeSeatsLeftTextView(view);
-
-
-
-        }
-
-        private void initializeOfferItemRelativeLayout(View view) {
-            offerItemRelativeLayout = (RelativeLayout) view.findViewById(R.id.relative_layout_offer_item);
-        }
-
-        private void initializeDetailsTextView(View view) {
-            detailsTextView = (TextView) view.findViewById(R.id.text_view_offer_view_more);
-        }
-
-        private void initializeDeleteOfferButton(View view) {
-            deleteOfferButton = (ImageButton) view.findViewById(R.id.image_button_offer_delete);
-        }
-
-        private void initializeEditOfferButton(View view) {
-            editOfferButton = (ImageButton) view.findViewById(R.id.image_button_offer_edit);
-        }
-
-        private void initializeMonthTextView(View view) {
-            monthTextView = (TextView) view.findViewById(R.id.text_view_offer_month);
-        }
-
-        private void initializeRemarksTextView(View view) {
-            remarksTextView = (TextView) view.findViewById(R.id.text_view_offer_remarks);
-        }
-
-        private void initializeDayTextView(View view) {
-            dayTextView = (TextView) view.findViewById(R.id.text_view_offer_day);
-        }
-
-        private void initializeSeatsLeftTextView(View view) {
-            seatsLeftTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_left);
-        }
-
-        private void initializeSeatsOfferedTextView(View view) {
-            seatsOfferedTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_offered);
-        }
-
-        private void initializeMeetUpTimeTextView(View view) {
-            meetUpTimeTextView = (TextView) view.findViewById(R.id.text_view_offer_meet_up_time);
-        }
-
-        private void initializeStartLocationTextView(View view) {
-            startLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_start_location);
-        }
-
-        private void initializeEndLocationTextView(View view) {
-            endLocationTextView = (TextView) view.findViewById(R.id.text_view_offer_end_location);
+            relativeLayoutItem = (RelativeLayout) view.findViewById(R.id.relative_layout_item);
+            textViewDay = (TextView) view.findViewById(R.id.text_view_day);
+            textViewMonth = (TextView) view.findViewById(R.id.text_view_month);
+            textViewEndLocationName = (TextView) view.findViewById(R.id.text_view_end_location_name);
+            textViewEndLocationAddress = (TextView) view.findViewById(R.id.text_view_end_location_address);
+            textViewStartLocationName = (TextView) view.findViewById(R.id.text_view_start_location_name);
+            textViewStartLocationAddress = (TextView) view.findViewById(R.id.text_view_start_location_address);
+            textViewMeetupTime = (TextView) view.findViewById(R.id.text_view_meetup_time);
+            textViewSeatsLeft = (TextView) view.findViewById(R.id.text_view_seats_left);
+            textViewRemarksLabel = (TextView) view.findViewById(R.id.text_view_remarks_label);
+            textViewRemarks = (TextView) view.findViewById(R.id.text_view_remarks);
+            textViewViewMore = (TextView) view.findViewById(R.id.text_view_view_more);
+            textViewCancel = (TextView) view.findViewById(R.id.text_view_cancel);
+            textViewEdit = (TextView) view.findViewById(R.id.text_view_edit);
+            textViewVehicleLabel = (TextView) view.findViewById(R.id.text_view_vehicle_label);
+            textViewVehicle = (TextView) view.findViewById(R.id.text_view_vehicle);
+            textViewVehicleModelLabel = (TextView) view.findViewById(R.id.text_view_vehicle_model_label);
+            textViewVehicleModel = (TextView) view.findViewById(R.id.text_view_vehicle_model);
         }
     }
 

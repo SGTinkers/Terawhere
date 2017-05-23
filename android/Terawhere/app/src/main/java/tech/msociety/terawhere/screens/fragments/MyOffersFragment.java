@@ -137,7 +137,7 @@ public class MyOffersFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        offersAdapter = new OffersAdapter();
+        offersAdapter = new OffersAdapter(getContext());
         recyclerView.setAdapter(offersAdapter);
     }
 
