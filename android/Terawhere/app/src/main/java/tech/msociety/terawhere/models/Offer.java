@@ -31,8 +31,8 @@ public class Offer implements Parcelable {
         this.vacancy = vacancy;
         this.backendTimestamp = backendTimestamp;
         this.remarks = remarks;
-        this.seatsBooked = seatsBooked;
-        this.seatsRemaining = seatsRemaining;
+        this.seatsBooked = seatsBooked != null ? seatsBooked : 0;
+        this.seatsRemaining = seatsRemaining != null ? seatsRemaining : 0;
         this.driverName = driverName;
     }
 

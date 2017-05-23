@@ -16,7 +16,8 @@
             android:clipToPadding="false"
             android:paddingBottom="48dp"
             android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical"
+            android:background="#efefef"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
