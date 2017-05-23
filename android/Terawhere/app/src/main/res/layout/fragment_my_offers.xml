@@ -27,6 +27,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/no_offers_available"
+        android:background="#efefef"
         android:visibility="gone"/>
 
     <include layout="@layout/floating_action_button_create_offer"/>
