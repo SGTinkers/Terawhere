@@ -1,8 +1,11 @@
 package tech.msociety.terawhere.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
-public class Offer {
+public class Offer implements Parcelable {
     private Integer offerId;
     private String offererId;
     private Date meetupTime;
@@ -46,6 +49,28 @@ public class Offer {
 
     }
 
+
+    protected Offer(Parcel in) {
+        offererId = in.readString();
+        startTerawhereLocation = in.readParcelable(TerawhereLocation.class.getClassLoader());
+        endTerawhereLocation = in.readParcelable(TerawhereLocation.class.getClassLoader());
+        vehicle = in.readParcelable(Vehicle.class.getClassLoader());
+        remarks = in.readString();
+        driverName = in.readString();
+        meetupTime = (java.util.Date) in.readSerializable();
+    }
+
+    public static final Creator<Offer> CREATOR = new Creator<Offer>() {
+        @Override
+        public Offer createFromParcel(Parcel in) {
+            return new Offer(in);
+        }
+
+        @Override
+        public Offer[] newArray(int size) {
+            return new Offer[size];
+        }
+    };
 
     public Integer getOfferId() {
         return offerId;
@@ -93,5 +118,22 @@ public class Offer {
 
     public String getDriverName() {
         return driverName;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(offererId);
+        dest.writeParcelable(startTerawhereLocation, flags);
+        dest.writeParcelable(endTerawhereLocation, flags);
+        dest.writeParcelable(vehicle, flags);
+        dest.writeString(remarks);
+        dest.writeString(driverName);
+        dest.writeSerializable(meetupTime);
+
     }
 }
