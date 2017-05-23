@@ -25,6 +25,7 @@
         android:id="@+id/text_view_empty_recycler_view_offers"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="16dp"
         android:gravity="center"
         android:text="@string/no_offers_available"
         android:background="#efefef"
