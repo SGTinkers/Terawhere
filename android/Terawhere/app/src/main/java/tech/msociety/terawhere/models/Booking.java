@@ -1,25 +1,20 @@
 package tech.msociety.terawhere.models;
 
-public class Booking extends Offer {
+public class Booking {
 
     private Integer bookingId;
     private String userId;
-    private Integer offerId;
     private Integer seatsBooked;
     private BackendTimestamp bookingBackendTimestamp;
+    private Offer offer;
 
 
-    public Booking(Integer bookingId, String userId, Integer offerId, Integer pax, BackendTimestamp bookingBackendTimestamp, Offer offer) {
-        super(offer.getOfferId(), offer.getOffererId(), offer.getMeetupTime(),
-                offer.getStartTerawhereLocation(), offer.getEndTerawhereLocation(),
-                offer.getVehicle(), offer.getVacancy(), offer.getBackendTimestamp(),
-                offer.getRemarks(), offer.getSeatsRemaining(), offer.getSeatsBooked(),
-                offer.getDriverName());
-
+    public Booking(Integer bookingId, String userId, Integer pax, BackendTimestamp bookingBackendTimestamp, Offer offer) {
         this.bookingId = bookingId;
         this.userId = userId;
         this.seatsBooked = pax;
         this.bookingBackendTimestamp = bookingBackendTimestamp;
+        this.offer = offer;
 
     }
 
@@ -31,12 +26,6 @@ public class Booking extends Offer {
         return userId;
     }
 
-    @Override
-    public Integer getOfferId() {
-        return offerId;
-    }
-
-    @Override
     public Integer getSeatsBooked() {
         return seatsBooked;
     }
@@ -45,5 +34,7 @@ public class Booking extends Offer {
         return bookingBackendTimestamp;
     }
 
-
+    public Offer getOffer() {
+        return offer;
+    }
 }

@@ -69,7 +69,7 @@ public class MyBookingsFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         
-        bookingsAdapter = new BookingsAdapter();
+        bookingsAdapter = new BookingsAdapter(getContext());
         recyclerView.setAdapter(bookingsAdapter);
     }
     
