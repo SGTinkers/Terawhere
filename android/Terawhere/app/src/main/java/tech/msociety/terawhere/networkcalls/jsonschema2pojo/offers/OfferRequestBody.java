@@ -3,19 +3,15 @@ package tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by musa on 20/5/17.
- */
-
-public class PostOffers {
-
-    public PostOffers(String meetupTime, String startName,
-                      String startAddr, Double startLat,
-                      Double startLng, String endName,
-                      String endAddr, Double endLat,
-                      Double endLng, Integer vacancy,
-                      Object remarks, String vehicleNumber,
-                      Object vehicleDesc, String vehicleModel) {
+public class OfferRequestBody {
+    
+    public OfferRequestBody(String meetupTime, String startName,
+                            String startAddr, Double startLat,
+                            Double startLng, String endName,
+                            String endAddr, Double endLat,
+                            Double endLng, Integer vacancy,
+                            Object remarks, String vehicleNumber,
+                            Object vehicleDesc, String vehicleModel) {
 
         this.meetupTime = meetupTime;
         this.startName = startName;
@@ -88,6 +84,4 @@ public class PostOffers {
     @SerializedName("vehicle_model")
     @Expose
     public String vehicleModel;
-
-
 }

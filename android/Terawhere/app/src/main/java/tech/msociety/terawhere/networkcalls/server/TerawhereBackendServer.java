@@ -18,14 +18,14 @@ import tech.msociety.terawhere.networkcalls.intereptors.AuthorizationResponseInt
 import tech.msociety.terawhere.networkcalls.intereptors.ConnectivityInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.DefaultInterceptor;
 import tech.msociety.terawhere.networkcalls.intereptors.LoggingInterceptor;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.BookingRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.PostBookings;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUserRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.PostOffers;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferRequestBody;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationRequestBody;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
 
 public class TerawhereBackendServer {
@@ -71,13 +71,13 @@ public class TerawhereBackendServer {
 
     public interface Api {
         @POST("api/v1/auth")
-        Call<FacebookUser> createUser(@Body FacebookUser user);
+        Call<FacebookUserRequestBody> createUser(@Body FacebookUserRequestBody facebookUserRequestBody);
 
         @GET("api/v1/auth/refresh")
         Call<Void> refreshToken();
 
         @POST("api/v1/devices")
-        Call<StoreDeviceToken> storeDeviceToken(@Body DeviceTokenDatum deviceToken);
+        Call<StoreDeviceToken> storeDeviceToken(@Body DeviceTokenRequestBody deviceTokenRequestBody);
 
         @GET("api/v1/me")
         Call<GetUserDetailsResponse> getStatus();
@@ -89,13 +89,13 @@ public class TerawhereBackendServer {
         Call<GetBookingsResponse> getAllBookings();
 
         @POST("api/v1/nearby-offers")
-        Call<GetOffersResponse> getNearbyOffers(@Body LocationDatum location);
+        Call<GetOffersResponse> getNearbyOffers(@Body LocationRequestBody locationRequestBody);
     
         @POST("api/v1/offers")
-        Call<Void> createOffer(@Body PostOffers offers);
+        Call<Void> createOffer(@Body OfferRequestBody offerRequestBody);
 
         @POST("api/v1/bookings")
-        Call<Void> createBooking(@Body PostBookings bookings);
+        Call<Void> createBooking(@Body BookingRequestBody bookingRequestBody);
 
         @DELETE("api/v1/offers/{offer}")
         Call<Void> deleteOffer(@Path("offer") Integer id);
@@ -104,6 +104,6 @@ public class TerawhereBackendServer {
         Call<Void> deleteBooking(@Path("booking") Integer id);
 
         @PUT("api/v1/offers/{offer}")
-        Call<Void> editOffer(@Path("offer") Integer id, @Body PostOffers offers);
+        Call<Void> editOffer(@Path("offer") Integer id, @Body OfferRequestBody offerRequestBody);
     }
 }

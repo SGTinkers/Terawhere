@@ -18,7 +18,7 @@ import tech.msociety.terawhere.events.LoginEvent;
 import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.globals.Constants;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
@@ -44,7 +44,7 @@ public class TerawhereApplication extends Application {
         if (Constants.getBearerToken() != null) {
             final String token = FirebaseInstanceId.getInstance().getToken();
             if (token != null) {
-                TerawhereBackendServer.getApiInstance().storeDeviceToken(new DeviceTokenDatum(token, "android")).enqueue(new Callback<StoreDeviceToken>() {
+                TerawhereBackendServer.getApiInstance().storeDeviceToken(new DeviceTokenRequestBody(token, "android")).enqueue(new Callback<StoreDeviceToken>() {
                     @Override
                     public void onResponse(Call<StoreDeviceToken> call, Response<StoreDeviceToken> response) {
                         Log.d(TerawhereApplication.class.getSimpleName(), "Submitted push token to server: " + token);

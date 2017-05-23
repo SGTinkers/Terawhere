@@ -46,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.PostOffers;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferRequestBody;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
 import tech.msociety.terawhere.utils.DateUtils;
@@ -259,14 +259,14 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         e.printStackTrace();
                     }
                     String meetUpTime = date + " " + new SimpleDateFormat("HH:mm:ss").format(dateObj);
-                    PostOffers postOffers = new PostOffers(meetUpTime, getPlaceName(selectedStartPlace),
+                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime, getPlaceName(selectedStartPlace),
                             selectedStartPlace.getAddress().toString(), selectedStartPlace.getLatLng().latitude,
                             selectedStartPlace.getLatLng().longitude, getPlaceName(selectedEndPlace), selectedEndPlace.getAddress().toString(),
                             selectedEndPlace.getLatLng().latitude, selectedEndPlace.getLatLng().longitude, Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
                             textInputEditTextRemarks.getText().toString(), textInputEditTextVehiclePlateNumber.getText().toString(),
                             textInputEditTextVehicleColor.getText().toString(), textInputEditTextVehicleModel.getText().toString());
     
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(postOffers);
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
@@ -338,7 +338,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     
                     }
     
-                    PostOffers postOffers = new PostOffers(meetUpTime,
+                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime,
                             startName,
                             textInputEditTextStartLocation.getText().toString(),
                             getStartLatitude(selectedStartPlace),
@@ -352,8 +352,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                             textInputEditTextVehiclePlateNumber.getText().toString(),
                             textInputEditTextVehicleColor.getText().toString(),
                             textInputEditTextVehicleModel.getText().toString());
-                    
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, postOffers);
+    
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {

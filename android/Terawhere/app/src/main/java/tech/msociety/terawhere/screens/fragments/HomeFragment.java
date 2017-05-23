@@ -62,9 +62,9 @@ import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.maps.ClusterRenderer;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.factories.OfferFactory;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.PostBookings;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.BookingRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationDatum;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationRequestBody;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 import tech.msociety.terawhere.utils.DateUtils;
@@ -249,7 +249,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     }
 
     private void loadMarkers() {
-        Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationDatum(location.getLatitude(), location.getLongitude()));
+        Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getNearbyOffers(new LocationRequestBody(location.getLatitude(), location.getLongitude()));
         callGetOffers.enqueue(new Callback<GetOffersResponse>() {
             @Override
             public void onResponse(Call<GetOffersResponse> call, Response<GetOffersResponse> response) {
@@ -290,8 +290,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             }
         });
     }
-
-    private Call<Void> createBookingApi(PostBookings booking) {
+    
+    private Call<Void> createBookingApi(BookingRequestBody booking) {
         return TerawhereBackendServer.getApiInstance().createBooking(booking);
     }
 
@@ -395,8 +395,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         } else {
 
             int offerId = offer.getOfferId();
-
-            createBookingApi(new PostBookings(offerId)).enqueue(new Callback<Void>() {
+    
+            createBookingApi(new BookingRequestBody(offerId)).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
 

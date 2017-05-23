@@ -25,7 +25,7 @@ import tech.msociety.terawhere.TerawhereApplication;
 import tech.msociety.terawhere.events.LoginEvent;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.globals.Constants;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUser;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUserRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
@@ -55,9 +55,9 @@ public class FacebookLoginActivity extends BaseActivity {
             public void onSuccess(LoginResult loginResult) {
                 Log.d("FacebookLoginActivity", "onSuccess: " + loginResult.getAccessToken().getToken());
                 Toast.makeText(FacebookLoginActivity.this, R.string.please_wait, Toast.LENGTH_SHORT).show();
-                TerawhereBackendServer.getAuthApiInstance().createUser(new FacebookUser(loginResult.getAccessToken().getToken(), "facebook")).enqueue(new Callback<FacebookUser>() {
+                TerawhereBackendServer.getAuthApiInstance().createUser(new FacebookUserRequestBody(loginResult.getAccessToken().getToken(), "facebook")).enqueue(new Callback<FacebookUserRequestBody>() {
                     @Override
-                    public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
+                    public void onResponse(Call<FacebookUserRequestBody> call, Response<FacebookUserRequestBody> response) {
                         Log.d("FacebookLoginActivity", "Server Token: " + response.body().getToken());
                         Constants.setBearerToken(response.body().getToken());
 
@@ -66,7 +66,7 @@ public class FacebookLoginActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<FacebookUser> call, Throwable t) {
+                    public void onFailure(Call<FacebookUserRequestBody> call, Throwable t) {
                         // TODO: Handle error more elegantly
                         t.printStackTrace();
                         Toast.makeText(FacebookLoginActivity.this, R.string.error_login_fail, Toast.LENGTH_SHORT).show();
