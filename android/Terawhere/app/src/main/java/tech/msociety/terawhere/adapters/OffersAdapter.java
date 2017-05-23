@@ -98,6 +98,8 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             viewHolder.textViewRemarksLabel.setVisibility(View.GONE);
             viewHolder.textViewRemarks.setVisibility(View.GONE);
         }
+        viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " / " + offer.getVehicle().getPlateNumber());
+        viewHolder.textViewVehicleModel.setText(offer.getVehicle().getModel());
 
         // check card collapse/expand
         final boolean[] shouldExpand = isCollapse(viewHolder, offer);
@@ -116,7 +118,15 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
     private boolean[] isCollapse(ViewHolder viewHolder, Offer offer) {
-        return new boolean[]{viewHolder.textViewEndLocationAddress.getVisibility() == View.GONE, viewHolder.textViewStartLocationAddress.getVisibility() == View.GONE, offer.getRemarks() != null && !offer.getRemarks().isEmpty() && viewHolder.textViewRemarks.getVisibility() == View.GONE};
+        return new boolean[]{
+                viewHolder.textViewEndLocationAddress.getVisibility() == View.GONE,
+                viewHolder.textViewStartLocationAddress.getVisibility() == View.GONE,
+                offer.getRemarks() != null && !offer.getRemarks().isEmpty() && viewHolder.textViewRemarks.getVisibility() == View.GONE,
+                viewHolder.textViewVehicleLabel.getVisibility() == View.GONE,
+                viewHolder.textViewVehicle.getVisibility() == View.GONE,
+                viewHolder.textViewVehicleModelLabel.getVisibility() == View.GONE,
+                viewHolder.textViewVehicleModel.getVisibility() == View.GONE,
+        };
     }
 
     private void setOfferItemRelativeLayoutListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
@@ -141,12 +151,20 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         if (shouldExpand[0]) {
             viewHolder.textViewEndLocationAddress.setVisibility(View.VISIBLE);
             viewHolder.textViewStartLocationAddress.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicleLabel.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicle.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicleModelLabel.setVisibility(View.VISIBLE);
+            viewHolder.textViewVehicleModel.setVisibility(View.VISIBLE);
             viewHolder.textViewViewMore.setText(LESS_DETAILS);
             shouldExpand[0] = false;
         } else {
             viewHolder.textViewEndLocationAddress.setVisibility(View.GONE);
             viewHolder.textViewStartLocationAddress.setVisibility(View.GONE);
             viewHolder.textViewRemarks.setVisibility(View.GONE);
+            viewHolder.textViewVehicleLabel.setVisibility(View.GONE);
+            viewHolder.textViewVehicle.setVisibility(View.GONE);
+            viewHolder.textViewVehicleModelLabel.setVisibility(View.GONE);
+            viewHolder.textViewVehicleModel.setVisibility(View.GONE);
             viewHolder.textViewViewMore.setText(MORE_DETAILS);
             shouldExpand[0] = true;
         }
@@ -208,7 +226,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             public void onClick(View v) {
                 final AlertDialog.Builder adbDeleteOffer = new AlertDialog.Builder(viewGroup.getContext());
                 createAdbDeleteOffer(adbDeleteOffer, position);
-
             }
         });
     }
@@ -231,7 +248,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             deleteOffer(position);
-
                         } else {
                             try {
                                 Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
@@ -303,6 +319,11 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView textViewRemarks;
         private TextView textViewSeatsLeft;
 
+        private TextView textViewVehicleLabel;
+        private TextView textViewVehicle;
+        private TextView textViewVehicleModelLabel;
+        private TextView textViewVehicleModel;
+
         private TextView textViewViewMore;
         private TextView textViewEdit;
         private TextView textViewCancel;
@@ -326,6 +347,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             textViewViewMore = (TextView) view.findViewById(R.id.text_view_view_more);
             textViewCancel = (TextView) view.findViewById(R.id.text_view_cancel);
             textViewEdit = (TextView) view.findViewById(R.id.text_view_edit);
+            textViewVehicleLabel = (TextView) view.findViewById(R.id.text_view_vehicle_label);
+            textViewVehicle = (TextView) view.findViewById(R.id.text_view_vehicle);
+            textViewVehicleModelLabel = (TextView) view.findViewById(R.id.text_view_vehicle_model_label);
+            textViewVehicleModel = (TextView) view.findViewById(R.id.text_view_vehicle_model);
         }
     }
 
