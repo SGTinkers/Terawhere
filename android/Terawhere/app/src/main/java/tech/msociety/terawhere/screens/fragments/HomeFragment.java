@@ -217,7 +217,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 Offer offer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
 
                 if (AppPrefs.with(TerawhereApplication.ApplicationContext).getUserId().equals(offer.getOffererId())) {
-                    viewPager.setCurrentItem(1);
+                    viewPager.setCurrentItem(0);
                 } else {
                     showBookingDialog(offer);
                 }
@@ -399,6 +399,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             @Override
                             public void onClick(View v) {
                                 successDialog.dismiss();
+                                viewPager.setCurrentItem(2);
+
                             }
                         });
                         successDialog.show();
