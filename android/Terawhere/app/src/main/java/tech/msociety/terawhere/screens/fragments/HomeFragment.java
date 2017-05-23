@@ -2,12 +2,15 @@ package tech.msociety.terawhere.screens.fragments;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -86,6 +89,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private GoogleMap googleMap;
 
+    private double latitude, longitude;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -98,6 +103,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         super.onActivityCreated(savedInstanceState);
         viewPager = (ViewPager) getActivity().findViewById(R.id.pager);
 
+        trackCurrentLocation();
         // Faruq: Shouldn't need this as in the BaseActivity we already have a guard for requireLocationServices
         // It is here to pass Android IDE inspection
         if (AndroidSdkChecker.isMarshmallow()) {
@@ -121,6 +127,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         googleApiClient.disconnect();
     }
 
+    private void trackCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+
+        this.location = ((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Log.i("LAT:", ":" + location.getLatitude());
+        Log.i("LON:", ":" + location.getLongitude());
+
+
+    }
     private void initializeSupportMapFragment() {
         SupportMapFragment supportMapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map_container);
         if (supportMapFragment == null) {
@@ -428,4 +445,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
         }
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (location != null) {
+                loadMarkers();
+            }
+
+        }
+
+    }
+
+
 }
