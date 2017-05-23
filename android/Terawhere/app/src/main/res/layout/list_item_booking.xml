@@ -122,6 +122,7 @@
             android:text="+ MORE DETAILS"
             android:textColor="#7e7b7b"
             android:textSize="13sp"
+            android:layout_marginTop="10dp"
             android:textStyle="normal" />
 
         <ImageButton

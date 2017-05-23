@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,13 +56,13 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         String day = DateUtils.toString(booking.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.toString(booking.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
 
-        viewHolder.endingLocationTextView.setText("Destination: " + booking.getEndTerawhereLocation().getName());
-        viewHolder.startingLocationTextView.setText("Meeting Point: " + booking.getStartTerawhereLocation().getName());
+        viewHolder.endingLocationTextView.setText(setTextBold("Destination: ", booking.getEndTerawhereLocation().getName()));
+        viewHolder.startingLocationTextView.setText(setTextBold("Meeting Point: ", booking.getStartTerawhereLocation().getName()));
         viewHolder.bookingDayTextView.setText(day);
         viewHolder.bookingMonthTextView.setText(month);
-        viewHolder.bookingMeetUpTimeTextView.setText("Pick Up Time: " + meetUpTime);
+        viewHolder.bookingMeetUpTimeTextView.setText(setTextBold("Pick Up Time: ", meetUpTime));
 
-        viewHolder.seatsBookedTextView.setText("Seats Booked: " + booking.getSeatsBooked());
+        viewHolder.seatsBookedTextView.setText(setTextBold("Seats Booked: ", Integer.toString(booking.getSeatsBooked())));
 
         viewHolder.deleteBookingButton.setOnClickListener(new View.OnClickListener()
 
@@ -101,19 +103,23 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                 AlertDialog alert = deleteConfirmationDialog.create();
                 alert.show();
 
-                decorateAlertDialog(alert);
+                createAlertDialog(alert);
             }
         });
 
     }
 
-    private void decorateAlertDialog(AlertDialog alert) {
+    private void createAlertDialog(AlertDialog alert) {
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
         nbutton.setTextColor(Color.BLACK);
         nbutton.setText(CANCEL);
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
         pbutton.setTextColor(Color.parseColor(TERAWHERE_PRIMARY_COLOR));
         pbutton.setText(CONFIRM);
+    }
+
+    private Spanned setTextBold(String title, String text) {
+        return Html.fromHtml(title + "<b>" + text + "</b>");
     }
 
     @Override
