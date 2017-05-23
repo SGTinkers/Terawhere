@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +55,8 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     private static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
     private static final String CONFIRM = "Confirm";
     private static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
+    public static final String SEATS_OFFERED = "Seats Offered: ";
+    public static final String SEATS_LEFT = "Seats Left: ";
 
     private List<Offer> offers;
 
@@ -86,6 +90,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         setTextDay(viewHolder, day);
         setTextMonth(viewHolder, month);
         setTextRemarks(viewHolder, offer);
+        setTextSeatsOffered(viewHolder, offer);
 
         // check card collapse/expand
         final boolean[] shouldExpand = isCollapse(viewHolder);
@@ -98,6 +103,20 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         setEditOfferButtonListener(viewHolder, offer);
         setDeleteOfferButtonListener(viewHolder, position);
 
+    }
+
+    private void setTextSeatsOffered(ViewHolder viewHolder, Offer offer) {
+        viewHolder.seatsOfferedTextView.setText(getOfferSeatsOfferedText(offer));
+
+    }
+
+    private void setTextSeatsRemaining(ViewHolder viewHolder, Offer offer) {
+        viewHolder.seatsLeftTextView.setText(getOfferSeatsRemaining(offer));
+
+    }
+
+    private Spanned setTextBold(String title, String text) {
+        return Html.fromHtml(title + "<b>" + text + "</b>");
     }
 
     private void setTextRemarks(ViewHolder viewHolder, Offer offer) {
@@ -284,23 +303,33 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
     @NonNull
-    private String getOfferRemarksText(Offer offer) {
-        return REMARKS + offer.getRemarks();
+    private Spanned getOfferSeatsOfferedText(Offer offer) {
+        return setTextBold(SEATS_OFFERED, Integer.toString(offer.getVacancy()));
     }
 
     @NonNull
-    private String getOfferMeetUpTimeText(String meetUpTime) {
-        return PICK_UP_TIME + meetUpTime;
+    private Spanned getOfferSeatsRemaining(Offer offer) {
+        return setTextBold(SEATS_LEFT, Integer.toString(offer.getSeatsRemaining()));
     }
 
     @NonNull
-    private String getOfferStartLocationText(Offer offer) {
-        return MEETING_POINT + offer.getStartTerawhereLocation().getAddress();
+    private Spanned getOfferRemarksText(Offer offer) {
+        return setTextBold(REMARKS, offer.getRemarks());
     }
 
     @NonNull
-    private String getOfferEndLocationText(Offer offer) {
-        return DESTINATION + offer.getEndTerawhereLocation().getAddress();
+    private Spanned getOfferMeetUpTimeText(String meetUpTime) {
+        return setTextBold(PICK_UP_TIME, meetUpTime);
+    }
+
+    @NonNull
+    private Spanned getOfferStartLocationText(Offer offer) {
+        return setTextBold(MEETING_POINT, offer.getStartTerawhereLocation().getAddress());
+    }
+
+    @NonNull
+    private Spanned getOfferEndLocationText(Offer offer) {
+        return setTextBold(DESTINATION, offer.getEndTerawhereLocation().getAddress());
     }
 
     private void deleteOffer(int position) {
@@ -337,9 +366,8 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView remarksTextView;
         private TextView detailsTextView;
 
-        // Using this soon
-        /*private TextView seatsOfferedTextView;
-        private TextView seatsLeftTextView;*/
+        private TextView seatsOfferedTextView;
+        private TextView seatsLeftTextView;
 
         private ImageButton editOfferButton;
         private ImageButton deleteOfferButton;
@@ -362,8 +390,8 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             initializeOfferItemRelativeLayout(view);
 
             // Using this soon
-            /*initializeSeatsOfferedTextView(view);
-            initializeSeatsLeftTextView(view);*/
+            initializeSeatsOfferedTextView(view);
+            initializeSeatsLeftTextView(view);
 
 
 
@@ -397,14 +425,13 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             dayTextView = (TextView) view.findViewById(R.id.text_view_offer_day);
         }
 
-        // Using this soon
-        /*private void initializeSeatsLeftTextView(View view) {
+        private void initializeSeatsLeftTextView(View view) {
             seatsLeftTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_left);
         }
 
         private void initializeSeatsOfferedTextView(View view) {
             seatsOfferedTextView = (TextView) view.findViewById(R.id.text_view_offer_seats_offered);
-        }*/
+        }
 
         private void initializeMeetUpTimeTextView(View view) {
             meetUpTimeTextView = (TextView) view.findViewById(R.id.text_view_offer_meet_up_time);
