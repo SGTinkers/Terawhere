@@ -1,8 +1,10 @@
 package tech.msociety.terawhere.adapters;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
@@ -57,9 +59,15 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     public static final String SEATS_OFFERED = "Seats Offered: ";
     public static final String SEATS_LEFT = "Seats Left: ";
 
+    private Context context;
+
     private List<Offer> offers;
 
     private ViewGroup viewGroup;
+
+    public OffersAdapter(Context context) {
+        this.context = context;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -107,6 +115,30 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         // set listeners for collapse/expand offer details
         setOfferItemRelativeLayoutListener(viewHolder, shouldExpand);
         setDetailsTextViewListener(viewHolder, shouldExpand);
+
+        // set listeners for directions
+        viewHolder.textViewEndLocationAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("geo:" + offer.getEndTerawhereLocation().getLatitude() + "," + offer.getEndTerawhereLocation().getLongitude() + "?q=" + offer.getEndTerawhereLocation().getName());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(mapIntent);
+                }
+            }
+        });
+        viewHolder.textViewStartLocationAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("geo:" + offer.getStartTerawhereLocation().getLatitude() + "," + offer.getStartTerawhereLocation().getLongitude() + "?q=" + offer.getStartTerawhereLocation().getName());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(mapIntent);
+                }
+            }
+        });
 
         // set listeners for edit/delete offer
         setEditOfferButtonListener(viewHolder, offer);
