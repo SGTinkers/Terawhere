@@ -51,8 +51,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.TerawhereLocation;
-import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.PostOffers;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
@@ -148,28 +148,27 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             setSeatsAvailableField(intent);
             setRemarksField(intent);
 
+            Offer offer = getOffer(intent);
+
             // set vehicle details
-            Vehicle vehicle = getVehicle(intent);
-            setTextVehicleDescriptionEditText(vehicle);
-            setTextVehicleModelEditText(vehicle);
-            setTextVehiclePlateNumber(vehicle);
+            setTextVehicleDescriptionEditText(offer);
+            setTextVehicleModelEditText(offer);
+            setTextVehiclePlateNumber(offer);
 
             //  set location details
-            TerawhereLocation startTerawhereLocation = getStartTerawhereLocation(intent);
-            TerawhereLocation endTerawhereLocation = getEndTerawhereLocation(intent);
-            setTextStartLocationEditText(startTerawhereLocation);
-            setTextEndLocationEditText(endTerawhereLocation);
+            setTextStartLocationEditText(offer);
+            setTextEndLocationEditText(offer);
 
             // initialize location details
-            setStartLatitude(startTerawhereLocation);
-            setEndLatitude(endTerawhereLocation);
-            setStartLongitude(startTerawhereLocation);
-            setEndLongitude(startTerawhereLocation);
-            setStartLocationName(startTerawhereLocation);
-            setEndLocationName(endTerawhereLocation);
+            setStartLatitude(offer);
+            setEndLatitude(offer);
+            setStartLongitude(offer);
+            setEndLongitude(offer);
+            setStartLocationName(offer);
+            setEndLocationName(offer);
 
             // set meet up time
-            final Date meetUpTime = getMeetUpTime(intent);
+            final Date meetUpTime = offer.getMeetupTime();
             setTextMeetUpTimeEditText(meetUpTime);
 
             //set button
@@ -210,40 +209,37 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         editTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
     }
 
-    private Date getMeetUpTime(Intent intent) {
-        return (Date) intent.getSerializableExtra("meetUpTime");
+
+    private void setEndLocationName(Offer offer) {
+        endLocationName = offer.getEndTerawhereLocation().getName();
     }
 
-    private void setEndLocationName(TerawhereLocation endTerawhereLocation) {
-        endLocationName = endTerawhereLocation.getName();
+    private void setStartLocationName(Offer offer) {
+        startLocationName = offer.getStartTerawhereLocation().getName();
     }
 
-    private void setStartLocationName(TerawhereLocation startTerawhereLocation) {
-        startLocationName = startTerawhereLocation.getName();
+    private void setEndLongitude(Offer offer) {
+        endLongitude = offer.getEndTerawhereLocation().getLongitude();
     }
 
-    private void setEndLongitude(TerawhereLocation startTerawhereLocation) {
-        endLongitude = startTerawhereLocation.getLongitude();
+    private void setStartLongitude(Offer offer) {
+        startLongitude = offer.getStartTerawhereLocation().getLongitude();
     }
 
-    private void setStartLongitude(TerawhereLocation startTerawhereLocation) {
-        startLongitude = startTerawhereLocation.getLongitude();
+    private void setEndLatitude(Offer offer) {
+        endLatitude = offer.getEndTerawhereLocation().getLatitude();
     }
 
-    private void setEndLatitude(TerawhereLocation endTerawhereLocation) {
-        endLatitude = endTerawhereLocation.getLatitude();
+    private void setStartLatitude(Offer offer) {
+        startLatitude = offer.getStartTerawhereLocation().getLatitude();
     }
 
-    private void setStartLatitude(TerawhereLocation startTerawhereLocation) {
-        startLatitude = startTerawhereLocation.getLatitude();
+    private void setTextEndLocationEditText(Offer offer) {
+        endLocationEditText.setText(offer.getEndTerawhereLocation().getName());
     }
 
-    private void setTextEndLocationEditText(TerawhereLocation endTerawhereLocation) {
-        endLocationEditText.setText(endTerawhereLocation.getName());
-    }
-
-    private void setTextStartLocationEditText(TerawhereLocation startTerawhereLocation) {
-        startLocationEditText.setText(startTerawhereLocation.getName());
+    private void setTextStartLocationEditText(Offer offer) {
+        startLocationEditText.setText(offer.getStartTerawhereLocation().getName());
     }
 
     private TerawhereLocation getEndTerawhereLocation(Intent intent) {
@@ -254,20 +250,20 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         return intent.getParcelableExtra("startTerawhereLocation");
     }
 
-    private void setTextVehiclePlateNumber(Vehicle vehicle) {
-        editTextVehiclePlateNumber.setText(vehicle.getPlateNumber());
+    private void setTextVehiclePlateNumber(Offer offer) {
+        editTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
     }
 
-    private void setTextVehicleModelEditText(Vehicle vehicle) {
-        editTextVehicleModel.setText(vehicle.getModel());
+    private void setTextVehicleModelEditText(Offer offer) {
+        editTextVehicleModel.setText(offer.getVehicle().getModel());
     }
 
-    private void setTextVehicleDescriptionEditText(Vehicle vehicle) {
-        editTextVehicleDescription.setText(vehicle.getDescription());
+    private void setTextVehicleDescriptionEditText(Offer offer) {
+        editTextVehicleDescription.setText(offer.getVehicle().getDescription());
     }
 
-    private Vehicle getVehicle(Intent intent) {
-        return intent.getParcelableExtra("vehicle");
+    private Offer getOffer(Intent intent) {
+        return intent.getParcelableExtra("offer");
     }
 
     @NonNull

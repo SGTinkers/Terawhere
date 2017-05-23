@@ -28,8 +28,6 @@ import tech.msociety.terawhere.events.GetOffersHasFinishedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.models.TerawhereLocation;
-import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.models.factories.OfferFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -77,14 +75,14 @@ public class MyOffersFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 getOffersFromServer();
-                TerawhereLocation startTerawhereLocation = null;
+                /*TerawhereLocation startTerawhereLocation = null;
                 TerawhereLocation endTerawhereLocation = null;
-                Vehicle vehicle = null;
+                Vehicle vehicle = null;*/
                 Intent intent = new Intent(v.getContext(), CreateOfferActivity.class);
 
                 if (lastOffer != null) {
                     // start location
-                    startTerawhereLocation = new TerawhereLocation(
+                    /*startTerawhereLocation = new TerawhereLocation(
                             lastOffer.getStartTerawhereLocation().getName(),
                             lastOffer.getStartTerawhereLocation().getAddress(),
                             lastOffer.getStartTerawhereLocation().getLatitude(),
@@ -103,19 +101,19 @@ public class MyOffersFragment extends BaseFragment {
                     vehicle = new Vehicle(
                             lastOffer.getVehicle().getPlateNumber(),
                             lastOffer.getVehicle().getDescription(),
-                            lastOffer.getVehicle().getModel());
+                            lastOffer.getVehicle().getModel());*/
 
                     // store values for create offer activity
                     intent.putExtra(IS_EDIT, true);
-                    intent.putExtra(START_TERAWHERE_LOCATION, startTerawhereLocation);
-                    intent.putExtra(END_TERAWHERE_LOCATION, endTerawhereLocation);
+                    intent.putExtra("offer", lastOffer);
+                    /*intent.putExtra(END_TERAWHERE_LOCATION, endTerawhereLocation);
                     intent.putExtra(VEHICLE, vehicle);
                     intent.putExtra(OFFER_ID, lastOffer.getOfferId());
                     intent.putExtra(DRIVER_ID, lastOffer.getOffererId());
                     intent.putExtra(MEET_UP_TIME, lastOffer.getMeetupTime());
                     intent.putExtra(DRIVER_REMARKS, lastOffer.getRemarks());
                     intent.putExtra(SEATS_AVAILABLE, lastOffer.getVacancy());
-
+*/
                 }
 
 

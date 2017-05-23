@@ -221,14 +221,17 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 // store values for create offer activity
                 Intent intent = new Intent(new Intent(viewGroup.getContext(), CreateOfferActivity.class));
                 intent.putExtra(IS_EDIT, true);
-                intent.putExtra(START_TERAWHERE_LOCATION, startTerawhereLocation);
+                intent.putExtra("offer", offer);
+
+                // there is  no need for this
+                /*intent.putExtra(START_TERAWHERE_LOCATION, startTerawhereLocation);
                 intent.putExtra(END_TERAWHERE_LOCATION, endTerawhereLocation);
                 intent.putExtra(VEHICLE, vehicle);
                 intent.putExtra(ID, offer.getOfferId());
                 intent.putExtra(DRIVER_ID, offer.getOffererId());
                 intent.putExtra(MEET_UP_TIME, offer.getMeetupTime());
                 intent.putExtra(DRIVER_REMARKS, offer.getRemarks());
-                intent.putExtra(SEATS_AVAILABLE, offer.getVacancy());
+                intent.putExtra(SEATS_AVAILABLE, offer.getVacancy());*/
 
 
                 // start create offer activity
