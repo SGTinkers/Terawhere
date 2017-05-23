@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+        android:id="@+id/swipe_refresh_layout_offers"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewMyOffers"
+            android:id="@+id/recycler_view_my_offers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:paddingBottom="48dp"
             android:clipToPadding="false"
-            android:scrollbars="vertical" />
+            android:paddingBottom="48dp"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <include layout="@layout/floating_action_button_create_offer" />
+    <TextView
+        android:id="@+id/text_view_empty_recycler_view_offers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_offers_available"
+        android:visibility="gone"/>
+
+    <include layout="@layout/floating_action_button_create_offer"/>
 
 </android.support.design.widget.CoordinatorLayout>

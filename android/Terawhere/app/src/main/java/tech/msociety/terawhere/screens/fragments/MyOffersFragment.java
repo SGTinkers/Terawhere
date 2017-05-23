@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,7 +23,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.R.layout;
 import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.events.GetOffersHasFinishedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
@@ -49,16 +49,16 @@ public class MyOffersFragment extends BaseFragment {
     public static final String SEATS_AVAILABLE = "seatsAvailable";
 
     private OffersAdapter offersAdapter;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
+    
+    private SwipeRefreshLayout swipeRefreshLayoutOffers;
 
     private Offer lastOffer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.needsEventBus = true;
-        View view = inflater.inflate(layout.fragment_my_offers, container, false);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        View view = inflater.inflate(R.layout.fragment_my_offers, container, false);
+        swipeRefreshLayoutOffers = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout_offers);
         return view;
     }
 
@@ -125,16 +125,16 @@ public class MyOffersFragment extends BaseFragment {
     }
 
     private void initRecyclerView() {
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorTerawherePrimary);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayoutOffers.setColorSchemeResources(R.color.colorTerawherePrimary);
+    
+        swipeRefreshLayoutOffers.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 getOffersFromServer();
             }
         });
-
-        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyOffers);
+    
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view_my_offers);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -144,7 +144,7 @@ public class MyOffersFragment extends BaseFragment {
     }
 
     private void getOffersFromServer() {
-        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayoutOffers.setRefreshing(true);
         Call<GetOffersResponse> callGetOffers = TerawhereBackendServer.getApiInstance().getOffers();
         callGetOffers.enqueue(new Callback<GetOffersResponse>() {
             @Override
@@ -155,14 +155,13 @@ public class MyOffersFragment extends BaseFragment {
                     Log.i("SIZE", ":" + offers.size());
 
                     if (!offers.isEmpty()) {
-
                         lastOffer = offers.get(offers.size() - 1);
                     }
                     EventBus.getDefault().post(new GetOffersHasFinishedEvent(offers));
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
-                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayoutOffers.setRefreshing(false);
             }
 
             @Override
@@ -176,6 +175,17 @@ public class MyOffersFragment extends BaseFragment {
     public void populateRecyclerView(GetOffersHasFinishedEvent event) {
         offersAdapter.setOffers(event.getOffers());
         offersAdapter.notifyDataSetChanged();
+    
+        RecyclerView recyclerViewMyOffers = (RecyclerView) getActivity().findViewById(R.id.recycler_view_my_offers);
+        TextView textViewEmptyRecyclerView = (TextView) getActivity().findViewById(R.id.text_view_empty_recycler_view_offers);
+    
+        if (offersAdapter.getItemCount() == 0) {
+            recyclerViewMyOffers.setVisibility(View.GONE);
+            textViewEmptyRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerViewMyOffers.setVisibility(View.VISIBLE);
+            textViewEmptyRecyclerView.setVisibility(View.GONE);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

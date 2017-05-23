@@ -72,5 +72,7 @@
     <string name="vehicle_color">Vehicle Color</string>
     <string name="remarks">Remarks (optional)</string>
     <string name="create_offer">Create Offer</string>
+    <string name="no_offers_available">No offers available</string>
+    <string name="no_bookings_available">No bookings available</string>
 
 </resources>

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,15 +34,15 @@ import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 
 public class MyBookingsFragment extends BaseFragment {
     private BookingsAdapter bookingsAdapter;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
+    
+    private SwipeRefreshLayout swipeRefreshLayoutBookings;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.needsEventBus = true;
         setHasOptionsMenu(false);
         View view = inflater.inflate(R.layout.fragment_my_bookings, container, false);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayoutBookings = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout_bookings);
         return view;
     }
     
@@ -54,16 +55,16 @@ public class MyBookingsFragment extends BaseFragment {
     }
     
     private void initRecyclerView() {
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorTerawherePrimary);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayoutBookings.setColorSchemeResources(R.color.colorTerawherePrimary);
+    
+        swipeRefreshLayoutBookings.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 getBookingsFromServer();
             }
         });
-
-        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewMyBookings);
+    
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view_my_bookings);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -73,7 +74,7 @@ public class MyBookingsFragment extends BaseFragment {
     }
     
     private void getBookingsFromServer() {
-        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayoutBookings.setRefreshing(true);
 
         Call<GetBookingsResponse> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookings();
         callGetBookings.enqueue(new Callback<GetBookingsResponse>() {
@@ -87,7 +88,7 @@ public class MyBookingsFragment extends BaseFragment {
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
-                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayoutBookings.setRefreshing(false);
             }
 
             @Override
@@ -101,11 +102,22 @@ public class MyBookingsFragment extends BaseFragment {
     public void populateRecyclerView(GetBookingsHasFinishedEvent event) {
         bookingsAdapter.setBookings(event.getBookings());
         bookingsAdapter.notifyDataSetChanged();
+    
+        RecyclerView recyclerViewMyOffers = (RecyclerView) getActivity().findViewById(R.id.recycler_view_my_bookings);
+        TextView textViewEmptyRecyclerView = (TextView) getActivity().findViewById(R.id.text_view_empty_recycler_view_bookings);
+    
+        if (bookingsAdapter.getItemCount() == 0) {
+            recyclerViewMyOffers.setVisibility(View.GONE);
+            textViewEmptyRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerViewMyOffers.setVisibility(View.VISIBLE);
+            textViewEmptyRecyclerView.setVisibility(View.GONE);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
-        Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());
+        Log.e(TAG, "failed to fetch my bookings via network call", event.getThrowable());
     }
 
     @Override
