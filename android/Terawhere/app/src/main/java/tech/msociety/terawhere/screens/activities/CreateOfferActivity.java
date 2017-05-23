@@ -33,7 +33,9 @@ import android.widget.Toast;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -414,17 +416,20 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             }
         }
         if (view.getId() == R.id.edit_text_start_location || view.getId() == R.id.text_input_layout_start_location) {
-            try {
-                showStartingPlacePickerActivity();
+            /*try {
+                //showStartingPlacePickerActivity();
             } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 e.printStackTrace();
-            }
+            }*/
+            callStartPlaceAutocompleteActivityIntent();
         } else if (view.getId() == R.id.edit_text_end_location || view.getId() == R.id.text_input_layout_end_location) {
-            try {
+            /*try {
                 showEndingPlacePickerActivity();
             } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 e.printStackTrace();
-            }
+            }*/
+            callEndPlaceAutocompleteActivityIntent();
+
         } else if (view.getId() == R.id.button_create_offer) {
 
             if (areNotAllFieldsFilled() || !editTextVehiclePlateNumber.getText().toString().matches("^[a-zA-Z0-9]*$")) {
@@ -667,6 +672,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
     private void showStartingPlacePickerActivity() throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+
         if (selectedStartPlace != null) {
             initializePlacePickerMap(intentBuilder, selectedStartPlace.getLatLng().latitude, selectedStartPlace.getLatLng().longitude);
         } else {
@@ -702,6 +708,44 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         if (getCurrentFocus() != null) {
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    private void callStartPlaceAutocompleteActivityIntent() {
+        LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
+        LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
+        try {
+            AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
+                    .setTypeFilter(Place.TYPE_COUNTRY)
+                    .setCountry("SG")
+                    .build();
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).setFilter(autocompleteFilter).setBoundsBias(placePickerMapBounds)
+                            .build(this);
+            startActivityForResult(intent, 1);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+
+        }
+
+    }
+
+    private void callEndPlaceAutocompleteActivityIntent() {
+        LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
+        LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
+        try {
+            AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
+                    .setTypeFilter(Place.TYPE_COUNTRY)
+                    .setCountry("SG")
+                    .build();
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).setFilter(autocompleteFilter).setBoundsBias(placePickerMapBounds)
+                            .build(this);
+            startActivityForResult(intent, 2);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+
+        }
+
     }
 
     /**
@@ -764,6 +808,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+
+
     }
 
     private String getPlaceName(Place place) {

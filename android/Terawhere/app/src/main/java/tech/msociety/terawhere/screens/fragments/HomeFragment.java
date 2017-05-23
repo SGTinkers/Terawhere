@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -298,9 +299,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             dialogRemarks.setText("Remarks: NIL");
 
         } else {
-            dialogRemarks.setText("Remarks: " + offer.getRemarks());
+            dialogRemarks.setText(Html.fromHtml("Remarks: <b>" + offer.getRemarks() + "</b>"));
         }
-        dialogStartingLocation.setText("Meeting Point: " + offer.getStartTerawhereLocation().getAddress());
+        dialogStartingLocation.setText(Html.fromHtml("Meeting Point: <b>" + offer.getStartTerawhereLocation().getAddress() + "</b>"));
         dialogDestination.setText("Destination: " + offer.getEndTerawhereLocation().getAddress());
         String meetUpTime = DateUtils.toFriendlyDateTimeString(offer.getMeetupTime());
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);

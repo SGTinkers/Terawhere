@@ -4,7 +4,7 @@ import tech.msociety.terawhere.TerawhereApplication;
 
 public class Constants {
     //    public static final String BASE_URL = "https://api.terawhere.com";  // prod
-    public static final String BASE_URL = "http://139.59.224.66";   // dev
+    public static final String BASE_URL = "https://api.terawhere.com";   // dev
 
     private static String bearerToken;
 
