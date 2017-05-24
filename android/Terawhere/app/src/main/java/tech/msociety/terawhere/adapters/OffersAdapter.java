@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -192,7 +191,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         } else {
             viewHolder.textViewEndLocationAddress.setVisibility(View.GONE);
             viewHolder.textViewStartLocationAddress.setVisibility(View.GONE);
-            viewHolder.textViewRemarks.setVisibility(View.GONE);
             viewHolder.textViewVehicleLabel.setVisibility(View.GONE);
             viewHolder.textViewVehicle.setVisibility(View.GONE);
             viewHolder.textViewVehicleModelLabel.setVisibility(View.GONE);
