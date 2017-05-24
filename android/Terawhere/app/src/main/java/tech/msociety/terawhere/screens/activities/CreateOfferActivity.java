@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
@@ -34,7 +33,6 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -52,32 +50,18 @@ import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
 import tech.msociety.terawhere.utils.DateUtils;
 
 public class CreateOfferActivity extends ToolbarActivity implements View.OnClickListener {
-    /******************************************************
-     *  Terawhere offer fields. Please do not remove!!! *
-     ****************************************************/
-    public static final String SEATS_AVAILABLE = "seatsAvailable";
-    public static final String DRIVER_REMARKS = "driverRemarks";
+    public static final String INTENT_OFFER = "intentOffer";
+    public static final String INTENT_IS_EDIT = "isEdit";
+    public static final String INTENT_IS_CREATE = "isCreate";
+    private static final String TOOLBAR_TITLE = "Create Offer";
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
-    private static final String TOOLBAR_TITLE = "Create Offer";
-    public static final String EDIT_OFFER = "Edit Offer";
-    public static final String IS_EDIT = "isEdit";
-    public static final String MESSAGE_CREATE_OFFER_SUCCESSFUL = "SUCCESSFULLY CREATED OFFER";
-    public static final String MESSAGE_EDIT_OFFER_SUCCESSFUL = "SUCCESSFULLY UPDATED OFFER";
-    public static final String LOG_RESPONSE = "messageResponse";
-    public static final String MESSAGE_YOU_ARE_AT = "You are at: ";
-    public static final String FORMAT_TWO_DIGITS = "%02d";
-    public static final String OFFER_ID = "id";
     public static final String SELECT_TIME = "Select Time";
-
     private boolean isEditOffer = false;
     private boolean isCreateOffer = false;
-
     private Place selectedStartPlace;
     private Place selectedEndPlace;
     private int offerId;
-    private GoogleApiClient googleApiClient;
-    private String MESSAGE_LOCATION_PERMISSION_NEEDED = "Need location";
     private double startLatitude;
     private double endLatitude;
     private double startLongitude;
@@ -86,10 +70,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private String endLocationName;
     private String startLocationAddress;
     private String endLocationAddress;
-
     private double latitude;
     private double longitude;
-
     private Button buttonCreateOffer;
     private TextInputEditText textInputEditTextVehicleColor;
     private TextInputEditText textInputEditTextEndLocation;
@@ -99,86 +81,61 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private TextInputEditText textInputEditTextVehicleModel;
     private TextInputEditText textInputEditTextMeetUpTime;
     private TextInputEditText textInputEditTextStartLocation;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
-
+        
         Bundle bundle = getIntent().getExtras();
         Intent intent = getIntent();
-
+        
         initToolbar(TOOLBAR_TITLE, true);
         trackCurrentLocation();
         initViewHandles();
         setClickListeners();
-
+        
         if (bundle != null) {
-            isEditOffer = intent.getExtras().getBoolean(IS_EDIT);
-            isCreateOffer = intent.getExtras().getBoolean("isCreate");
-
+            isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT);
+            isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE);
         }
-
+        
         if (isEditOffer) {
-
-
-            Offer offer = intent.getParcelableExtra("offer");
-
+            Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
+            unloadOfferIntoUi(offer);
+            
             offerId = offer.getOfferId();
-            textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
-            textInputEditTextRemarks.setText(offer.getRemarks());
-
-            textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
-            textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
-            textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
-            textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
-            textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
-
-            startLatitude = offer.getStartTerawhereLocation().getLatitude();
-            endLatitude = offer.getEndTerawhereLocation().getLatitude();
-            startLongitude = offer.getStartTerawhereLocation().getLongitude();
-            endLongitude = offer.getEndTerawhereLocation().getLongitude();
-            startLocationName = offer.getStartTerawhereLocation().getName();
-            endLocationName = offer.getEndTerawhereLocation().getName();
-            startLocationAddress = offer.getStartTerawhereLocation().getAddress();
-            endLocationAddress = offer.getEndTerawhereLocation().getAddress();
-
-
-            final Date meetUpTime = offer.getMeetupTime();
-            textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
-            buttonCreateOffer.setText(EDIT_OFFER);
-            setMeetUpTimeEditTextListener(meetUpTime);
+            buttonCreateOffer.setText(R.string.create_offer_activity_button_text);
         } else if (isCreateOffer) {
-
-            Offer offer = intent.getParcelableExtra("offer");
-
-            textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
-            textInputEditTextRemarks.setText(offer.getRemarks());
-
-            textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
-            textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
-            textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
-            textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
-            textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
-
-            startLatitude = offer.getStartTerawhereLocation().getLatitude();
-            endLatitude = offer.getEndTerawhereLocation().getLatitude();
-            startLongitude = offer.getStartTerawhereLocation().getLongitude();
-            endLongitude = offer.getEndTerawhereLocation().getLongitude();
-            startLocationName = offer.getStartTerawhereLocation().getName();
-            endLocationName = offer.getEndTerawhereLocation().getName();
-            startLocationAddress = offer.getStartTerawhereLocation().getAddress();
-            endLocationAddress = offer.getEndTerawhereLocation().getAddress();
-
-            final Date meetUpTime = offer.getMeetupTime();
-            textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
-            setMeetUpTimeEditTextListener(meetUpTime);
-
+            Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
+            unloadOfferIntoUi(offer);
         } else {
             setMeetUpTimeEditTextListener();
         }
     }
-
+    
+    private void unloadOfferIntoUi(Offer offer) {
+        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
+        textInputEditTextRemarks.setText(offer.getRemarks());
+        textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
+        textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
+        textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
+        textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
+        textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
+        startLatitude = offer.getStartTerawhereLocation().getLatitude();
+        endLatitude = offer.getEndTerawhereLocation().getLatitude();
+        startLongitude = offer.getStartTerawhereLocation().getLongitude();
+        endLongitude = offer.getEndTerawhereLocation().getLongitude();
+        startLocationName = offer.getStartTerawhereLocation().getName();
+        endLocationName = offer.getEndTerawhereLocation().getName();
+        startLocationAddress = offer.getStartTerawhereLocation().getAddress();
+        endLocationAddress = offer.getEndTerawhereLocation().getAddress();
+        
+        final Date meetupTime = offer.getMeetupTime();
+        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
+        setMeetUpTimeEditTextListener(meetupTime);
+    }
+    
     private void initViewHandles() {
         buttonCreateOffer = (Button) findViewById(R.id.button_create_offer);
         textInputEditTextMeetUpTime = (TextInputEditText) findViewById(R.id.edit_text_meet_up_time);
@@ -190,13 +147,13 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         textInputEditTextVehiclePlateNumber = (TextInputEditText) findViewById(R.id.edit_text_vehicle_number);
         textInputEditTextVehicleColor = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_color);
     }
-
+    
     private void setClickListeners() {
         textInputEditTextStartLocation.setOnClickListener(this);
         textInputEditTextEndLocation.setOnClickListener(this);
         buttonCreateOffer.setOnClickListener(this);
     }
-
+    
     private void setMeetUpTimeEditTextListener() {
         textInputEditTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,7 +170,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             }
         });
     }
-
+    
     private void setMeetUpTimeEditTextListener(final Date meetUpTime) {
         textInputEditTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,11 +187,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             }
         });
     }
-
+    
     private void showTpdMeetUpTime(TimePickerDialog tpdMeetUpTime) {
         tpdMeetUpTime.show();
     }
-
+    
     private void setTextMeetUpTimeEditText(int selectedHour, int selectedMinute) {
         String AM_PM = " am";
         String mm_precede = "";
@@ -251,23 +208,23 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         if (selectedMinute < 10) {
             mm_precede = "0";
         }
-
+        
         textInputEditTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
     }
-
+    
     private void trackCurrentLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
-
+        
         Location location = ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
+        
         if (location != null) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
         }
     }
-
+    
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.linearLayout) {
@@ -276,7 +233,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
-
+        
         if (view.getId() == R.id.edit_text_start_location || view.getId() == R.id.text_input_layout_start_location) {
             callStartPlaceAutocompleteActivityIntent();
         } else if (view.getId() == R.id.edit_text_end_location || view.getId() == R.id.text_input_layout_end_location) {
@@ -288,7 +245,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                 if (isCreateOffer) {
                     String date = getDate(); // get todays date
                     String time = textInputEditTextMeetUpTime.getText().toString();
-
+    
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
                     Date dateObj = null;
                     try {
@@ -306,28 +263,27 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
 
 
     */
-
+    
                     String startName, endName, startAddress, endAddress;
-
+    
                     if (selectedStartPlace == null) {
                         startName = startLocationName;
                         startAddress = startLocationAddress;
                     } else {
                         startName = getPlaceName(selectedStartPlace);
                         startAddress = getPlaceAddress(selectedStartPlace);
-
+        
                     }
                     if (selectedEndPlace == null) {
                         endName = endLocationName;
                         endAddress = endLocationAddress;
-
+    
                     } else {
                         endName = getPlaceName(selectedEndPlace);
                         endAddress = getPlaceAddress(selectedEndPlace);
-
-
+    
                     }
-
+    
                     OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime,
                             startName,
                             startAddress,
@@ -346,7 +302,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
-
                             if (response.isSuccessful()) {
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
                                 successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -354,7 +309,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                 successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 successDialog.setCanceledOnTouchOutside(false);
                                 successDialog.setCancelable(false);
-
+    
                                 Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
                                 TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
                                 dialogInfo.setText("Your offer has been successfully created");
@@ -362,7 +317,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                     @Override
                                     public void onClick(View v) {
                                         successDialog.dismiss();
-
+    
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
@@ -370,26 +325,19 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                     }
                                 });
                                 successDialog.show();
-
-                            } else {
-                                try {
-                                    Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
                             }
                         }
-
+    
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-
+        
                         }
                     });
-
+    
                 } else if (isEditOffer) {
                     String date = getDate();
                     String time = textInputEditTextMeetUpTime.getText().toString();
-
+    
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
                     Date dateObj = null;
                     try {
@@ -398,29 +346,27 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         e.printStackTrace();
                     }
                     String meetUpTime = date + " " + getTimeFormat(dateObj);
-
+    
                     String startName, endName, startAddress, endAddress;
-
-
+    
                     if (selectedStartPlace == null) {
                         startName = startLocationName;
                         startAddress = startLocationAddress;
                     } else {
                         startName = getPlaceName(selectedStartPlace);
                         startAddress = getPlaceAddress(selectedStartPlace);
-
+        
                     }
                     if (selectedEndPlace == null) {
                         endName = endLocationName;
                         endAddress = endLocationAddress;
-
+    
                     } else {
                         endName = getPlaceName(selectedEndPlace);
                         endAddress = getPlaceAddress(selectedEndPlace);
-
-
+    
                     }
-
+    
                     OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime,
                             startName,
                             startAddress,
@@ -435,12 +381,12 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                             textInputEditTextVehiclePlateNumber.getText().toString(),
                             textInputEditTextVehicleColor.getText().toString(),
                             textInputEditTextVehicleModel.getText().toString());
-
+    
                     Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
-
+    
                             if (response.isSuccessful()) {
                                 Log.i("EDIT_MESSAGE", ": " + response.message());
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
@@ -452,12 +398,12 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                 Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
                                 TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
                                 dialogInfo.setText("Your offer has been successfully updated");
-
+        
                                 okButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         successDialog.dismiss();
-
+    
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
@@ -465,10 +411,10 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                     }
                                 });
                                 successDialog.show();
-
+        
                             }
                         }
-
+    
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             Log.e(TAG, "onFailure: ", t);
@@ -477,7 +423,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                 } else {
                     String date = getDate(); // get todays date
                     String time = textInputEditTextMeetUpTime.getText().toString();
-
+    
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
                     Date dateObj = null;
                     try {
@@ -492,13 +438,12 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                             selectedEndPlace.getLatLng().latitude, selectedEndPlace.getLatLng().longitude, Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
                             textInputEditTextRemarks.getText().toString(), textInputEditTextVehiclePlateNumber.getText().toString(),
                             textInputEditTextVehicleColor.getText().toString(), textInputEditTextVehicleModel.getText().toString());
-
-
+    
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
-
+    
                             if (response.isSuccessful()) {
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
                                 successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -506,7 +451,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                 successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 successDialog.setCanceledOnTouchOutside(false);
                                 successDialog.setCancelable(false);
-
+        
                                 Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
                                 TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
                                 dialogInfo.setText("Your offer has been successfully created");
@@ -514,7 +459,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                     @Override
                                     public void onClick(View v) {
                                         successDialog.dismiss();
-
+    
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
@@ -522,41 +467,34 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                                     }
                                 });
                                 successDialog.show();
-
-                            } else {
-                                try {
-                                    Log.i(LOG_RESPONSE, ": " + response.errorBody().string());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
                             }
                         }
-
+    
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-
+        
                         }
                     });
                 }
             }
         }
     }
-
+    
     private String getDate() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return simpleDateFormat.format(Calendar.getInstance().getTime());
-
+        
     }
-
+    
     private String getTimeFormat(Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         return simpleDateFormat.format(date);
     }
-
+    
     private boolean areNotAllFieldsFilled() {
         return (textInputEditTextStartLocation.getText().toString().matches("") || textInputEditTextEndLocation.getText().toString().matches("") || textInputEditTextSeatsAvailable.getText().toString().matches("") || textInputEditTextVehicleColor.getText().toString().matches("") || textInputEditTextVehiclePlateNumber.getText().toString().matches(""));
     }
-
+    
     private void callStartPlaceAutocompleteActivityIntent() {
         LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
         LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
@@ -575,7 +513,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             Log.e(TAG, "callStartPlaceAutocompleteActivityIntent: ", e);
         }
     }
-
+    
     private void callEndPlaceAutocompleteActivityIntent() {
         LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
         LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
@@ -593,18 +531,18 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             Log.e(TAG, "callEndPlaceAutocompleteActivityIntent: ", e);
         }
     }
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1:
                 if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, MESSAGE_LOCATION_PERMISSION_NEEDED, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Need location", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
     }
-
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -619,7 +557,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
+    
     private String getPlaceName(Place place) {
         String name = null;
         if (place != null) {
@@ -627,7 +565,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         }
         return name;
     }
-
+    
     private String getPlaceAddress(Place place) {
         String address = null;
         if (place != null) {
@@ -635,7 +573,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         }
         return address;
     }
-
+    
     private double getStartLatitude(Place place) {
         if (place == null) {
             return startLatitude;
@@ -643,7 +581,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             return selectedStartPlace.getLatLng().latitude;
         }
     }
-
+    
     private double getEndLatitude(Place place) {
         if (place == null) {
             return endLatitude;
@@ -651,7 +589,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             return selectedEndPlace.getLatLng().latitude;
         }
     }
-
+    
     private double getStartLongitude(Place place) {
         if (place == null) {
             return startLongitude;
@@ -659,7 +597,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             return selectedStartPlace.getLatLng().longitude;
         }
     }
-
+    
     private double getEndLongitude(Place place) {
         if (place == null) {
             return endLongitude;

@@ -234,16 +234,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 intent.putExtra(IS_EDIT, true);
                 intent.putExtra("offer", offer);
 
-                // there is  no need for this
-                /*intent.putExtra(START_TERAWHERE_LOCATION, startTerawhereLocation);
-                intent.putExtra(END_TERAWHERE_LOCATION, endTerawhereLocation);
-                intent.putExtra(VEHICLE, vehicle);
-                intent.putExtra(ID, offer.getOfferId());
-                intent.putExtra(DRIVER_ID, offer.getOffererId());
-                intent.putExtra(MEET_UP_TIME, offer.getMeetupTime());
-                intent.putExtra(DRIVER_REMARKS, offer.getRemarks());
-                intent.putExtra(SEATS_AVAILABLE, offer.getVacancy());*/
-
                 // start create offer activity
                 viewGroup.getContext().startActivity(intent);
             }
@@ -327,9 +317,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         pbutton.setTextColor(Color.parseColor(TERAWHERE_PRIMARY_COLOR));
         pbutton.setText(CONFIRM);
     }
-
+    
     public void setOffers(List<Offer> offers) {
         this.offers = offers;
+    }
+    
+    public Offer getLastOffer() {
+        if (offers.isEmpty()) return null;
+        return offers.get(offers.size() - 1);
     }
 
     @Override
@@ -383,5 +378,4 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             textViewVehicleModel = (TextView) view.findViewById(R.id.text_view_vehicle_model);
         }
     }
-
 }

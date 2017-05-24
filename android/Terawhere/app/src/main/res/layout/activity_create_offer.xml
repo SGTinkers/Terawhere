@@ -89,8 +89,7 @@
                     android:backgroundTint="@color/colorTerawherePrimary"
                     android:ems="10"
                     android:imeOptions="actionNext"
-                    android:inputType="number"
-                    android:maxLength="1"/>
+                    android:inputType="number"/>
 
             </android.support.design.widget.TextInputLayout>
 
