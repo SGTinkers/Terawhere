@@ -30,9 +30,9 @@ public class Offer implements Parcelable {
         this.vehicle = vehicle;
         this.vacancy = vacancy;
         this.backendTimestamp = backendTimestamp;
-        this.remarks = remarks;
-        this.seatsBooked = seatsBooked != null ? seatsBooked : 0;
+        this.remarks = remarks != null ? remarks : "";
         this.seatsRemaining = seatsRemaining != null ? seatsRemaining : 0;
+        this.seatsBooked = seatsBooked != null ? seatsBooked : 0;
         this.driverName = driverName;
     }
 
@@ -61,9 +61,9 @@ public class Offer implements Parcelable {
         driverName = in.readString();
         offerId = in.readInt();
         vacancy = in.readInt();
-        seatsRemaining = in.readInt();
+        /*seatsRemaining = in.readInt();
         seatsBooked = in.readInt();
-
+*/
 
 
 
@@ -149,9 +149,9 @@ public class Offer implements Parcelable {
         dest.writeInt(offerId);
         dest.writeInt(vacancy);
 
-        dest.writeInt(seatsRemaining);
+        /*dest.writeInt(seatsRemaining);
 
-        dest.writeInt(seatsBooked);
+        dest.writeInt(seatsBooked);*/
 
 
 

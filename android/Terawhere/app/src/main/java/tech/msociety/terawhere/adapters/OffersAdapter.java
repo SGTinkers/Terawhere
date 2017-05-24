@@ -96,7 +96,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         viewHolder.textViewEndLocationAddress.setText(offer.getEndTerawhereLocation().getAddress());
         viewHolder.textViewStartLocationName.setText(offer.getStartTerawhereLocation().getName());
         viewHolder.textViewStartLocationAddress.setText(offer.getStartTerawhereLocation().getAddress());
-        viewHolder.textViewSeatsLeft.setText(offer.getSeatsBooked() + " of " + offer.getVacancy());
+        viewHolder.textViewSeatsLeft.setText(offer.getSeatsRemaining() + " of " + offer.getVacancy());
         if (offer.getRemarks() != null && !offer.getRemarks().isEmpty()) {
             viewHolder.textViewRemarks.setText(offer.getRemarks());
             viewHolder.textViewRemarksLabel.setVisibility(View.VISIBLE);
