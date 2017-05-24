@@ -87,15 +87,13 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
         
-        Bundle bundle = getIntent().getExtras();
-        Intent intent = getIntent();
-        
         initToolbar(TOOLBAR_TITLE, true);
         trackCurrentLocation();
         initViewHandles();
         setClickListeners();
-        
-        if (bundle != null) {
+    
+        Intent intent = getIntent();
+        if (intent.getExtras() != null) {
             isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT);
             isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE);
         }
@@ -110,7 +108,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
         } else {
-            setMeetUpTimeEditTextListener();
+            setMeetUpTimeEditTextListener(null);
         }
     }
     
@@ -154,62 +152,30 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         buttonCreateOffer.setOnClickListener(this);
     }
     
-    private void setMeetUpTimeEditTextListener() {
+    private void setMeetUpTimeEditTextListener(Date meetupTime) {
+        if (meetupTime == null) {
+            meetupTime = new Date();
+        }
+        
+        final Calendar calendar = DateUtils.toCalendar(meetupTime);
+        
         textInputEditTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TimePickerDialog timePickerDialog;
-                timePickerDialog = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+                timePickerDialog = new TimePickerDialog(CreateOfferActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        setTextMeetUpTimeEditText(selectedHour, selectedMinute);
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        calendar.set(Calendar.MINUTE, minute);
+                        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(calendar.getTime()));
                     }
-                }, Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), false);
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
                 timePickerDialog.setTitle(SELECT_TIME);
-                showTpdMeetUpTime(timePickerDialog);
+                timePickerDialog.show();
             }
         });
-    }
-    
-    private void setMeetUpTimeEditTextListener(final Date meetUpTime) {
-        textInputEditTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimePickerDialog tpdMeetUpTime;
-                tpdMeetUpTime = new TimePickerDialog(CreateOfferActivity.this, TimePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        setTextMeetUpTimeEditText(selectedHour, selectedMinute);
-                    }
-                }, meetUpTime.getHours(), meetUpTime.getMinutes(), false);
-                tpdMeetUpTime.setTitle(SELECT_TIME);
-                showTpdMeetUpTime(tpdMeetUpTime);
-            }
-        });
-    }
-    
-    private void showTpdMeetUpTime(TimePickerDialog tpdMeetUpTime) {
-        tpdMeetUpTime.show();
-    }
-    
-    private void setTextMeetUpTimeEditText(int selectedHour, int selectedMinute) {
-        String AM_PM = " am";
-        String mm_precede = "";
-        if (selectedHour >= 12) {
-            AM_PM = " pm";
-            if (selectedHour >= 13 && selectedHour < 24) {
-                selectedHour -= 12;
-            } else {
-                selectedHour = 12;
-            }
-        } else if (selectedHour == 0) {
-            selectedHour = 12;
-        }
-        if (selectedMinute < 10) {
-            mm_precede = "0";
-        }
-        
-        textInputEditTextMeetUpTime.setText(selectedHour + ":" + mm_precede + selectedMinute + AM_PM);
     }
     
     private void trackCurrentLocation() {
@@ -243,27 +209,17 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                 Toast.makeText(CreateOfferActivity.this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
             } else {
                 if (isCreateOffer) {
-                    String date = getDate(); // get todays date
-                    String time = textInputEditTextMeetUpTime.getText().toString();
-    
+                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
+                    String timeString = textInputEditTextMeetUpTime.getText().toString();
+                    
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date dateObj = null;
+                    Date date = null;
                     try {
-                        dateObj = sdf.parse(time);
+                        date = sdf.parse(timeString);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    String meetUpTime = date + " " + getTimeFormat(dateObj);
-                    /*OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime, getPlaceName(selectedStartPlace),
-                            selectedStartPlace.getAddress().toString(), selectedStartPlace.getLatLng().latitude,
-                            selectedStartPlace.getLatLng().longitude, getPlaceName(selectedEndPlace), selectedEndPlace.getAddress().toString(),
-                            selectedEndPlace.getLatLng().latitude, selectedEndPlace.getLatLng().longitude, Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                            textInputEditTextRemarks.getText().toString(), textInputEditTextVehiclePlateNumber.getText().toString(),
-                            textInputEditTextVehicleColor.getText().toString(), textInputEditTextVehicleModel.getText().toString());
-
-
-    */
-    
+                    String meetupTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
                     String startName, endName, startAddress, endAddress;
     
                     if (selectedStartPlace == null) {
@@ -272,7 +228,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                     } else {
                         startName = getPlaceName(selectedStartPlace);
                         startAddress = getPlaceAddress(selectedStartPlace);
-        
                     }
                     if (selectedEndPlace == null) {
                         endName = endLocationName;
@@ -284,7 +239,7 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     
                     }
     
-                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime,
+                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetupTime,
                             startName,
                             startAddress,
                             getStartLatitude(selectedStartPlace),
@@ -335,18 +290,18 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                     });
     
                 } else if (isEditOffer) {
-                    String date = getDate();
+                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
                     String time = textInputEditTextMeetUpTime.getText().toString();
     
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date dateObj = null;
+                    Date date = null;
                     try {
-                        dateObj = sdf.parse(time);
+                        date = sdf.parse(time);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    String meetUpTime = date + " " + getTimeFormat(dateObj);
-    
+                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
+                    
                     String startName, endName, startAddress, endAddress;
     
                     if (selectedStartPlace == null) {
@@ -421,17 +376,17 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         }
                     });
                 } else {
-                    String date = getDate(); // get todays date
+                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
                     String time = textInputEditTextMeetUpTime.getText().toString();
     
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date dateObj = null;
+                    Date date = null;
                     try {
-                        dateObj = sdf.parse(time);
+                        date = sdf.parse(time);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    String meetUpTime = date + " " + getTimeFormat(dateObj);
+                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
                     OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime, getPlaceName(selectedStartPlace),
                             selectedStartPlace.getAddress().toString(), selectedStartPlace.getLatLng().latitude,
                             selectedStartPlace.getLatLng().longitude, getPlaceName(selectedEndPlace), selectedEndPlace.getAddress().toString(),
@@ -478,17 +433,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                 }
             }
         }
-    }
-    
-    private String getDate() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return simpleDateFormat.format(Calendar.getInstance().getTime());
-        
-    }
-    
-    private String getTimeFormat(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-        return simpleDateFormat.format(date);
     }
     
     private boolean areNotAllFieldsFilled() {

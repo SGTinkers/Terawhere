@@ -39,7 +39,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     private static final String REMARKS = "Remarks: ";
     private static final String LESS_DETAILS = "\u2014 LESS DETAILS";
     private static final String MORE_DETAILS = "+ MORE DETAILS";
-    private static final String IS_EDIT = "isEdit";
     private static final String START_TERAWHERE_LOCATION = "startTerawhereLocation";
     private static final String END_TERAWHERE_LOCATION = "endTerawhereLocation";
     private static final String VEHICLE = "vehicle";
@@ -57,37 +56,37 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     private static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
     public static final String SEATS_OFFERED = "Seats Offered: ";
     public static final String SEATS_LEFT = "Seats Left: ";
-
+    
     private Context context;
-
+    
     private List<Offer> offers;
-
+    
     private ViewGroup viewGroup;
-
+    
     public OffersAdapter(Context context) {
         this.context = context;
     }
-
+    
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_offer, parent, false);
         viewGroup = parent;
-
+        
         return new ViewHolder(view);
     }
-
+    
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         // set offer object
         final Offer offer = offers.get(position);
-
+        
         // set meet up time to be in hh:mm am/pm format
         String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
-
+        
         // set meet up date to be in day and month abbreviated format
         String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
-
+        
         // Set the value of the text
         viewHolder.textViewMonth.setText(month);
         viewHolder.textViewDay.setText(day);
@@ -107,14 +106,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         }
         viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " / " + offer.getVehicle().getPlateNumber());
         viewHolder.textViewVehicleModel.setText(offer.getVehicle().getModel());
-
+        
         // check card collapse/expand
         final boolean[] shouldExpand = isCollapse(viewHolder, offer);
-
+        
         // set listeners for collapse/expand offer details
         setOfferItemRelativeLayoutListener(viewHolder, shouldExpand);
         setDetailsTextViewListener(viewHolder, shouldExpand);
-
+        
         // set listeners for directions
         viewHolder.textViewEndLocationAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,16 +137,16 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 }
             }
         });
-
+        
         // set listeners for edit/delete offer
         setEditOfferButtonListener(viewHolder, offer);
         setDeleteOfferButtonListener(viewHolder, position);
     }
-
+    
     private Spanned setTextBold(String title, String text) {
         return Html.fromHtml(title + "<b>" + text + "</b>");
     }
-
+    
     private boolean[] isCollapse(ViewHolder viewHolder, Offer offer) {
         return new boolean[]{
                 viewHolder.textViewEndLocationAddress.getVisibility() == View.GONE,
@@ -159,7 +158,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 viewHolder.textViewVehicleModel.getVisibility() == View.GONE,
         };
     }
-
+    
     private void setOfferItemRelativeLayoutListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
         viewHolder.relativeLayoutItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,7 +167,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             }
         });
     }
-
+    
     private void setDetailsTextViewListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
         viewHolder.textViewViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,7 +176,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             }
         });
     }
-
+    
     private void toggleExpand(final ViewHolder viewHolder, final boolean[] shouldExpand) {
         if (shouldExpand[0]) {
             viewHolder.textViewEndLocationAddress.setVisibility(View.VISIBLE);
@@ -198,48 +197,42 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             viewHolder.textViewViewMore.setText(MORE_DETAILS);
             shouldExpand[0] = true;
         }
-
+        
         TransitionManager.beginDelayedTransition(viewGroup);
         viewHolder.itemView.setActivated(shouldExpand[0]);
     }
-
+    
     private void setEditOfferButtonListener(ViewHolder viewHolder, final Offer offer) {
         viewHolder.textViewEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // start location
                 TerawhereLocation startTerawhereLocation = new TerawhereLocation(
                         offer.getStartTerawhereLocation().getName(),
                         offer.getStartTerawhereLocation().getAddress(),
                         offer.getStartTerawhereLocation().getLatitude(),
                         offer.getStartTerawhereLocation().getLongitude(),
                         offer.getStartTerawhereLocation().getGeohash());
-
-                // end location
+    
                 TerawhereLocation endTerawhereLocation = new TerawhereLocation(
                         offer.getEndTerawhereLocation().getName(),
                         offer.getEndTerawhereLocation().getAddress(),
                         offer.getEndTerawhereLocation().getLatitude(),
                         offer.getEndTerawhereLocation().getLongitude(),
                         offer.getEndTerawhereLocation().getGeohash());
-
-                // vehicle info
+    
                 Vehicle vehicle = new Vehicle(
                         offer.getVehicle().getPlateNumber(),
                         offer.getVehicle().getDescription(),
                         offer.getVehicle().getModel());
-
-                // store values for create offer activity
+    
                 Intent intent = new Intent(new Intent(viewGroup.getContext(), CreateOfferActivity.class));
-                intent.putExtra(IS_EDIT, true);
-                intent.putExtra("offer", offer);
-
-                // start create offer activity
+                intent.putExtra(CreateOfferActivity.INTENT_IS_EDIT, true);
+                intent.putExtra(CreateOfferActivity.INTENT_OFFER, offer);
                 viewGroup.getContext().startActivity(intent);
             }
         });
     }
-
+    
     private void setDeleteOfferButtonListener(ViewHolder viewHolder, final int position) {
         viewHolder.textViewCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,7 +242,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             }
         });
     }
-
+    
     private void createAdbDeleteOffer(AlertDialog.Builder adbDeleteOffer, final int position) {
         setAdbDeleteOfferTitle(adbDeleteOffer);
         setAdbDeleteOfferMessage(adbDeleteOffer);
@@ -257,7 +250,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         setAdbDeleteOfferConfirmButton(adbDeleteOffer, position);
         setAdbDeleteOfferStyle(adbDeleteOffer);
     }
-
+    
     private void setAdbDeleteOfferConfirmButton(AlertDialog.Builder adbDeleteOffer, final int position) {
         adbDeleteOffer.setPositiveButton(DELETE, new DialogInterface.OnClickListener() {
             @Override
@@ -276,7 +269,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                             }
                         }
                     }
-
+    
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                     }
@@ -284,31 +277,31 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             }
         });
     }
-
+    
     private void setAdbDeleteOfferCancelButton(AlertDialog.Builder adbDeleteOffer) {
         adbDeleteOffer.setNegativeButton(CANCEL, null);
     }
-
+    
     private void setAdbDeleteOfferMessage(AlertDialog.Builder adbDeleteOffer) {
         adbDeleteOffer.setMessage(ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER);
     }
-
+    
     private void setAdbDeleteOfferTitle(AlertDialog.Builder adbDeleteOffer) {
         adbDeleteOffer.setTitle(DELETE_OFFER);
     }
-
+    
     private void setAdbDeleteOfferStyle(AlertDialog.Builder adbDeleteOffer) {
         AlertDialog deleteOfferAlertDialog = adbDeleteOffer.create();
         deleteOfferAlertDialog.show();
         setDeleteOfferDialogStyle(deleteOfferAlertDialog);
     }
-
+    
     private void deleteOffer(int position) {
         offers.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
     }
-
+    
     private void setDeleteOfferDialogStyle(AlertDialog alert) {
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
         nbutton.setTextColor(Color.BLACK);
@@ -326,12 +319,12 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         if (offers.isEmpty()) return null;
         return offers.get(offers.size() - 1);
     }
-
+    
     @Override
     public int getItemCount() {
         return offers == null ? 0 : offers.size();
     }
-
+    
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewDay;
         private TextView textViewMonth;
@@ -343,21 +336,21 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView textViewRemarksLabel;
         private TextView textViewRemarks;
         private TextView textViewSeatsLeft;
-
+        
         private TextView textViewVehicleLabel;
         private TextView textViewVehicle;
         private TextView textViewVehicleModelLabel;
         private TextView textViewVehicleModel;
-
+        
         private TextView textViewViewMore;
         private TextView textViewEdit;
         private TextView textViewCancel;
-
+        
         private RelativeLayout relativeLayoutItem;
-
+        
         private ViewHolder(View view) {
             super(view);
-
+            
             relativeLayoutItem = (RelativeLayout) view.findViewById(R.id.relative_layout_item);
             textViewDay = (TextView) view.findViewById(R.id.text_view_day);
             textViewMonth = (TextView) view.findViewById(R.id.text_view_month);
