@@ -150,10 +150,12 @@ public class MyOffersFragment extends BaseFragment {
                 if (response.isSuccessful()) {
                     GetOffersResponse getOffersResponse = response.body();
                     List<Offer> offers = OfferFactory.createFromResponse(getOffersResponse);
-                    Log.i("RESPONSE", ":" + offers.get(0).getSeatsRemaining());
 
                     if (!offers.isEmpty()) {
                         lastOffer = offers.get(offers.size() - 1);
+                    } else {
+                        lastOffer = null;
+
                     }
                     EventBus.getDefault().post(new GetOffersHasFinishedEvent(offers));
                 } else {
