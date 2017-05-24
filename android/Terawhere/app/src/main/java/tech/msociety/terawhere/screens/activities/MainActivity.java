@@ -1,10 +1,8 @@
 package tech.msociety.terawhere.screens.activities;
 
-import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -12,14 +10,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -38,12 +33,12 @@ public class MainActivity extends BaseActivity {
     private ViewPager viewPager;
 
     private Context context = this;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         initializeToolbar();
         initializeTabLayout();
         initPagerView();
@@ -61,9 +56,12 @@ public class MainActivity extends BaseActivity {
             EventBus.getDefault().post(new LogoutEvent());
         }
 
-        if(item.getItemId() == R.id.action_info){
+        if (item.getItemId() == R.id.action_info) {
 
-            onDialogInfoPressed();
+            /*onDialogInfoPressed();*/
+
+            final AlertDialog.Builder adbDeleteOffer = new AlertDialog.Builder(getApplicationContext());
+            createAdbAppInfo(adbDeleteOffer);
             return true;
 
         }
@@ -71,9 +69,41 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void createAdbAppInfo(AlertDialog.Builder adbAppInfo) {
+        setAdbInfoTitle(adbAppInfo);
+        setAdbadbAppInfoMessage(adbAppInfo);
+        setAdbadbAppInfoCancelButton(adbAppInfo);
+        setAdbadbAppInfoConfirmButton(adbAppInfo);
+    }
+
+
+    private void setAdbadbAppInfoConfirmButton(AlertDialog.Builder adbAppInfo) {
+        adbAppInfo.setPositiveButton("Learn More", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Uri uri = Uri.parse("https://terawhere.com/#features"); // missing 'http://' will cause crashed
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void setAdbadbAppInfoCancelButton(AlertDialog.Builder adbAppInfo) {
+        adbAppInfo.setNegativeButton("Cancel", null);
+    }
+
+    private void setAdbadbAppInfoMessage(AlertDialog.Builder adbAppInfo) {
+        adbAppInfo.setMessage("Learn more about Terawhere at www.terawhere.com");
+    }
+
+    private void setAdbInfoTitle(AlertDialog.Builder adbAppInfo) {
+        adbAppInfo.setTitle("Terawhere");
+    }
+
     public void onDialogInfoPressed() {
 
-        final Dialog infoButtonDialog = new Dialog(context);
+
+        /*final Dialog infoButtonDialog = new Dialog(context);
         infoButtonDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         infoButtonDialog.setContentView(R.layout.dialog_info_button);
         infoButtonDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -99,8 +129,7 @@ public class MainActivity extends BaseActivity {
                 infoButtonDialog.dismiss();
             }
         });
-        infoButtonDialog.show();
-
+        infoButtonDialog.show();*/
 
 
     }
@@ -109,7 +138,7 @@ public class MainActivity extends BaseActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
-    
+
     private void initializeTabLayout() {
         tabLayout = (TabLayout) findViewById(R.id.mainActivityTabLayout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_drives));
@@ -117,7 +146,7 @@ public class MainActivity extends BaseActivity {
         tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_rides));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
     }
-    
+
     private void initPagerView() {
         viewPager = (ViewPager) findViewById(R.id.pager);
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
@@ -170,10 +199,10 @@ public class MainActivity extends BaseActivity {
                     fragments[0] = new MyOffersFragment();
                     break;
                 case 1:
-                    fragments[1] =  new HomeFragment();
+                    fragments[1] = new HomeFragment();
                     break;
                 case 2:
-                    fragments[2] =  new MyBookingsFragment();
+                    fragments[2] = new MyBookingsFragment();
                     break;
             }
 

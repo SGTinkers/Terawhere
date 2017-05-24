@@ -36,7 +36,7 @@ import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 
 public class MyOffersFragment extends BaseFragment {
     private static final int REQUEST_CODE = 1;
-    public static final String IS_EDIT = "isEdit";
+    public static final String IS_CREATE = "isCreate";
     public static final String START_TERAWHERE_LOCATION = "startTerawhereLocation";
     public static final String END_TERAWHERE_LOCATION = "endTerawhereLocation";
     public static final String VEHICLE = "vehicle";
@@ -104,7 +104,7 @@ public class MyOffersFragment extends BaseFragment {
                             lastOffer.getVehicle().getModel());*/
 
                     // store values for create offer activity
-                    intent.putExtra(IS_EDIT, true);
+                    intent.putExtra(IS_CREATE, true);
                     intent.putExtra("offer", lastOffer);
                     /*intent.putExtra(END_TERAWHERE_LOCATION, endTerawhereLocation);
                     intent.putExtra(VEHICLE, vehicle);

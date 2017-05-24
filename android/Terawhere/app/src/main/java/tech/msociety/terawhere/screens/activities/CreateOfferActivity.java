@@ -71,6 +71,8 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     public static final String SELECT_TIME = "Select Time";
     
     private boolean isEditOffer = false;
+    private boolean isCreateOffer = false;
+
     private Place selectedStartPlace;
     private Place selectedEndPlace;
     private int offerId;
@@ -110,14 +112,18 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     
         if (bundle != null) {
             isEditOffer = intent.getExtras().getBoolean(IS_EDIT);
+            isCreateOffer = intent.getExtras().getBoolean("isCreate");
+
         }
         
         if (isEditOffer) {
-            offerId = intent.getExtras().getInt(OFFER_ID);
-            textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", intent.getExtras().getInt(SEATS_AVAILABLE)));
-            textInputEditTextRemarks.setText(intent.getStringExtra(DRIVER_REMARKS));
+
     
             Offer offer = intent.getParcelableExtra("offer");
+
+            offerId = offer.getOfferId();
+            textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
+            textInputEditTextRemarks.setText(offer.getRemarks());
     
             textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
             textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
@@ -136,6 +142,30 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
             textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
             buttonCreateOffer.setText(EDIT_OFFER);
             setMeetUpTimeEditTextListener(meetUpTime);
+        } else if (isCreateOffer) {
+
+            Offer offer = intent.getParcelableExtra("offer");
+
+            textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
+            textInputEditTextRemarks.setText(offer.getRemarks());
+
+            textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
+            textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
+            textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
+            textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
+            textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
+
+            startLatitude = offer.getStartTerawhereLocation().getLatitude();
+            endLatitude = offer.getEndTerawhereLocation().getLatitude();
+            startLongitude = offer.getStartTerawhereLocation().getLongitude();
+            endLongitude = offer.getEndTerawhereLocation().getLongitude();
+            startLocationName = offer.getStartTerawhereLocation().getName();
+            endLocationName = offer.getEndTerawhereLocation().getName();
+
+            final Date meetUpTime = offer.getMeetupTime();
+            textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetUpTime));
+            setMeetUpTimeEditTextListener(meetUpTime);
+
         } else {
             setMeetUpTimeEditTextListener();
         }
@@ -259,13 +289,45 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
                         e.printStackTrace();
                     }
                     String meetUpTime = date + " " + new SimpleDateFormat("HH:mm:ss").format(dateObj);
-                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime, getPlaceName(selectedStartPlace),
+                    /*OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime, getPlaceName(selectedStartPlace),
                             selectedStartPlace.getAddress().toString(), selectedStartPlace.getLatLng().latitude,
                             selectedStartPlace.getLatLng().longitude, getPlaceName(selectedEndPlace), selectedEndPlace.getAddress().toString(),
                             selectedEndPlace.getLatLng().latitude, selectedEndPlace.getLatLng().longitude, Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
                             textInputEditTextRemarks.getText().toString(), textInputEditTextVehiclePlateNumber.getText().toString(),
                             textInputEditTextVehicleColor.getText().toString(), textInputEditTextVehicleModel.getText().toString());
-    
+
+
+    */
+
+                    String startName, endName;
+
+                    if (selectedStartPlace == null) {
+                        startName = startLocationName;
+                    } else {
+                        startName = getPlaceName(selectedStartPlace);
+
+                    }
+                    if (selectedEndPlace == null) {
+                        endName = endLocationName;
+                    } else {
+                        endName = getPlaceName(selectedEndPlace);
+
+                    }
+
+                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime,
+                            startName,
+                            textInputEditTextStartLocation.getText().toString(),
+                            getStartLatitude(selectedStartPlace),
+                            getStartLongitude(selectedStartPlace),
+                            endName,
+                            textInputEditTextEndLocation.getText().toString(),
+                            getEndLatitude(selectedEndPlace),
+                            getEndLongitude(selectedEndPlace),
+                            Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
+                            textInputEditTextRemarks.getText().toString(),
+                            textInputEditTextVehiclePlateNumber.getText().toString(),
+                            textInputEditTextVehicleColor.getText().toString(),
+                            textInputEditTextVehicleModel.getText().toString());
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override

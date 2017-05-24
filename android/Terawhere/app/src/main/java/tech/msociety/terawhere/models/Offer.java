@@ -51,13 +51,23 @@ public class Offer implements Parcelable {
 
 
     protected Offer(Parcel in) {
-        offererId = in.readString();
+
         startTerawhereLocation = in.readParcelable(TerawhereLocation.class.getClassLoader());
         endTerawhereLocation = in.readParcelable(TerawhereLocation.class.getClassLoader());
         vehicle = in.readParcelable(Vehicle.class.getClassLoader());
+        meetupTime = (Date) in.readSerializable();
+        offererId = in.readString();
         remarks = in.readString();
         driverName = in.readString();
-        meetupTime = (java.util.Date) in.readSerializable();
+        offerId = in.readInt();
+        vacancy = in.readInt();
+        seatsRemaining = in.readInt();
+        seatsBooked = in.readInt();
+
+
+
+
+
     }
 
     public static final Creator<Offer> CREATOR = new Creator<Offer>() {
@@ -127,13 +137,24 @@ public class Offer implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(offererId);
         dest.writeParcelable(startTerawhereLocation, flags);
         dest.writeParcelable(endTerawhereLocation, flags);
         dest.writeParcelable(vehicle, flags);
+        dest.writeSerializable(meetupTime);
+        dest.writeString(offererId);
+
         dest.writeString(remarks);
         dest.writeString(driverName);
-        dest.writeSerializable(meetupTime);
+
+        dest.writeInt(offerId);
+        dest.writeInt(vacancy);
+
+        dest.writeInt(seatsRemaining);
+
+        dest.writeInt(seatsBooked);
+
+
+
 
     }
 }
