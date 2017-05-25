@@ -431,10 +431,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_info);
                         TextView dialogNotice = (TextView) successDialog.findViewById(R.id.text_view_notice);
 
-                        dialogInfo.setText(Html.fromHtml("Driver Name: <b>" + offer.getOffererName() + "</b>"
-                                + "<br/>Car Type : <b>" + offer.getVehicle().getModel() + "</b>"
-                                + "<br/>Colour : <b>" + offer.getVehicle().getDescription() + "</b>"
-                                + "<br/>Plate No: <b>" + offer.getVehicle().getPlateNumber() + "</b>"));
+                        dialogInfo.setText(Html.fromHtml("Driver: <b>" + offer.getOffererName() + "</b>"
+                                + "<br/>Brand: <b>" + offer.getVehicle().getModel() + "</b>"
+                                + "<br/>Color: <b>" + offer.getVehicle().getDescription() + "</b>"
+                                + "<br/>Number: <b>" + offer.getVehicle().getPlateNumber() + "</b>"));
                         dialogNotice.setText(Html.fromHtml("<b>Driver will only wait for you at most 5 mins. Be punctual!</b>"));
                         okButton.setOnClickListener(new View.OnClickListener() {
                             @Override

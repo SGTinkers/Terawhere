@@ -68,7 +68,7 @@
     <string name="destination">Destination</string>
     <string name="number_of_seats">Number of Seats</string>
     <string name="vehicle_number">Vehicle Number</string>
-    <string name="vehicle_model">Vehicle Model</string>
+    <string name="vehicle_model">Vehicle Brand</string>
     <string name="vehicle_color">Vehicle Color</string>
     <string name="remarks">Remarks (optional)</string>
     <string name="create_offer">Create Offer</string>
