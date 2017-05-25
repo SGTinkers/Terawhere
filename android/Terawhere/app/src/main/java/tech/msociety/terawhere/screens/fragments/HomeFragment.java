@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -45,6 +46,10 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +62,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.OfferInfoViewAdapter;
+import tech.msociety.terawhere.events.BookingCreatedEvent;
+import tech.msociety.terawhere.events.OfferCreatedEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.globals.TerawhereApplication;
@@ -86,6 +93,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private ClusterManager<ClusterMarkerLocation> clusterManager;
 
     private GoogleMap googleMap;
+
+    @Override
+    protected boolean needsEventBus() {
+        return true;
+    }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -451,8 +463,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             @Override
                             public void onClick(View v) {
                                 successDialog.dismiss();
+                                EventBus.getDefault().post(new BookingCreatedEvent());
                                 viewPager.setCurrentItem(2);
-    
                             }
                         });
                         successDialog.show();
@@ -471,5 +483,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 }
             });
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBookingCreatedEvent(BookingCreatedEvent event) {
+        loadMarkers();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOfferCreatedEvent(OfferCreatedEvent event) {
+        loadMarkers();
     }
 }

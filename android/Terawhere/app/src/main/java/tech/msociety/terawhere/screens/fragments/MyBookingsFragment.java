@@ -37,10 +37,14 @@ public class MyBookingsFragment extends BaseFragment {
     private BookingsAdapter bookingsAdapter;
     
     private SwipeRefreshLayout swipeRefreshLayoutBookings;
-    
+
+    @Override
+    protected boolean needsEventBus() {
+        return true;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.needsEventBus = true;
         setHasOptionsMenu(false);
         View view = inflater.inflate(R.layout.fragment_my_bookings, container, false);
         swipeRefreshLayoutBookings = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout_bookings);

@@ -40,10 +40,14 @@ public class MyOffersFragment extends BaseFragment {
     private static final int REQUEST_CODE_CREATE_OFFER = 1;
     private OffersAdapter offersAdapter;
     private SwipeRefreshLayout swipeRefreshLayoutOffers;
+
+    @Override
+    protected boolean needsEventBus() {
+        return true;
+    }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.needsEventBus = true;
         View view = inflater.inflate(R.layout.fragment_my_offers, container, false);
         swipeRefreshLayoutOffers = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout_offers);
         return view;

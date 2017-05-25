@@ -273,7 +273,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
     public Offer getLastOffer() {
-        if (offers.isEmpty()) return null;
+        if (offers == null || offers.isEmpty()) return null;
         return offers.get(offers.size() - 1);
     }
 

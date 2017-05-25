@@ -32,6 +32,8 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,6 +43,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.events.OfferCreatedEvent;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferRequestBody;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -214,6 +217,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
+                                        EventBus.getDefault().post(new OfferCreatedEvent());
                                         finish();
                                     }
                                 });
