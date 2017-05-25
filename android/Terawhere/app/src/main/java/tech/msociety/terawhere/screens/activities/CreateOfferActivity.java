@@ -497,7 +497,7 @@ public class CreateOfferActivity extends ToolbarActivity {
         } else if (place.getPlaceTypes().contains(Place.TYPE_BUS_STATION)) {
             return "Bus Stop @ " + name;
         } else if (place.getPlaceTypes().contains(Place.TYPE_TRAIN_STATION)) {
-            return "Train Stn @ " + name;
+            return "MRT Station @ " + name;
         } else if (place.getPlaceTypes().contains(Place.TYPE_TAXI_STAND)) {
             return "Taxi Stand @ " + name;
         } else if (place.getPlaceTypes().contains(Place.TYPE_PARKING)) {
