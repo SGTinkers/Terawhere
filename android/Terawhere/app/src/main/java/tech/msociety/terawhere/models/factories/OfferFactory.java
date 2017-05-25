@@ -15,32 +15,29 @@ import tech.msociety.terawhere.utils.DateUtils;
 public class OfferFactory {
     public static List<Offer> createFromResponse(GetOffersResponse getOffersResponse) {
         List<Offer> offers = new ArrayList<>();
-        Vehicle vehicle;
-        Offer offer;
-        for (OfferDatum offersDatum : getOffersResponse.data) {
-            TerawhereLocation startTerawhereLocation = new TerawhereLocation(offersDatum.startName, offersDatum.startAddr, offersDatum.startLat, offersDatum.startLng, offersDatum.startGeohash);
-            TerawhereLocation endTerawhereLocation = new TerawhereLocation(offersDatum.endName, offersDatum.endAddr, offersDatum.endLat, offersDatum.endLng, offersDatum.endGeohash);
-            if (offersDatum.vehicleDesc == null) {
-                vehicle = new Vehicle(offersDatum.vehicleNumber, "", offersDatum.vehicleModel);
 
-            } else {
-                vehicle = new Vehicle(offersDatum.vehicleNumber, offersDatum.vehicleDesc.toString(), offersDatum.vehicleModel);
-            }
-            Date dateCreated = DateUtils.mysqlDateTimeStringToDate(offersDatum.createdAt);
-            Date dateUpdated = DateUtils.mysqlDateTimeStringToDate(offersDatum.updatedAt);
-//            Date dateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
-            BackendTimestamp backendTimestamp = new BackendTimestamp(dateCreated, dateUpdated, null);
-            Date meetupTime = DateUtils.mysqlDateTimeStringToDate(offersDatum.meetupTime);
-
-            if (offersDatum.remarks == null) {
-                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, "", offersDatum.seatsRemaining, offersDatum.seatsBooked, offersDatum.driverName);
-
-            } else {
-                offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, offersDatum.remarks.toString(), offersDatum.seatsRemaining, offersDatum.seatsBooked, offersDatum.driverName);
-            }
+        for (OfferDatum offerDatum : getOffersResponse.data) {
+            Offer offer = createFromDatum(offerDatum);
             offers.add(offer);
         }
 
         return offers;
+    }
+
+    public static Offer createFromDatum(OfferDatum offerDatum) {
+        TerawhereLocation startTerawhereLocation = new TerawhereLocation(offerDatum.startName, offerDatum.startAddr, offerDatum.startLat, offerDatum.startLng, offerDatum.startGeohash);
+        TerawhereLocation endTerawhereLocation = new TerawhereLocation(offerDatum.endName, offerDatum.endAddr, offerDatum.endLat, offerDatum.endLng, offerDatum.endGeohash);
+        Vehicle vehicle = new Vehicle(offerDatum.vehicleNumber, offerDatum.vehicleDesc, offerDatum.vehicleModel);
+        Date dateCreated = DateUtils.fromMysqlDateTimeString(offerDatum.createdAt);
+        Date dateUpdated = DateUtils.fromMysqlDateTimeString(offerDatum.updatedAt);
+//            Date dateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
+        BackendTimestamp backendTimestamp = new BackendTimestamp(dateCreated, dateUpdated, null);
+        Date meetupTime = DateUtils.fromMysqlDateTimeString(offerDatum.meetupTime);
+
+        Offer offer = new Offer(offerDatum.id, offerDatum.userId, offerDatum.user.name, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offerDatum.vacancy, offerDatum.seatsBooked, backendTimestamp);
+        offer.setRemarks(offerDatum.remarks);
+        offer.setOffererDp(offerDatum.user.dp);
+
+        return offer;
     }
 }
