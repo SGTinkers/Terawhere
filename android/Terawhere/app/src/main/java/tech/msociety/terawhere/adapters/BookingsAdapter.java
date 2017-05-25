@@ -93,10 +93,20 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                 .transform(new CropCircleTransformation())
                 .into(viewHolder.imageViewDriverAvatar);
         viewHolder.textViewDriver.setText(offer.getOffererName());
-        if (booking.getBookingBackendTimestamp().getDateDeleted() != null) {
+        if (booking.getBookingStatus() == 2) {
             // Past Booking
+            viewHolder.textViewBookingPast.setText("Past Booking");
             viewHolder.textViewBookingPast.setVisibility(View.VISIBLE);
             viewHolder.textViewCancel.setVisibility(View.GONE);
+        } else if (booking.getBookingStatus() == 1) {
+            // Cancelled
+            viewHolder.textViewBookingPast.setText("Cancelled");
+            viewHolder.textViewBookingPast.setVisibility(View.VISIBLE);
+            viewHolder.textViewCancel.setVisibility(View.GONE);
+        } else {
+            // Neither
+            viewHolder.textViewBookingPast.setVisibility(View.GONE);
+            viewHolder.textViewCancel.setVisibility(View.VISIBLE);
         }
 
         // check card collapse/expand

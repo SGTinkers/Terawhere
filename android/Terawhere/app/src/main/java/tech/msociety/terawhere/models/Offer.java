@@ -30,8 +30,10 @@ public class Offer implements Parcelable {
     private BackendTimestamp backendTimestamp;
     
     private String remarks;
+
+    private Integer status;
     
-    public Offer(Integer offerId, String offererId, String offererName, Date meetupTime, TerawhereLocation startTerawhereLocation, TerawhereLocation endTerawhereLocation, Vehicle vehicle, Integer vacancy, Integer seatsBooked, BackendTimestamp backendTimestamp) {
+    public Offer(Integer offerId, String offererId, String offererName, Date meetupTime, TerawhereLocation startTerawhereLocation, TerawhereLocation endTerawhereLocation, Vehicle vehicle, Integer vacancy, Integer seatsBooked, Integer status, BackendTimestamp backendTimestamp) {
         this.offerId = offerId;
         this.offererId = offererId;
         this.offererName = offererName;
@@ -42,6 +44,7 @@ public class Offer implements Parcelable {
         this.vacancy = vacancy;
         this.seatsBooked = seatsBooked;
         this.backendTimestamp = backendTimestamp;
+        this.status = status;
     }
     
     public Integer getOfferId() {
@@ -144,6 +147,15 @@ public class Offer implements Parcelable {
         this.remarks = remarks;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -153,40 +165,42 @@ public class Offer implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.offerId);
         dest.writeString(this.offererId);
+        dest.writeString(this.offererName);
+        dest.writeString(this.offererDp);
         dest.writeLong(this.meetupTime != null ? this.meetupTime.getTime() : -1);
         dest.writeParcelable(this.startTerawhereLocation, flags);
         dest.writeParcelable(this.endTerawhereLocation, flags);
         dest.writeParcelable(this.vehicle, flags);
         dest.writeValue(this.vacancy);
+        dest.writeValue(this.seatsBooked);
         dest.writeParcelable(this.backendTimestamp, flags);
         dest.writeString(this.remarks);
-        dest.writeValue(this.seatsBooked);
-        dest.writeString(this.offererName);
-        dest.writeString(this.offererDp);
+        dest.writeValue(this.status);
     }
-    
+
     protected Offer(Parcel in) {
         this.offerId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.offererId = in.readString();
+        this.offererName = in.readString();
+        this.offererDp = in.readString();
         long tmpMeetupTime = in.readLong();
         this.meetupTime = tmpMeetupTime == -1 ? null : new Date(tmpMeetupTime);
         this.startTerawhereLocation = in.readParcelable(TerawhereLocation.class.getClassLoader());
         this.endTerawhereLocation = in.readParcelable(TerawhereLocation.class.getClassLoader());
         this.vehicle = in.readParcelable(Vehicle.class.getClassLoader());
         this.vacancy = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.seatsBooked = (Integer) in.readValue(Integer.class.getClassLoader());
         this.backendTimestamp = in.readParcelable(BackendTimestamp.class.getClassLoader());
         this.remarks = in.readString();
-        this.seatsBooked = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.offererName = in.readString();
-        this.offererDp = in.readString();
+        this.status = (Integer) in.readValue(Integer.class.getClassLoader());
     }
-    
+
     public static final Creator<Offer> CREATOR = new Creator<Offer>() {
         @Override
         public Offer createFromParcel(Parcel source) {
             return new Offer(source);
         }
-        
+
         @Override
         public Offer[] newArray(int size) {
             return new Offer[size];

@@ -64,4 +64,18 @@ public class Booking {
     public Offer getOffer() {
         return offer;
     }
+
+    public Integer getBookingStatus() {
+        if (offer == null) {
+            return 0;
+        }
+
+        if (offer.getStatus() == 1 && getBookingBackendTimestamp().getDateDeleted() != null) {
+            return 1;
+        } else if (offer.getStatus() != 1 && getBookingBackendTimestamp().getDateDeleted() != null) {
+            return 2;
+        }
+
+        return 0;
+    }
 }

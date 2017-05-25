@@ -34,7 +34,7 @@ public class OfferFactory {
         BackendTimestamp backendTimestamp = new BackendTimestamp(dateCreated, dateUpdated, null);
         Date meetupTime = DateUtils.mysqlDateTimeStringToDate(offerDatum.meetupTime);
         
-        Offer offer = new Offer(offerDatum.id, offerDatum.userId, offerDatum.user.name, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offerDatum.vacancy, offerDatum.seatsBooked, backendTimestamp);
+        Offer offer = new Offer(offerDatum.id, offerDatum.userId, offerDatum.user.name, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offerDatum.vacancy, offerDatum.seatsBooked, offerDatum.status, backendTimestamp);
         offer.setRemarks(offerDatum.remarks);
         offer.setOffererDp(offerDatum.user.dp);
         
