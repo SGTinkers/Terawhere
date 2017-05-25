@@ -16,13 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
 
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -86,8 +89,12 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             viewHolder.textViewRemarksLabel.setVisibility(View.GONE);
             viewHolder.textViewRemarks.setVisibility(View.GONE);
         }
-        viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " / " + offer.getVehicle().getPlateNumber());
-        viewHolder.textViewVehicleModel.setText(offer.getVehicle().getModel());
+        viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " " + offer.getVehicle().getModel() + " [" + offer.getVehicle().getPlateNumber() + "]");
+        Picasso.with(context)
+                .load(offer.getOffererDp())
+                .transform(new CropCircleTransformation())
+                .into(viewHolder.imageViewDriverAvatar);
+        viewHolder.textViewDriver.setText(offer.getOffererName());
 
         // check card collapse/expand
         final boolean[] shouldExpand = isCollapse(viewHolder, booking);
@@ -171,8 +178,9 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                 viewHolder.textViewStartLocationAddress.getVisibility() == View.GONE,
                 viewHolder.textViewSeatsBooked.getVisibility() == View.GONE,
                 booking.getOffer().getRemarks() != null && !booking.getOffer().getRemarks().isEmpty() && viewHolder.textViewRemarks.getVisibility() == View.GONE,
-                viewHolder.textViewVehicleModelLabel.getVisibility() == View.GONE,
-                viewHolder.textViewVehicleModel.getVisibility() == View.GONE,
+                viewHolder.textViewDriverLabel.getVisibility() == View.GONE,
+                viewHolder.imageViewDriverAvatar.getVisibility() == View.GONE,
+                viewHolder.textViewDriver.getVisibility() == View.GONE,
         };
     }
 
@@ -200,8 +208,9 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             viewHolder.textViewStartLocationAddress.setVisibility(View.VISIBLE);
             viewHolder.textViewSeatsBookedLabel.setVisibility(View.VISIBLE);
             viewHolder.textViewSeatsBooked.setVisibility(View.VISIBLE);
-            viewHolder.textViewVehicleModelLabel.setVisibility(View.VISIBLE);
-            viewHolder.textViewVehicleModel.setVisibility(View.VISIBLE);
+            viewHolder.textViewDriverLabel.setVisibility(View.VISIBLE);
+            viewHolder.imageViewDriverAvatar.setVisibility(View.VISIBLE);
+            viewHolder.textViewDriver.setVisibility(View.VISIBLE);
             viewHolder.textViewViewMore.setText(LESS_DETAILS);
             shouldExpand[0] = false;
         } else {
@@ -210,8 +219,9 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             viewHolder.textViewSeatsBookedLabel.setVisibility(View.GONE);
             viewHolder.textViewSeatsBooked.setVisibility(View.GONE);
             viewHolder.textViewRemarks.setVisibility(View.GONE);
-            viewHolder.textViewVehicleModelLabel.setVisibility(View.GONE);
-            viewHolder.textViewVehicleModel.setVisibility(View.GONE);
+            viewHolder.textViewDriverLabel.setVisibility(View.GONE);
+            viewHolder.imageViewDriverAvatar.setVisibility(View.GONE);
+            viewHolder.textViewDriver.setVisibility(View.GONE);
             viewHolder.textViewViewMore.setText(MORE_DETAILS);
             shouldExpand[0] = true;
         }
@@ -254,8 +264,9 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
 
         private TextView textViewVehicleLabel;
         private TextView textViewVehicle;
-        private TextView textViewVehicleModelLabel;
-        private TextView textViewVehicleModel;
+        private TextView textViewDriverLabel;
+        private ImageView imageViewDriverAvatar;
+        private TextView textViewDriver;
 
         private TextView textViewViewMore;
         private TextView textViewCancel;
@@ -281,8 +292,9 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             textViewCancel = (TextView) view.findViewById(R.id.text_view_cancel);
             textViewVehicleLabel = (TextView) view.findViewById(R.id.text_view_vehicle_label);
             textViewVehicle = (TextView) view.findViewById(R.id.text_view_vehicle);
-            textViewVehicleModelLabel = (TextView) view.findViewById(R.id.text_view_vehicle_model_label);
-            textViewVehicleModel = (TextView) view.findViewById(R.id.text_view_vehicle_model);
+            textViewDriverLabel = (TextView) view.findViewById(R.id.text_view_driver_label);
+            imageViewDriverAvatar = (ImageView) view.findViewById(R.id.image_view_driver_avatar);
+            textViewDriver = (TextView) view.findViewById(R.id.text_view_driver);
         }
     }
 

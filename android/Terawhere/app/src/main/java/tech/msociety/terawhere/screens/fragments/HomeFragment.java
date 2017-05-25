@@ -408,7 +408,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         TextView dialogExtraInfo = (TextView) successDialog.findViewById(R.id.text_view_extra_info);
         
                         dialogInfo.setText("You just booked a ride" + "\n" + "Here are the car details");
-                        dialogExtraInfo.setText(Html.fromHtml("Driver Name: <b>" + offer.getDriverName() + "</b>"
+                        dialogExtraInfo.setText(Html.fromHtml("Driver Name: <b>" + offer.getOffererName() + "</b>"
                                 + "<br/>Car Type : <b>" + offer.getVehicle().getModel() + "</b>"
                                 + "<br/>Colour : <b>" + offer.getVehicle().getDescription() + "</b>"
                                 + "<br/>Plate No: <b>" + offer.getVehicle().getPlateNumber() + "</b>"));

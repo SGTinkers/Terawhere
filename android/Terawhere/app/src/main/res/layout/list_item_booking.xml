@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -236,37 +237,51 @@
             android:visibility="visible" />
 
         <TextView
-            android:id="@+id/text_view_vehicle_model_label"
+            android:id="@+id/text_view_driver_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_vehicle"
             android:layout_toEndOf="@id/view_vertical_line"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
-            android:text="Model"
+            android:text="Driver"
             android:textColor="#7e7b7b"
             android:textSize="10sp"
             android:textStyle="normal"
-            android:visibility="gone" />
+            android:visibility="visible" />
+
+        <ImageView
+          android:id="@+id/image_view_driver_avatar"
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:layout_below="@id/text_view_driver_label"
+          android:layout_toEndOf="@id/view_vertical_line"
+          android:fontFamily="sans-serif"
+          tools:src="@drawable/hafidz2"
+          android:visibility="visible" />
 
         <TextView
-            android:id="@+id/text_view_vehicle_model"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle_model_label"
-            android:layout_toEndOf="@id/view_vertical_line"
-            android:fontFamily="sans-serif"
-            android:text="Toyota Camry"
-            android:textColor="#000000"
-            android:textSize="13sp"
-            android:textStyle="normal"
-            android:visibility="gone" />
+          android:id="@+id/text_view_driver"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/text_view_driver_label"
+          android:layout_toEndOf="@id/image_view_driver_avatar"
+          android:layout_alignTop="@+id/image_view_driver_avatar"
+          android:layout_alignBottom="@+id/image_view_driver_avatar"
+          android:layout_marginLeft="6dp"
+          android:gravity="center_vertical"
+          android:fontFamily="sans-serif"
+          android:text="Khairul Akmal"
+          android:textColor="#000000"
+          android:textSize="13sp"
+          android:textStyle="normal"
+          android:visibility="visible" />
 
         <TextView
             android:id="@+id/text_view_view_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle_model"
+            android:layout_below="@id/text_view_driver"
             android:layout_alignBottom="@+id/text_view_cancel"
             android:layout_marginTop="8dp"
             android:gravity="center_vertical"
@@ -280,7 +295,7 @@
             android:id="@+id/text_view_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle_model"
+            android:layout_below="@id/text_view_driver"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
             android:padding="12dp"
