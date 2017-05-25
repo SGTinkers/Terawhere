@@ -83,11 +83,6 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         viewHolder.textViewSeatsBooked.setText(Integer.toString(booking.getSeatsBooked()));
         if (offer.getRemarks() != null && !offer.getRemarks().isEmpty()) {
             viewHolder.textViewRemarks.setText(offer.getRemarks());
-            viewHolder.textViewRemarksLabel.setVisibility(View.VISIBLE);
-            viewHolder.textViewRemarks.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.textViewRemarksLabel.setVisibility(View.GONE);
-            viewHolder.textViewRemarks.setVisibility(View.GONE);
         }
         viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " " + offer.getVehicle().getModel() + " [" + offer.getVehicle().getPlateNumber() + "]");
         Picasso.with(context)
@@ -198,6 +193,10 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             viewHolder.textViewStartLocationAddress.setVisibility(View.VISIBLE);
             viewHolder.textViewSeatsBookedLabel.setVisibility(View.VISIBLE);
             viewHolder.textViewSeatsBooked.setVisibility(View.VISIBLE);
+            if (viewHolder.textViewRemarks.getText() != null && !viewHolder.textViewRemarks.getText().toString().isEmpty()) {
+                viewHolder.textViewRemarksLabel.setVisibility(View.VISIBLE);
+                viewHolder.textViewRemarks.setVisibility(View.VISIBLE);
+            }
             viewHolder.textViewDriverLabel.setVisibility(View.VISIBLE);
             viewHolder.imageViewDriverAvatar.setVisibility(View.VISIBLE);
             viewHolder.textViewDriver.setVisibility(View.VISIBLE);
@@ -208,7 +207,10 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             viewHolder.textViewStartLocationAddress.setVisibility(View.GONE);
             viewHolder.textViewSeatsBookedLabel.setVisibility(View.GONE);
             viewHolder.textViewSeatsBooked.setVisibility(View.GONE);
-            viewHolder.textViewRemarks.setVisibility(View.GONE);
+            if (viewHolder.textViewRemarks.getText() != null && !viewHolder.textViewRemarks.getText().toString().isEmpty()) {
+                viewHolder.textViewRemarksLabel.setVisibility(View.GONE);
+                viewHolder.textViewRemarks.setVisibility(View.GONE);
+            }
             viewHolder.textViewDriverLabel.setVisibility(View.GONE);
             viewHolder.imageViewDriverAvatar.setVisibility(View.GONE);
             viewHolder.textViewDriver.setVisibility(View.GONE);

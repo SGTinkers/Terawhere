@@ -108,7 +108,7 @@
             android:background="?attr/selectableItemBackground"
             android:fontFamily="sans-serif"
             android:text="6 Admiralty Rd, Singapore 739983"
-            android:textColor="#000000"
+            android:textColor="#888888"
             android:textSize="13sp"
             android:textStyle="italic"
             android:visibility="gone" />
@@ -150,7 +150,7 @@
             android:background="?attr/selectableItemBackground"
             android:fontFamily="sans-serif"
             android:text="406 Woodlands Street 41"
-            android:textColor="#000000"
+            android:textColor="#888888"
             android:textSize="13sp"
             android:textStyle="italic"
             android:visibility="gone" />
