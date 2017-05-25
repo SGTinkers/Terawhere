@@ -81,43 +81,43 @@ public class CreateOfferActivity extends ToolbarActivity {
     private TextInputEditText textInputEditTextVehicleModel;
     private TextInputEditText textInputEditTextMeetUpTime;
     private TextInputEditText textInputEditTextStartLocation;
-
+    
     public static Intent getIntentToStartInCreateMode(Context sourceContext) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, false);
         return intent;
     }
-
+    
     public static Intent getIntentToStartInCreateModePrepopulated(Context sourceContext, Offer referenceOffer) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
         intent.putExtra(CreateOfferActivity.INTENT_OFFER, referenceOffer);
         return intent;
     }
-
+    
     public static Intent getIntentToStartInEditMode(Context sourceContext, Offer offerToBeEdited) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_EDIT, true);
         intent.putExtra(CreateOfferActivity.INTENT_OFFER, offerToBeEdited);
         return intent;
     }
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
-
+        
         initToolbar(TOOLBAR_TITLE, true);
         trackCurrentLocation();
         initViewHandles();
         setClickListeners();
-
+        
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT);
             isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE);
         }
-
+        
         if (isEditOffer) {
             offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
@@ -129,7 +129,7 @@ public class CreateOfferActivity extends ToolbarActivity {
             setMeetUpTimeEditTextListener(null);
         }
     }
-
+    
     private void unloadOfferIntoUi(Offer offer) {
         textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
         textInputEditTextRemarks.setText(offer.getRemarks());
@@ -146,12 +146,12 @@ public class CreateOfferActivity extends ToolbarActivity {
         endLocationName = offer.getEndTerawhereLocation().getName();
         startLocationAddress = offer.getStartTerawhereLocation().getAddress();
         endLocationAddress = offer.getEndTerawhereLocation().getAddress();
-    
+        
         Date meetupTime = offer.getMeetupTime();
         textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
         setMeetUpTimeEditTextListener(meetupTime);
     }
-
+    
     private void initViewHandles() {
         buttonCreateOffer = (Button) findViewById(R.id.button_create_offer);
         textInputEditTextMeetUpTime = (TextInputEditText) findViewById(R.id.text_input_edit_text_meetup_time);
@@ -163,7 +163,7 @@ public class CreateOfferActivity extends ToolbarActivity {
         textInputEditTextVehiclePlateNumber = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_number);
         textInputEditTextVehicleColor = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_color);
     }
-
+    
     private void setClickListeners() {
         textInputEditTextStartLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,14 +171,14 @@ public class CreateOfferActivity extends ToolbarActivity {
                 callStartPlaceAutocompleteActivityIntent();
             }
         });
-
+        
         textInputEditTextEndLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callEndPlaceAutocompleteActivityIntent();
             }
         });
-
+        
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,7 +186,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                     Toast.makeText(CreateOfferActivity.this, R.string.message_required_fields, Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+    
                 if (isCreateOffer) {
                     String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
                     String timeString = textInputEditTextMeetUpTime.getText().toString();
@@ -200,7 +200,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                     }
                     String meetupTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
                     String startName, endName, startAddress, endAddress;
-    
+        
                     if (selectedStartPlace == null) {
                         startName = startLocationName;
                         startAddress = startLocationAddress;
@@ -217,7 +217,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                         endAddress = getPlaceAddress(selectedEndPlace);
     
                     }
-    
+        
                     OfferRequestBody offerRequestBody =
                             new OfferRequestBody(
                                     meetupTime,
@@ -273,7 +273,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                 } else if (isEditOffer) {
                     String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
                     String time = textInputEditTextMeetUpTime.getText().toString();
-    
+        
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
                     Date date = null;
                     try {
@@ -284,14 +284,14 @@ public class CreateOfferActivity extends ToolbarActivity {
                     String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
                     
                     String startName, endName, startAddress, endAddress;
-    
+        
                     if (selectedStartPlace == null) {
                         startName = startLocationName;
                         startAddress = startLocationAddress;
                     } else {
                         startName = getPlaceName(selectedStartPlace);
                         startAddress = getPlaceAddress(selectedStartPlace);
-        
+            
                     }
                     if (selectedEndPlace == null) {
                         endName = endLocationName;
@@ -302,7 +302,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                         endAddress = getPlaceAddress(selectedEndPlace);
     
                     }
-    
+        
                     OfferRequestBody offerRequestBody =
                             new OfferRequestBody(
                                     meetUpTime,
@@ -319,9 +319,9 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     textInputEditTextVehiclePlateNumber.getText().toString(),
                                     textInputEditTextVehicleColor.getText().toString(),
                                     textInputEditTextVehicleModel.getText().toString());
-    
+        
                     Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offer.getOfferId(), offerRequestBody);
-
+        
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
@@ -350,7 +350,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.show();
                             }
                         }
-    
+            
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             Log.e(TAG, "onFailure: ", t);
@@ -359,7 +359,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                 } else {
                     String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
                     String time = textInputEditTextMeetUpTime.getText().toString();
-    
+        
                     final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
                     Date date = null;
                     try {
