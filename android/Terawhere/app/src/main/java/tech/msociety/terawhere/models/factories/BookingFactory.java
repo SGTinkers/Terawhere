@@ -35,10 +35,10 @@ public class BookingFactory {
         Booking booking;
         for (BookingDatum bookingDatum : getBookingsResponse.data) {
 
-            Date bookingDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.createdAt);
-            Date bookingDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.updatedAt);
+//            Date bookingDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.createdAt);
+//            Date bookingDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.updatedAt);
             //            Date bookingDateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
-            BackendTimestamp bookingBackendTimestamp = new BackendTimestamp(bookingDateCreated, bookingDateUpdated, null);
+            BackendTimestamp bookingBackendTimestamp = new BackendTimestamp(null, null, null);
 
             booking = new Booking(bookingDatum.id, bookingDatum.userId, bookingDatum.user.name, bookingDatum.user.dp, bookingDatum.user.email, bookingDatum.pax, bookingBackendTimestamp, null);
 

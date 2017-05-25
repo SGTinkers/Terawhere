@@ -307,8 +307,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogTextViewSeatsAvailable);
         TextView dialogMonth = (TextView) dialogView.findViewById(R.id.dialogTextViewMonth);
         TextView dialogDay = (TextView) dialogView.findViewById(R.id.dialogTextViewDay);
-    
-        if (offer.getRemarks().matches("")) {
+
+        if (offer.getRemarks() == null) {
             dialogRemarks.setText("Remarks: NIL");
         
         } else {

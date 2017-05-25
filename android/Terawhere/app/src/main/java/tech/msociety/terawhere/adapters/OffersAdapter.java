@@ -64,8 +64,8 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
         String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
 
-        String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
-        String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
+        String day = DateUtils.dateToString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
+        String month = DateUtils.dateToString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
 
         viewHolder.textViewMonth.setText(month);
         viewHolder.textViewDay.setText(day);
