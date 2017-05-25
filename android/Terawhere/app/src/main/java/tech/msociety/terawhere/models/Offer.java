@@ -10,9 +10,9 @@ public class Offer implements Parcelable {
     private Integer offerId;
 
     private String offererId;
-
+    
     private String offererName;
-
+    
     private String offererDp;
 
     private Date meetupTime;
@@ -26,11 +26,11 @@ public class Offer implements Parcelable {
     private Integer vacancy;
 
     private Integer seatsBooked;
-
+    
     private BackendTimestamp backendTimestamp;
-
+    
     private String remarks;
-
+    
     public Offer(Integer offerId, String offererId, String offererName, Date meetupTime, TerawhereLocation startTerawhereLocation, TerawhereLocation endTerawhereLocation, Vehicle vehicle, Integer vacancy, Integer seatsBooked, BackendTimestamp backendTimestamp) {
         this.offerId = offerId;
         this.offererId = offererId;
@@ -43,35 +43,35 @@ public class Offer implements Parcelable {
         this.seatsBooked = seatsBooked;
         this.backendTimestamp = backendTimestamp;
     }
-
+    
     public Integer getOfferId() {
         return offerId;
     }
-
+    
     public void setOfferId(Integer offerId) {
         this.offerId = offerId;
     }
-
+    
     public String getOffererId() {
         return offererId;
     }
-
+    
     public void setOffererId(String offererId) {
         this.offererId = offererId;
     }
-
+    
     public String getOffererName() {
         return offererName;
     }
-
+    
     public void setOffererName(String offererName) {
         this.offererName = offererName;
     }
-
+    
     public String getOffererDp() {
         return offererDp;
     }
-
+    
     public void setOffererDp(String offererDp) {
         this.offererDp = offererDp;
     }
@@ -79,7 +79,7 @@ public class Offer implements Parcelable {
     public Date getMeetupTime() {
         return meetupTime;
     }
-
+    
     public void setMeetupTime(Date meetupTime) {
         this.meetupTime = meetupTime;
     }
@@ -87,7 +87,7 @@ public class Offer implements Parcelable {
     public TerawhereLocation getStartTerawhereLocation() {
         return startTerawhereLocation;
     }
-
+    
     public void setStartTerawhereLocation(TerawhereLocation startTerawhereLocation) {
         this.startTerawhereLocation = startTerawhereLocation;
     }
@@ -95,7 +95,7 @@ public class Offer implements Parcelable {
     public TerawhereLocation getEndTerawhereLocation() {
         return endTerawhereLocation;
     }
-
+    
     public void setEndTerawhereLocation(TerawhereLocation endTerawhereLocation) {
         this.endTerawhereLocation = endTerawhereLocation;
     }
@@ -103,15 +103,15 @@ public class Offer implements Parcelable {
     public Vehicle getVehicle() {
         return vehicle;
     }
-
+    
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
-
+    
     public Integer getVacancy() {
         return vacancy;
     }
-
+    
     public void setVacancy(Integer vacancy) {
         this.vacancy = vacancy;
     }
@@ -119,7 +119,7 @@ public class Offer implements Parcelable {
     public Integer getSeatsBooked() {
         return seatsBooked;
     }
-
+    
     public void setSeatsBooked(Integer seatsBooked) {
         this.seatsBooked = seatsBooked;
     }
@@ -127,19 +127,19 @@ public class Offer implements Parcelable {
     public Integer getSeatsRemaining() {
         return vacancy - seatsBooked;
     }
-
+    
     public BackendTimestamp getBackendTimestamp() {
         return backendTimestamp;
     }
-
+    
     public void setBackendTimestamp(BackendTimestamp backendTimestamp) {
         this.backendTimestamp = backendTimestamp;
     }
-
+    
     public String getRemarks() {
         return remarks;
     }
-
+    
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
@@ -164,7 +164,7 @@ public class Offer implements Parcelable {
         dest.writeString(this.offererName);
         dest.writeString(this.offererDp);
     }
-
+    
     protected Offer(Parcel in) {
         this.offerId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.offererId = in.readString();
@@ -180,13 +180,13 @@ public class Offer implements Parcelable {
         this.offererName = in.readString();
         this.offererDp = in.readString();
     }
-
+    
     public static final Creator<Offer> CREATOR = new Creator<Offer>() {
         @Override
         public Offer createFromParcel(Parcel source) {
             return new Offer(source);
         }
-
+        
         @Override
         public Offer[] newArray(int size) {
             return new Offer[size];

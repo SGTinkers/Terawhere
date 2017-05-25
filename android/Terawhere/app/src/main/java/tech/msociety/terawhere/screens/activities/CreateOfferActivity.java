@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -119,21 +120,20 @@ public class CreateOfferActivity extends ToolbarActivity {
         }
     }
     
-    // commented out code because pre-populating those fields leads to 422s from the backend; to be investigated later
     private void unloadOfferIntoUi(Offer offer) {
-//        Date meetupTime = offer.getMeetupTime();
-//        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
-//        initTimePickerDialog(meetupTime);
-
-//        textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
-//        textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
-//        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
+        Date meetupTime = offer.getMeetupTime();
+        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
+        initTimePickerDialog(meetupTime);
+    
+        textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
+        textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
+        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
         
         textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
         textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
         textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
-
-//        textInputEditTextRemarks.setText(offer.getRemarks());
+    
+        textInputEditTextRemarks.setText(offer.getRemarks());
     }
     
     private void initViewHandles() {

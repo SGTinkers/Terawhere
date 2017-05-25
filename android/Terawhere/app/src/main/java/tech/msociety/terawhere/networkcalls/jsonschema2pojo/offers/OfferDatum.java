@@ -106,7 +106,7 @@ public class OfferDatum {
     @SerializedName("seats_booked")
     @Expose
     public Integer seatsBooked;
-
+    
     @SerializedName("user")
     @Expose
     public UserDatum user;
