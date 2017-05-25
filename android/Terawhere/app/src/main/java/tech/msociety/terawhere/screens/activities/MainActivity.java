@@ -42,6 +42,8 @@ public class MainActivity extends BaseActivity {
         initializeToolbar();
         initializeTabLayout();
         initPagerView();
+        
+        getSupportActionBar().setTitle("Terawhere Beta");
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
