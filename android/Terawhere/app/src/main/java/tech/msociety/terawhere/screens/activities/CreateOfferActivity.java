@@ -32,8 +32,6 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -266,17 +264,10 @@ public class CreateOfferActivity extends ToolbarActivity {
                         }
                     });
                 } else if (isEditOffer) {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String time = textInputEditTextMeetUpTime.getText().toString();
+                    String timeString = textInputEditTextMeetUpTime.getText().toString();
+                    Date timeDate = DateUtils.fromFriendlyTimeString(timeString);
 
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
+                    String meetupTime = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT) + DELIMITER + DateUtils.toString(timeDate, DateUtils.MYSQL_TIME_FORMAT);
 
                     String startName, endName, startAddress, endAddress;
 
@@ -300,7 +291,7 @@ public class CreateOfferActivity extends ToolbarActivity {
 
                     OfferRequestBody offerRequestBody =
                             new OfferRequestBody(
-                                    meetUpTime,
+                                    meetupTime,
                                     startName,
                                     startAddress,
                                     getStartLatitude(selectedStartPlace),
@@ -351,20 +342,14 @@ public class CreateOfferActivity extends ToolbarActivity {
                         }
                     });
                 } else {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String time = textInputEditTextMeetUpTime.getText().toString();
+                    String timeString = textInputEditTextMeetUpTime.getText().toString();
+                    Date timeDate = DateUtils.fromFriendlyTimeString(timeString);
 
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
+                    String meetupTime = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT) + DELIMITER + DateUtils.toString(timeDate, DateUtils.MYSQL_TIME_FORMAT);
+
                     OfferRequestBody offerRequestBody =
                             new OfferRequestBody(
-                                    meetUpTime,
+                                    meetupTime,
                                     getPlaceName(selectedStartPlace),
                                     selectedStartPlace.getAddress().toString(),
                                     selectedStartPlace.getLatLng().latitude,

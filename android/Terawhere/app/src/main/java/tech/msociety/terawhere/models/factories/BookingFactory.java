@@ -33,11 +33,11 @@ public class BookingFactory {
                 vehicle = new Vehicle(bookingDatum.offer.vehicleNumber, bookingDatum.offer.vehicleDesc.toString(), bookingDatum.offer.vehicleModel);
             }
 
-            Date offerDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.offer.createdAt);
-            Date offerDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.offer.updatedAt);
+            /*Date offerDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.offer.createdAt);
+            Date offerDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.offer.updatedAt);*/
             //            Date offerDateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
 
-            BackendTimestamp offerBackendTimestamp = new BackendTimestamp(offerDateCreated, offerDateUpdated, null);
+            BackendTimestamp offerBackendTimestamp = new BackendTimestamp(null, null, null);
 
             Date bookingDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.createdAt);
             Date bookingDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.updatedAt);
