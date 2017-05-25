@@ -105,6 +105,7 @@
             android:drawableRight="@drawable/ic_directions_black_24dp"
             android:drawablePadding="4dp"
             android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
             android:fontFamily="sans-serif"
             android:text="6 Admiralty Rd, Singapore 739983"
             android:textColor="#000000"
@@ -146,7 +147,7 @@
             android:drawableRight="@drawable/ic_directions_black_24dp"
             android:drawablePadding="4dp"
             android:gravity="center_vertical"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:fontFamily="sans-serif"
             android:text="406 Woodlands Street 41"
             android:textColor="#000000"
@@ -282,7 +283,7 @@
             android:layout_toStartOf="@+id/text_view_edit"
             android:layout_marginTop="8dp"
             android:padding="12dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:text="CANCEL" />
 
         <TextView
@@ -293,7 +294,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
             android:padding="12dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:text="EDIT" />
 
 
