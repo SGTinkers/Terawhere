@@ -34,7 +34,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -97,16 +96,17 @@ public class CreateOfferActivity extends ToolbarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
-        
-        initToolbar(TOOLBAR_TITLE, true);
+    
         trackCurrentLocation();
+        initToolbar(TOOLBAR_TITLE, true);
         initViewHandles();
+        initTimePickerDialog(null);
         setClickListeners();
         
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
-            isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT);
-            isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE);
+            isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT, false);
+            isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE, false);
         }
         
         if (isEditOffer) {
@@ -114,27 +114,26 @@ public class CreateOfferActivity extends ToolbarActivity {
             unloadOfferIntoUi(offer);
             buttonCreateOffer.setText(R.string.create_offer_activity_button_text);
         } else if (isCreateOffer) {
-            Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
+            offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
-        } else {
-            setMeetUpTimeEditTextListener(null);
         }
     }
     
+    // commented out code because pre-populating those fields leads to 422s from the backend; to be investigated later
     private void unloadOfferIntoUi(Offer offer) {
-        Date meetupTime = offer.getMeetupTime();
-        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
-        setMeetUpTimeEditTextListener(meetupTime);
+//        Date meetupTime = offer.getMeetupTime();
+//        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
+//        initTimePickerDialog(meetupTime);
+
+//        textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
+//        textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
+//        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
         
-        textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
-        textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
-        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
-    
         textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
         textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
         textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
-    
-        textInputEditTextRemarks.setText(offer.getRemarks());
+
+//        textInputEditTextRemarks.setText(offer.getRemarks());
     }
     
     private void initViewHandles() {
@@ -165,30 +164,6 @@ public class CreateOfferActivity extends ToolbarActivity {
         });
         
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
-            private OfferRequestBody getOfferRequestBodyFromUi() {
-                if (placeStart == null || placeEnd == null) return null;
-    
-                Date dateWithTimeComponent = DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString());
-                Date dateComplete = DateUtils.getDateFromDates(new Date(), dateWithTimeComponent);
-                
-                return new OfferRequestBody(
-                        DateUtils.dateToString(dateComplete, DateUtils.MYSQL_DATE_TIME_FORMAT),
-                        placeStart.getName().toString(),
-                        placeStart.getAddress().toString(),
-                        placeStart.getLatLng().latitude,
-                        placeStart.getLatLng().longitude,
-                        placeEnd.getName().toString(),
-                        placeEnd.getAddress().toString(),
-                        placeEnd.getLatLng().latitude,
-                        placeEnd.getLatLng().longitude,
-                        Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                        textInputEditTextRemarks.getText().toString(),
-                        textInputEditTextVehiclePlateNumber.getText().toString(),
-                        textInputEditTextVehicleColor.getText().toString(),
-                        textInputEditTextVehicleModel.getText().toString()
-                );
-            }
-            
             @Override
             public void onClick(View v) {
                 if (!isFormFilled()) {
@@ -197,11 +172,6 @@ public class CreateOfferActivity extends ToolbarActivity {
                 }
     
                 OfferRequestBody offerRequestBody = getOfferRequestBodyFromUi();
-                if (offerRequestBody == null) {
-                    Toast.makeText(CreateOfferActivity.this, "Either placeStart or placeEnd is null", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Log.d(TAG, "offerRequestBody: " + offerRequestBody.toString());
                 
                 if (isCreateOffer) {
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
@@ -245,7 +215,6 @@ public class CreateOfferActivity extends ToolbarActivity {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.isSuccessful()) {
-                                Log.i("EDIT_MESSAGE", ": " + response.message());
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
                                 successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 successDialog.setContentView(R.layout.dialog_offer_successful);
@@ -314,14 +283,55 @@ public class CreateOfferActivity extends ToolbarActivity {
                     });
                 }
             }
+    
+            private OfferRequestBody getOfferRequestBodyFromUi() {
+                String startName;
+                String startAddress;
+                double startLatitude;
+                double startLongitude;
+                String endName;
+                String endAddress;
+                double endLatitude;
+                double endLongitude;
+        
+                startName = placeStart != null ? placeStart.getName().toString() : offer.getStartTerawhereLocation().getName();
+                startAddress = placeStart != null ? placeStart.getAddress().toString() : offer.getStartTerawhereLocation().getAddress();
+                startLatitude = placeStart != null ? placeStart.getLatLng().latitude : offer.getStartTerawhereLocation().getLatitude();
+                startLongitude = placeStart != null ? placeStart.getLatLng().longitude : offer.getStartTerawhereLocation().getLongitude();
+        
+                endName = placeEnd != null ? placeEnd.getName().toString() : offer.getEndTerawhereLocation().getName();
+                endAddress = placeEnd != null ? placeEnd.getAddress().toString() : offer.getEndTerawhereLocation().getAddress();
+                endLatitude = placeEnd != null ? placeEnd.getLatLng().latitude : offer.getEndTerawhereLocation().getLatitude();
+                endLongitude = placeEnd != null ? placeEnd.getLatLng().longitude : offer.getEndTerawhereLocation().getLongitude();
+        
+                Date dateWithTimeComponent = DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString());
+                Date dateComplete = DateUtils.getDateFromDates(new Date(), dateWithTimeComponent);
+        
+                return new OfferRequestBody(
+                        DateUtils.dateToString(dateComplete, DateUtils.MYSQL_DATE_TIME_FORMAT),
+                        startName,
+                        startAddress,
+                        startLatitude,
+                        startLongitude,
+                        endName,
+                        endAddress,
+                        endLatitude,
+                        endLongitude,
+                        Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
+                        textInputEditTextRemarks.getText().toString(),
+                        textInputEditTextVehiclePlateNumber.getText().toString(),
+                        textInputEditTextVehicleColor.getText().toString(),
+                        textInputEditTextVehicleModel.getText().toString()
+                );
+            }
         });
     }
     
-    private void setMeetUpTimeEditTextListener(Date meetupTime) {
+    private void initTimePickerDialog(Date meetupTime) {
         if (meetupTime == null) {
             meetupTime = new Date();
         }
-    
+        
         final Calendar calendar = DateUtils.dateToCalendar(meetupTime);
         
         textInputEditTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
@@ -410,7 +420,7 @@ public class CreateOfferActivity extends ToolbarActivity {
             textInputEditTextStartLocation.setText(placeStart.getName());
         } else if (requestCode == REQUEST_CODE_GET_END_PLACE && resultCode == RESULT_OK) {
             placeEnd = PlacePicker.getPlace(this, data);
-            textInputEditTextEndLocation.setText(placeStart.getName());
+            textInputEditTextEndLocation.setText(placeEnd.getName());
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
