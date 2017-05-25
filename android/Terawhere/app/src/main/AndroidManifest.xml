@@ -63,6 +63,17 @@
                 android:value="tech.msociety.terawhere.screens.activities.MainActivity"/>
         </activity>
 
+        <activity
+            android:name=".screens.activities.BookingInfoActivity"
+            android:label="@string/title_activity_create_offer"
+            android:parentActivityName=".screens.activities.MainActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tech.msociety.terawhere.screens.activities.MainActivity" />
+        </activity>
+
 
         <!-- Required Activities by 3rd Party Libs -->
         <activity

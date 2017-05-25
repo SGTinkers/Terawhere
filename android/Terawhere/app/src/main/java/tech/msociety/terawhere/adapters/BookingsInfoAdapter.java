@@ -5,22 +5,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.Booking;
 
-/**
- * Created by musa on 24/5/17.
- */
-
-
 public class BookingsInfoAdapter extends RecyclerView.Adapter<BookingsInfoAdapter.ViewHolder> {
+
     private Context context;
-    List<Booking> bookings;
-    ViewGroup viewGroup;
+
+    private List<Booking> bookings;
 
     public BookingsInfoAdapter(Context context) {
         this.context = context;
@@ -28,9 +28,7 @@ public class BookingsInfoAdapter extends RecyclerView.Adapter<BookingsInfoAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_booking, parent, false);
-        viewGroup = parent;
-
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_booking_info, parent, false);
         return new ViewHolder(view);
     }
 
@@ -38,34 +36,33 @@ public class BookingsInfoAdapter extends RecyclerView.Adapter<BookingsInfoAdapte
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Booking booking = bookings.get(position);
         viewHolder.textViewPassengerName.setText(booking.getUserName());
-        viewHolder.textViewSeatsBooked.setText(booking.getSeatsBooked());
-
-
+        viewHolder.textViewSeatsBookedInfo.setText(Integer.toString(booking.getSeatsBooked()));
+        Picasso.with(context)
+                .load(booking.getUserDp())
+                .transform(new CropCircleTransformation())
+                .into(viewHolder.imageViewPassengerAvatar);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return bookings.size();
     }
 
     public void setBookingsInfo(List<Booking> bookings) {
         this.bookings = bookings;
     }
 
-
     class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView textViewSeatsBooked;
+        private TextView textViewSeatsBookedInfo;
         private TextView textViewPassengerName;
-
+        private ImageView imageViewPassengerAvatar;
 
         private ViewHolder(View view) {
             super(view);
 
             textViewPassengerName = (TextView) view.findViewById(R.id.text_view_passenger_name);
-            textViewSeatsBooked = (TextView) view.findViewById(R.id.text_view_seats_booked);
-
+            textViewSeatsBookedInfo = (TextView) view.findViewById(R.id.text_view_seats_booked_info);
+            imageViewPassengerAvatar = (ImageView) view.findViewById(R.id.image_view_passenger_avatar);
         }
     }
-
-
 }

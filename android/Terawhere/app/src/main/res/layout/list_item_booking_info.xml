@@ -16,31 +16,31 @@
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
+
+        <ImageView
+            android:id="@+id/image_view_passenger_avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:text="26"
+            android:textColor="#000000"
+            android:textSize="48sp"
+            android:textStyle="normal" />
+
         <View
             android:id="@+id/view_vertical_line"
             android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_toEndOf="@+id/text_view_day"
-            android:layout_alignTop="@+id/text_view_end_location_name_label"
-            android:layout_above="@+id/text_view_view_more"
-            android:background="#979797" />
+            android:layout_toEndOf="@+id/image_view_passenger_avatar"
 
-        <ImageView
-            android:id="@+id/text_view_day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:text="26"
-            android:textColor="#000000"
-            android:textSize="48sp"
-            android:src="@drawable/pin_location"
-            android:textStyle="normal" />
+            android:background="#979797" />
 
 
         <TextView
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/view_vertical_line"
             android:fontFamily="sans-serif"
-            android:text="Passenger Name"
+            android:text="Name"
             android:textColor="#7e7b7b"
             android:textSize="10sp"
             android:textStyle="normal" />
@@ -81,7 +81,7 @@
             android:textStyle="normal" />
 
         <TextView
-            android:id="@+id/text_view_seats_booked"
+            android:id="@+id/text_view_seats_booked_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_seats_booked_label"

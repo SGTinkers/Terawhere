@@ -1,9 +1,8 @@
 package tech.msociety.terawhere.screens.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -20,46 +19,48 @@ import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.models.factories.BookingFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
+import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
 
-/**
- * Created by musa on 24/5/17.
- */
 
-public class BookingInfoActivity extends Activity {
+public class BookingInfoActivity extends ToolbarActivity {
 
-    private BookingsInfoAdapter bookingsInfoAdapter;
+    private static final String TOOLBAR_TITLE = "Your Passengers";
+    public static final String INTENT_OFFER_ID = "INTENT_OFFER_ID";
+
+    private RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_info);
-        initRecyclerView();
-        Integer offerId = getIntent().getExtras().getInt("offerId");
+        initToolbar(TOOLBAR_TITLE, true);
+
+        Integer offerId = getIntent().getExtras().getInt(INTENT_OFFER_ID);
         getBookingsFromServer(offerId);
     }
 
-
     private void initRecyclerView() {
-
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view_bookings_info);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
-
-        bookingsInfoAdapter = new BookingsInfoAdapter(getApplicationContext());
-        recyclerView.setAdapter(bookingsInfoAdapter);
+        adapter = new BookingsInfoAdapter(getApplicationContext());
+        recyclerView.setAdapter(adapter);
     }
 
     private void getBookingsFromServer(Integer offerId) {
-
         Call<GetBookingsResponse> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookingsByOffer(offerId);
         callGetBookings.enqueue(new Callback<GetBookingsResponse>() {
             @Override
             public void onResponse(Call<GetBookingsResponse> call, Response<GetBookingsResponse> response) {
                 if (response.isSuccessful()) {
+                    initRecyclerView();
                     GetBookingsResponse getBookingsResponse = response.body();
-                    List<Booking> bookings = BookingFactory.createFromResponse(getBookingsResponse);
-                    Log.i("BOOKING_SIZE", ":" + bookings.size());
-                    bookingsInfoAdapter.setBookingsInfo(bookings);
+                    List<Booking> bookings = BookingFactory.createFromResponseBookingInfo(getBookingsResponse);
+
+                    ((BookingsInfoAdapter) adapter).setBookingsInfo(bookings);
+                    adapter.notifyDataSetChanged();
 
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
@@ -72,6 +73,4 @@ public class BookingInfoActivity extends Activity {
             }
         });
     }
-
-
 }
