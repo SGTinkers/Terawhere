@@ -23,6 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.BookingsAdapter;
+import tech.msociety.terawhere.events.BookingDeletedEvent;
 import tech.msociety.terawhere.events.GetBookingsHasFinishedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
@@ -120,6 +121,11 @@ public class MyBookingsFragment extends BaseFragment {
         Log.e(TAG, "failed to fetch my bookings via network call", event.getThrowable());
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBookingDeletedEvent(BookingDeletedEvent event) {
+        getBookingsFromServer();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         getBookingsFromServer();
@@ -130,8 +136,6 @@ public class MyBookingsFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && isResumed()) {
             onResume();
-
-
         }
 
     }

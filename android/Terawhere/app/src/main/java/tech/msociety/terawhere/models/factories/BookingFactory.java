@@ -18,8 +18,8 @@ public class BookingFactory {
         for (BookingDatum bookingDatum : getBookingsResponse.data) {
             Date bookingDateCreated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.createdAt);
             Date bookingDateUpdated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.updatedAt);
-            //            Date bookingDateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
-            BackendTimestamp bookingBackendTimestamp = new BackendTimestamp(bookingDateCreated, bookingDateUpdated, null);
+            Date bookingDateDeleted = DateUtils.mysqlDateTimeStringToDate(bookingDatum.deletedAt);
+            BackendTimestamp bookingBackendTimestamp = new BackendTimestamp(bookingDateCreated, bookingDateUpdated, bookingDateDeleted);
     
             Offer offer = OfferFactory.createFromDatum(bookingDatum.offer);
 

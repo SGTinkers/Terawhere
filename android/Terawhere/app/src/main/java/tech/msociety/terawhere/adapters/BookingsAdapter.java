@@ -22,6 +22,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.events.BookingDeletedEvent;
 import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -90,6 +93,11 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                 .transform(new CropCircleTransformation())
                 .into(viewHolder.imageViewDriverAvatar);
         viewHolder.textViewDriver.setText(offer.getOffererName());
+        if (booking.getBookingBackendTimestamp().getDateDeleted() != null) {
+            // Past Booking
+            viewHolder.textViewBookingPast.setVisibility(View.VISIBLE);
+            viewHolder.textViewCancel.setVisibility(View.GONE);
+        }
 
         // check card collapse/expand
         final boolean[] shouldExpand = isCollapse(viewHolder, booking);
@@ -134,13 +142,13 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                 deleteConfirmationDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteBooking(bookings.get(position).getBookingId());
+                        final Booking booking = bookings.get(position);
+                        Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteBooking(booking.getBookingId());
                         deleteRequest.enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {
-                                    deleteBooking(position);
-
+                                    EventBus.getDefault().post(new BookingDeletedEvent(booking));
                                 } else {
                                     try {
                                         Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
@@ -231,15 +239,10 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         pbutton.setText(CONFIRM);
     }
 
-    private Spanned setTextBold(String title, String text) {
-        return Html.fromHtml(title + "<b>" + text + "</b>");
-    }
-
     @Override
     public int getItemCount() {
         return bookings == null ? 0 : bookings.size();
     }
-
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewDay;
@@ -262,6 +265,8 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
 
         private TextView textViewViewMore;
         private TextView textViewCancel;
+
+        private TextView textViewBookingPast;
 
         private RelativeLayout relativeLayoutItem;
 
@@ -287,6 +292,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             textViewDriverLabel = (TextView) view.findViewById(R.id.text_view_driver_label);
             imageViewDriverAvatar = (ImageView) view.findViewById(R.id.image_view_driver_avatar);
             textViewDriver = (TextView) view.findViewById(R.id.text_view_driver);
+            textViewBookingPast = (TextView) view.findViewById(R.id.text_view_booking_past);
         }
     }
 
@@ -294,9 +300,4 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         this.bookings = bookings;
     }
 
-    private void deleteBooking(int position) {
-        bookings.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount());
-    }
 }
