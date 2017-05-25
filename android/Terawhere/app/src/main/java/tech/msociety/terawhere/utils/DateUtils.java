@@ -93,17 +93,29 @@ public class DateUtils {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
         return simpleDateFormat.format(date);
     }
-
-    public static Date fromFriendlyTimeString(String timeString) throws ParseException {
-        return friendlyTimeFormatter.parse(timeString);
+    
+    public static Date fromFriendlyTimeString(String timeString) {
+        Date date = null;
+        
+        try {
+            date = friendlyTimeFormatter.parse(timeString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
+        return date;
     }
 
     public static String toFriendlyDateTimeString(Date date) {
         return getLocalizedFormatter(friendlyDateTimeFormatter).format(date);
     }
 
-//    public static Date fromFriendlyDateTimeString(String timeString) throws ParseException {
-//        return friendlyDateTimeFormatter.parse(timeString);
+//    public static Date fromFriendlyDateTimeString(String timeString) {
+//        try {
+//            return friendlyDateTimeFormatter.parse(timeString);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 //    }
 
     public static boolean dateIsInThePast(Date date) {
@@ -111,6 +123,10 @@ public class DateUtils {
     }
     
     public static Date fromMysqlDateTimeString(String mysqlDateTimeString) {
+        if (mysqlDateTimeString == null) {
+            return null;
+        }
+        
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(MYSQL_DATE_TIME_FORMAT, LOCALE);
         
         Date date = null;

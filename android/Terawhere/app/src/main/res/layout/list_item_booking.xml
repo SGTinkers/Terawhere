@@ -248,7 +248,7 @@
             android:textColor="#7e7b7b"
             android:textSize="10sp"
             android:textStyle="normal"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <ImageView
           android:id="@+id/image_view_driver_avatar"
@@ -258,7 +258,7 @@
           android:layout_toEndOf="@id/view_vertical_line"
           android:fontFamily="sans-serif"
           tools:src="@drawable/hafidz2"
-          android:visibility="visible" />
+          android:visibility="gone" />
 
         <TextView
           android:id="@+id/text_view_driver"
@@ -275,7 +275,7 @@
           android:textColor="#000000"
           android:textSize="13sp"
           android:textStyle="normal"
-          android:visibility="visible" />
+          android:visibility="gone" />
 
         <TextView
             android:id="@+id/text_view_view_more"

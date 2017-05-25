@@ -1,5 +1,6 @@
 package tech.msociety.terawhere.screens.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,7 +36,7 @@ import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
 
 public class MyOffersFragment extends BaseFragment {
-    private static final int REQUEST_CODE = 1;
+    private static final int REQUEST_CODE_CREATE_OFFER = 1;
     private OffersAdapter offersAdapter;
     private SwipeRefreshLayout swipeRefreshLayoutOffers;
     
@@ -61,15 +62,10 @@ public class MyOffersFragment extends BaseFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), CreateOfferActivity.class);
                 Offer lastOffer = offersAdapter.getLastOffer();
-                
-                if (lastOffer != null) {
-                    intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
-                    intent.putExtra(CreateOfferActivity.INTENT_OFFER, lastOffer);
-                }
-    
-                startActivityForResult(intent, REQUEST_CODE);
+                Context context = v.getContext();
+                Intent intent = lastOffer == null ? CreateOfferActivity.getIntentToStartInCreateMode(context) : CreateOfferActivity.getIntentToStartInCreateModePrepopulated(context, lastOffer);
+                startActivityForResult(intent, REQUEST_CODE_CREATE_OFFER);
             }
         });
     }
