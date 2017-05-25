@@ -83,8 +83,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             viewHolder.textViewRemarksLabel.setVisibility(View.GONE);
             viewHolder.textViewRemarks.setVisibility(View.GONE);
         }
-        viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " / " + offer.getVehicle().getPlateNumber());
-        viewHolder.textViewVehicleModel.setText(offer.getVehicle().getModel());
+        viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " " + offer.getVehicle().getModel() + " [" + offer.getVehicle().getPlateNumber() + "]");
 
         final boolean[] shouldExpand = isCollapse(viewHolder, offer);
 
@@ -126,8 +125,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                 offer.getRemarks() != null && !offer.getRemarks().isEmpty() && viewHolder.textViewRemarks.getVisibility() == View.GONE,
                 viewHolder.textViewVehicleLabel.getVisibility() == View.GONE,
                 viewHolder.textViewVehicle.getVisibility() == View.GONE,
-                viewHolder.textViewVehicleModelLabel.getVisibility() == View.GONE,
-                viewHolder.textViewVehicleModel.getVisibility() == View.GONE,
         };
     }
 
@@ -158,8 +155,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             viewHolder.textViewStartLocationAddress.setVisibility(View.VISIBLE);
             viewHolder.textViewVehicleLabel.setVisibility(View.VISIBLE);
             viewHolder.textViewVehicle.setVisibility(View.VISIBLE);
-            viewHolder.textViewVehicleModelLabel.setVisibility(View.VISIBLE);
-            viewHolder.textViewVehicleModel.setVisibility(View.VISIBLE);
             viewHolder.textViewViewMore.setText(LESS_DETAILS);
             shouldExpand[0] = false;
         } else {
@@ -167,8 +162,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             viewHolder.textViewStartLocationAddress.setVisibility(View.GONE);
             viewHolder.textViewVehicleLabel.setVisibility(View.GONE);
             viewHolder.textViewVehicle.setVisibility(View.GONE);
-            viewHolder.textViewVehicleModelLabel.setVisibility(View.GONE);
-            viewHolder.textViewVehicleModel.setVisibility(View.GONE);
             viewHolder.textViewViewMore.setText(MORE_DETAILS);
             shouldExpand[0] = true;
         }
@@ -294,8 +287,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
         private TextView textViewVehicleLabel;
         private TextView textViewVehicle;
-        private TextView textViewVehicleModelLabel;
-        private TextView textViewVehicleModel;
 
         private TextView textViewViewMore;
         private TextView textViewEdit;
@@ -322,8 +313,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             textViewEdit = (TextView) view.findViewById(R.id.text_view_edit);
             textViewVehicleLabel = (TextView) view.findViewById(R.id.text_view_vehicle_label);
             textViewVehicle = (TextView) view.findViewById(R.id.text_view_vehicle);
-            textViewVehicleModelLabel = (TextView) view.findViewById(R.id.text_view_vehicle_model_label);
-            textViewVehicleModel = (TextView) view.findViewById(R.id.text_view_vehicle_model);
         }
     }
 }

@@ -4,7 +4,9 @@
                                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="16dp"
+                                    android:layout_marginTop="16dp"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginRight="16dp"
                                     card_view:cardCornerRadius="4dp"
                                     card_view:cardUseCompatPadding="true">
 
@@ -244,39 +246,10 @@
             tools:visibility="visible"/>
 
         <TextView
-            android:id="@+id/text_view_vehicle_model_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle"
-            android:layout_toEndOf="@id/view_vertical_line"
-            android:layout_marginTop="4dp"
-            android:fontFamily="sans-serif"
-            android:text="Model"
-            android:textColor="#7e7b7b"
-            android:textSize="10sp"
-            android:textStyle="normal"
-            android:visibility="gone"
-            tools:visibility="visible"/>
-
-        <TextView
-            android:id="@+id/text_view_vehicle_model"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle_model_label"
-            android:layout_toEndOf="@id/view_vertical_line"
-            android:fontFamily="sans-serif"
-            android:text="Toyota Camry"
-            android:textColor="#000000"
-            android:textSize="13sp"
-            android:textStyle="normal"
-            android:visibility="gone"
-            tools:visibility="visible"/>
-
-        <TextView
             android:id="@+id/text_view_view_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle_model"
+            android:layout_below="@id/text_view_vehicle"
             android:layout_alignBottom="@+id/text_view_cancel"
             android:layout_marginTop="8dp"
             android:gravity="center_vertical"
@@ -293,7 +266,7 @@
             android:id="@+id/text_view_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle_model"
+            android:layout_below="@id/text_view_vehicle"
             android:layout_toStartOf="@+id/text_view_edit"
             android:layout_marginTop="8dp"
             android:padding="12dp"
@@ -304,7 +277,7 @@
             android:id="@+id/text_view_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_vehicle_model"
+            android:layout_below="@id/text_view_vehicle"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
             android:padding="12dp"
