@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,11 +43,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -228,12 +231,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             @Override
             public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
                 Offer offer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
-    
-                if (AppPrefs.with(TerawhereApplication.ApplicationContext).getUserId().equals(offer.getOffererId())) {
-                    viewPager.setCurrentItem(0);
-                } else {
-                    showBookingDialog(offer);
-                }
+                showBookingDialog(offer);
             }
         });
         clusterManager.setRenderer(new ClusterRenderer(getContext(), googleMap, clusterManager));
@@ -299,37 +297,47 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         builder.setView(dialogView);
     
         final Spinner spinner = (Spinner) dialogView.findViewById(R.id.spinner);
-    
-        TextView dialogStartingLocation = (TextView) dialogView.findViewById(R.id.dialogTextViewStartingLocation);
-        TextView dialogDestination = (TextView) dialogView.findViewById(R.id.dialogTextViewEndingLocation);
-        TextView dialogRemarks = (TextView) dialogView.findViewById(R.id.dialogTextViewRemarks);
-        TextView dialogTimestamp = (TextView) dialogView.findViewById(R.id.dialogTextViewMeetUpTime);
-        TextView dialogSeatsAvailable = (TextView) dialogView.findViewById(R.id.dialogTextViewSeatsAvailable);
-        TextView dialogMonth = (TextView) dialogView.findViewById(R.id.dialogTextViewMonth);
-        TextView dialogDay = (TextView) dialogView.findViewById(R.id.dialogTextViewDay);
 
-        if (offer.getRemarks() == null) {
-            dialogRemarks.setText("Remarks: NIL");
-        
-        } else {
-            dialogRemarks.setText("Remarks: " + offer.getRemarks());
-        }
-        dialogStartingLocation.setText(setTextBold("Meeting Point: ", offer.getStartTerawhereLocation().getAddress()));
-        dialogDestination.setText(setTextBold("Destination: ", offer.getEndTerawhereLocation().getAddress()));
+        TextView textViewDay = (TextView) dialogView.findViewById(R.id.text_view_day);
+        TextView textViewMonth = (TextView) dialogView.findViewById(R.id.text_view_month);
+        TextView textViewEndLocationName = (TextView) dialogView.findViewById(R.id.text_view_end_location_name);
+        TextView textViewEndLocationAddress = (TextView) dialogView.findViewById(R.id.text_view_end_location_address);
+        TextView textViewStartLocationName = (TextView) dialogView.findViewById(R.id.text_view_start_location_name);
+        TextView textViewStartLocationAddress = (TextView) dialogView.findViewById(R.id.text_view_start_location_address);
+        TextView textViewMeetupTime = (TextView) dialogView.findViewById(R.id.text_view_meetup_time);
+        TextView textViewSeatsLeft = (TextView) dialogView.findViewById(R.id.text_view_seats_left);
+        TextView textViewRemarksLabel = (TextView) dialogView.findViewById(R.id.text_view_remarks_label);
+        TextView textViewRemarks = (TextView) dialogView.findViewById(R.id.text_view_remarks);
+        ImageView imageViewDriverAvatar = (ImageView) dialogView.findViewById(R.id.image_view_driver_avatar);
+        TextView textViewDriver = (TextView) dialogView.findViewById(R.id.text_view_driver);
+
         String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
         String day = DateUtils.dateToString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
         String month = DateUtils.dateToString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
-        if (!meetUpTime.matches("")) {
-            dialogTimestamp.setText(setTextBold("Pick Up Time: ", meetUpTime));
+
+        textViewMonth.setText(month);
+        textViewDay.setText(day);
+        textViewMeetupTime.setText(meetUpTime);
+        textViewEndLocationName.setText(offer.getEndTerawhereLocation().getName());
+        textViewEndLocationAddress.setText(offer.getEndTerawhereLocation().getAddress());
+        textViewStartLocationName.setText(offer.getStartTerawhereLocation().getName());
+        textViewStartLocationAddress.setText(offer.getStartTerawhereLocation().getAddress());
+        textViewSeatsLeft.setText(Integer.toString(offer.getSeatsRemaining()));
+        if (offer.getRemarks() != null && !offer.getRemarks().isEmpty()) {
+            textViewRemarks.setText(offer.getRemarks());
+        } else {
+            textViewRemarksLabel.setVisibility(View.GONE);
+            textViewRemarks.setVisibility(View.GONE);
         }
-        dialogDay.setText(day);
-        dialogMonth.setText(month);
-    
-        dialogSeatsAvailable.setText(setTextBold("Seats Left: ", Integer.toString(offer.getSeatsRemaining())));
+        Picasso.with(getContext())
+                .load(offer.getOffererDp())
+                .transform(new CropCircleTransformation())
+                .into(imageViewDriverAvatar);
+        textViewDriver.setText(offer.getOffererName());
     
         List<String> categories = new ArrayList<String>();
-        int seatsAvailable = offer.getSeatsRemaining();
-        for (int i = 1; i <= 2; i++) {
+        int seatsAvailable = offer.getSeatsRemaining() < 2 ? offer.getSeatsRemaining() : 2;
+        for (int i = 1; i <= seatsAvailable; i++) {
             categories.add(Integer.toString(i));
         }
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(dialogView.getContext(), android.R.layout.simple_spinner_item, categories) {
@@ -353,42 +361,43 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         };
     
         spinner.setAdapter(dataAdapter);
-    
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                showConfirmBookDialog(offer, spinner.getSelectedItem().toString());
-            }
-        });
-    
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-    
-        decorateAlertDialog(builder);
-    }
-    
-    private Spanned setTextBold(String title, String text) {
-        return Html.fromHtml(title + "<b>" + text + "</b>");
-    }
-    
-    private void decorateAlertDialog(AlertDialog.Builder builder) {
+
+        if (AppPrefs.with(TerawhereApplication.ApplicationContext).getUserId().equals(offer.getOffererId())) {
+            builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        } else {
+            builder.setPositiveButton("Book", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    showConfirmBookDialog(offer, spinner.getSelectedItem().toString());
+                }
+            });
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+
         AlertDialog alert = builder.create();
         alert.show();
-        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        decorateAlertDialog(alert);
+    }
+
+    private void decorateAlertDialog(AlertDialog alertDialog) {
+        Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         nbutton.setTextColor(Color.BLACK);
-        nbutton.setText("Cancel");
-        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         pbutton.setTextColor(Color.parseColor("#54d8bd"));
-        pbutton.setText("Confirm");
     }
     
     private void showConfirmBookDialog(final Offer offer, final String numSeats) {
         if (numSeats.matches("")) {
             Toast.makeText(getContext(), "Please enter number of seats", Toast.LENGTH_SHORT).show();
         } else {
-    
             int offerId = offer.getOfferId();
     
             createBookingApi(new BookingRequestBody(offerId)).enqueue(new Callback<Void>() {
@@ -404,14 +413,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                         successDialog.setCancelable(false);
         
                         Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
-                        TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
-                        TextView dialogExtraInfo = (TextView) successDialog.findViewById(R.id.text_view_extra_info);
+                        TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_info);
+                        TextView dialogNotice = (TextView) successDialog.findViewById(R.id.text_view_notice);
         
-                        dialogInfo.setText("You just booked a ride" + "\n" + "Here are the car details");
-                        dialogExtraInfo.setText(Html.fromHtml("Driver Name: <b>" + offer.getOffererName() + "</b>"
+                        dialogInfo.setText("You just booked a ride.");
+                        dialogInfo.setText(Html.fromHtml("Driver Name: <b>" + offer.getOffererName() + "</b>"
                                 + "<br/>Car Type : <b>" + offer.getVehicle().getModel() + "</b>"
                                 + "<br/>Colour : <b>" + offer.getVehicle().getDescription() + "</b>"
                                 + "<br/>Plate No: <b>" + offer.getVehicle().getPlateNumber() + "</b>"));
+                        dialogNotice.setText(Html.fromHtml("<b>Driver will only wait for you at most 5 mins. Be punctual!</b>"));
                         okButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
