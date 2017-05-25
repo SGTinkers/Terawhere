@@ -363,6 +363,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         spinner.setAdapter(dataAdapter);
 
         if (AppPrefs.with(TerawhereApplication.ApplicationContext).getUserId().equals(offer.getOffererId())) {
+            ((View) spinner.getParent()).setVisibility(View.GONE);
             builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
