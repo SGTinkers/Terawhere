@@ -306,6 +306,14 @@ public class CreateOfferActivity extends ToolbarActivity {
         
                 Date dateWithTimeComponent = DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString());
                 Date dateComplete = DateUtils.getDateFromDates(new Date(), dateWithTimeComponent);
+
+                // if the time user select has passed, increment the day
+                if (dateComplete.before(new Date())) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(dateComplete);
+                    c.add(Calendar.DATE, 1);
+                    dateComplete = c.getTime();
+                }
         
                 return new OfferRequestBody(
                         DateUtils.dateToString(dateComplete, DateUtils.MYSQL_DATE_TIME_FORMAT, DateUtils.TIMEZONE_UTC),
