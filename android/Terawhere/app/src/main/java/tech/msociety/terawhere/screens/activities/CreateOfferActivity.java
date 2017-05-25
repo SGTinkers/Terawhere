@@ -84,7 +84,7 @@ public class CreateOfferActivity extends ToolbarActivity {
 
     public static Intent getIntentToStartInCreateMode(Context sourceContext) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
-        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
+        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, false);
         return intent;
     }
 
