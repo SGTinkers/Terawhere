@@ -18,13 +18,10 @@ import tech.msociety.terawhere.utils.DateUtils;
 public class OfferInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
     private final LayoutInflater mInflater;
 
-    private HashMap<LatLng, Offer> mapLocationOffer;
-
     View popup;
     
-    public OfferInfoViewAdapter(LayoutInflater inflater, HashMap<LatLng, Offer> map) {
+    public OfferInfoViewAdapter(LayoutInflater inflater) {
         this.mInflater = inflater;
-        mapLocationOffer = map;
     }
     
     @Override
@@ -38,8 +35,8 @@ public class OfferInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         final TextView endingLocationTextView = (TextView) popup.findViewById(R.id.textViewEndingLocation);
         final TextView meetUpTimeTextView = (TextView) popup.findViewById(R.id.textViewMeetUpTime);
         final TextView seatsAvailableTextView = (TextView) popup.findViewById(R.id.textViewSeatsAvailable);
-    
-        Offer offer = mapLocationOffer.get(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
+
+        Offer offer = (Offer) marker.getTag();
 
         String destination = offer.getEndTerawhereLocation().getName();
         if (destination == null || destination.isEmpty()) {

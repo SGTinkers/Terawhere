@@ -3,30 +3,26 @@ package tech.msociety.terawhere.maps;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-
-/**
- * Created by musa on 2/5/17.
- */
+import tech.msociety.terawhere.models.Offer;
 
 public class ClusterMarkerLocation implements ClusterItem {
 
-    private LatLng mPosition;
-    private int mId;
+    private Offer offer;
 
-    public ClusterMarkerLocation(int id, LatLng latLng) {
-        mPosition = latLng;
-        mId = id;
+    private LatLng position;
+
+    public ClusterMarkerLocation(Offer offer, LatLng position) {
+        this.position = position;
+        this.offer = offer;
     }
 
     @Override
     public LatLng getPosition() {
-        return mPosition;
+        return position;
     }
 
-    public int getId() {
-        return mId;
+    public Offer getOffer() {
+        return offer;
     }
-    public void setPosition(LatLng mPosition) {
-        this.mPosition = mPosition;
-    }
+
 }

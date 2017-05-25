@@ -15,7 +15,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,7 +41,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.squareup.picasso.Picasso;
 
@@ -50,6 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import retrofit2.Call;
@@ -84,14 +84,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     private ViewPager viewPager;
     
     private ClusterManager<ClusterMarkerLocation> clusterManager;
-    
-    private List<Offer> offers;
-    
-    private HashMap<LatLng, Offer> mapLocationOffer;
-    
+
     private GoogleMap googleMap;
-    
-    private double latitude, longitude;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -186,7 +180,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         }
-        
     }
     
     @Override
@@ -232,11 +225,32 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarkerLocation>() {
             @Override
             public void onClusterItemInfoWindowClick(ClusterMarkerLocation clusterMarkerLocation) {
-                Offer offer = mapLocationOffer.get(clusterMarkerLocation.getPosition());
+                Offer offer = clusterMarkerLocation.getOffer();
                 showBookingDialog(offer);
             }
         });
         clusterManager.setRenderer(new ClusterRenderer(getContext(), googleMap, clusterManager));
+        clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<ClusterMarkerLocation>() {
+            @Override
+            public boolean onClusterClick(Cluster<ClusterMarkerLocation> cluster) {
+                ArrayList<String> items = new ArrayList<>();
+                final ArrayList<Offer> offers = new ArrayList<>();
+                for (ClusterMarkerLocation clusterMarkerLocation : cluster.getItems()) {
+                    items.add(clusterMarkerLocation.getOffer().getEndTerawhereLocation().getName());
+                    offers.add(clusterMarkerLocation.getOffer());
+                }
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Destinations (" + offers.size() + ")")
+                        .setItems(items.toArray(new String[items.size()]), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Offer offer = offers.get(which);
+                                showBookingDialog(offer);
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
         googleMap.setOnCameraIdleListener(clusterManager);
         googleMap.setOnInfoWindowClickListener(clusterManager);
         googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
@@ -253,19 +267,17 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     clusterManager.clearItems();
     
                     GetOffersResponse getOffersResponse = response.body();
-                    offers = OfferFactory.createFromResponse(getOffersResponse);
-    
-                    mapLocationOffer = new HashMap<>();
+                    List<Offer> offers = OfferFactory.createFromResponse(getOffersResponse);
+
                     for (int i = 0; i < offers.size(); i++) {
                         Offer offer = offers.get(i);
                         LatLng startLatLng = new LatLng(offer.getStartTerawhereLocation().getLatitude(), offer.getStartTerawhereLocation().getLongitude());
     
                         if (offers.get(i).getSeatsRemaining() > 0) {
-                            clusterManager.addItem(new ClusterMarkerLocation(offer.getOfferId(), startLatLng));
-                            mapLocationOffer.put(startLatLng, offers.get(i));
+                            clusterManager.addItem(new ClusterMarkerLocation(offer, startLatLng));
                         }
                     }
-                    clusterManager.getMarkerCollection().setOnInfoWindowAdapter(new OfferInfoViewAdapter(LayoutInflater.from(getContext()), mapLocationOffer));
+                    clusterManager.getMarkerCollection().setOnInfoWindowAdapter(new OfferInfoViewAdapter(LayoutInflater.from(getContext())));
     
                     // Zoom in after markers loaded
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
