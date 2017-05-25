@@ -74,6 +74,13 @@ public class LoggingInterceptor implements Interceptor {
             stringBuilder.append("Message: ");
             stringBuilder.append(responseMessage);
             stringBuilder.append("\n");
+
+            if (response.body() != null) {
+                // Assume the error body won't be more than 160 bytes
+                stringBuilder.append("Body: ");
+                stringBuilder.append(response.peekBody(160).string());
+                stringBuilder.append("\n");
+            }
         
             Log.e("LoggingInterceptor", stringBuilder.toString());
         }
