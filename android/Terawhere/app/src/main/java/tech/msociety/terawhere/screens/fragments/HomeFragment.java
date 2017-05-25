@@ -277,6 +277,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     
                         if (offers.get(i).getSeatsRemaining() > 0) {
                             clusterManager.addItem(new ClusterMarkerLocation(offer, startLatLng));
+                        } else {
+                            offers.remove(i);
+                            i--;
                         }
                     }
                     clusterManager.getMarkerCollection().setOnInfoWindowAdapter(new OfferInfoViewAdapter(LayoutInflater.from(getContext())));
@@ -289,8 +292,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     // Update cluster (needed for refresh)
                     clusterManager.cluster();
 
-                    if (clusterManager.getMarkerCollection().getMarkers().size() > 0) {
-                        Toast.makeText(getActivity(), clusterManager.getMarkerCollection().getMarkers().size() + " rides available.", Toast.LENGTH_SHORT).show();
+                    if (offers.size() > 0) {
+                        Toast.makeText(getActivity(), offers.size() + " rides available.", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getActivity(), "No rides available.", Toast.LENGTH_SHORT).show();
                     }
