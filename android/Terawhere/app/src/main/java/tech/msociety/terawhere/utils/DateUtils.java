@@ -17,6 +17,8 @@ public class DateUtils {
     public static final String DAY_OF_MONTH_FORMAT = "dd";
     public static final String MONTH_ABBREVIATED_FORMAT = "MMMM";
     public static final Locale LOCALE = Locale.UK;
+    public static final TimeZone TIMEZONE_SINGAPORE = TimeZone.getTimeZone("Asia/Singapore");
+    public static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
     
     private static SimpleDateFormat getLocalizedFormatter(SimpleDateFormat simpleDateFormat) {
         simpleDateFormat = (SimpleDateFormat) simpleDateFormat.clone();
@@ -26,6 +28,13 @@ public class DateUtils {
     
     public static String dateToString(Date date, String pattern) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+        return simpleDateFormat.format(date);
+    }
+    
+    public static String dateToString(Date date, String pattern, TimeZone timeZone) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
+        simpleDateFormat.setTimeZone(timeZone);
         return simpleDateFormat.format(date);
     }
     

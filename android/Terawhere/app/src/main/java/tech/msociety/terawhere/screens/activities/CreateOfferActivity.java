@@ -308,7 +308,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                 Date dateComplete = DateUtils.getDateFromDates(new Date(), dateWithTimeComponent);
         
                 return new OfferRequestBody(
-                        DateUtils.dateToString(dateComplete, DateUtils.MYSQL_DATE_TIME_FORMAT),
+                        DateUtils.dateToString(dateComplete, DateUtils.MYSQL_DATE_TIME_FORMAT, DateUtils.TIMEZONE_UTC),
                         startName,
                         startAddress,
                         startLatitude,
