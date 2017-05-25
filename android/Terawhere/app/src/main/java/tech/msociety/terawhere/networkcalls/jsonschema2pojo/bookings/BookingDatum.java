@@ -3,6 +3,7 @@ package tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.UserDatum;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferDatum;
 
 public class BookingDatum {
@@ -32,5 +33,9 @@ public class BookingDatum {
     @SerializedName("offer")
     @Expose
     public OfferDatum offer;
+
+    @SerializedName("user")
+    @Expose
+    public UserDatum user;
 
 }

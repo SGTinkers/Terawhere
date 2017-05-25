@@ -85,6 +85,10 @@ public class TerawhereBackendServer {
         @GET("api/v1/users/me/offers")
         Call<GetOffersResponse> getOffers();
 
+        @GET("api/v1/offers/{id}/bookings")
+        Call<GetBookingsResponse> getAllBookingsByOffer(@Path("id") Integer id);
+
+
         @GET("api/v1/users/me/bookings")
         Call<GetBookingsResponse> getAllBookings();
 
