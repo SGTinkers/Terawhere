@@ -163,7 +163,23 @@ public class CreateOfferActivity extends ToolbarActivity {
                 callEndPlaceAutocompleteActivityIntent();
             }
         });
-        
+
+        textInputEditTextStartLocation.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                callStartPlacePickerActivityIntent();
+                return true;
+            }
+        });
+
+        textInputEditTextEndLocation.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                callEndPlacePickerActivityIntent();
+                return true;
+            }
+        });
+
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -391,10 +407,9 @@ public class CreateOfferActivity extends ToolbarActivity {
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
         try {
             AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
-                    .setTypeFilter(Place.TYPE_COUNTRY)
                     .setCountry("SG")
                     .build();
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
                     .setFilter(autocompleteFilter)
                     .setBoundsBias(placePickerMapBounds)
                     .build(this);
@@ -410,15 +425,43 @@ public class CreateOfferActivity extends ToolbarActivity {
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
         try {
             AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
-                    .setTypeFilter(Place.TYPE_COUNTRY)
                     .setCountry("SG")
                     .build();
             Intent intent =
-                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).setFilter(autocompleteFilter).setBoundsBias(placePickerMapBounds)
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).setFilter(autocompleteFilter).setBoundsBias(placePickerMapBounds)
                             .build(this);
             startActivityForResult(intent, REQUEST_CODE_GET_END_PLACE);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             Log.e(TAG, "callEndPlaceAutocompleteActivityIntent: ", e);
+        }
+    }
+
+    private void callStartPlacePickerActivityIntent() {
+        LatLng minimumBound = new LatLng(currentLocation.getLatitude() - OFFSET_LATITUDE, currentLocation.getLongitude() - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(currentLocation.getLatitude() + OFFSET_LATITUDE, currentLocation.getLongitude() + OFFSET_LONGITUDE);
+        LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
+        try {
+            Intent intent = new PlacePicker.IntentBuilder()
+                    .setLatLngBounds(placePickerMapBounds)
+                    .build(this);
+            startActivityForResult(intent, REQUEST_CODE_GET_START_PLACE);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            Log.e(TAG, "callStartPlacePickerActivityIntent: ", e);
+        }
+    }
+
+    private void callEndPlacePickerActivityIntent() {
+        LatLng minimumBound = new LatLng(currentLocation.getLatitude() - OFFSET_LATITUDE, currentLocation.getLongitude() - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(currentLocation.getLatitude() + OFFSET_LATITUDE, currentLocation.getLongitude() + OFFSET_LONGITUDE);
+        LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
+        try {
+            Intent intent = new PlacePicker.IntentBuilder()
+                    .setLatLngBounds(placePickerMapBounds)
+                    .build(this);
+            startActivityForResult(intent, REQUEST_CODE_GET_START_PLACE);
+            startActivityForResult(intent, REQUEST_CODE_GET_END_PLACE);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            Log.e(TAG, "callEndPlacePickerActivityIntent: ", e);
         }
     }
     
@@ -437,12 +480,32 @@ public class CreateOfferActivity extends ToolbarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_GET_START_PLACE && resultCode == RESULT_OK) {
             placeStart = PlacePicker.getPlace(this, data);
-            textInputEditTextStartLocation.setText(placeStart.getName());
+            textInputEditTextStartLocation.setText(getPlaceNameWithPrefix(placeStart));
         } else if (requestCode == REQUEST_CODE_GET_END_PLACE && resultCode == RESULT_OK) {
             placeEnd = PlacePicker.getPlace(this, data);
-            textInputEditTextEndLocation.setText(placeEnd.getName());
+            textInputEditTextEndLocation.setText(getPlaceNameWithPrefix(placeEnd));
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private CharSequence getPlaceNameWithPrefix(Place place) {
+        String name = place.getName().toString();
+        if (name.contains("°") && name.contains("'") && name.contains("\"")) {
+            return place.getAddress().toString().split(",")[0];
+        } else if (place.getPlaceTypes() == null) {
+        } else if (place.getPlaceTypes().contains(Place.TYPE_BUS_STATION)) {
+            return "Bus Stop @ " + name;
+        } else if (place.getPlaceTypes().contains(Place.TYPE_TRAIN_STATION)) {
+            return "Train Stn @ " + name;
+        } else if (place.getPlaceTypes().contains(Place.TYPE_TAXI_STAND)) {
+            return "Taxi Stand @ " + name;
+        } else if (place.getPlaceTypes().contains(Place.TYPE_PARKING)) {
+            return "Parking @ " + name;
+        } else if (place.getPlaceTypes().contains(Place.TYPE_AIRPORT)) {
+            return "Airport @ " + name;
+        }
+
+        return place.getName();
     }
 }
