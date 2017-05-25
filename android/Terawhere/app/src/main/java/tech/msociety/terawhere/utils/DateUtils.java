@@ -1,5 +1,6 @@
 package tech.msociety.terawhere.utils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -123,7 +124,14 @@ public class DateUtils {
     }
     
     public static Date fromMysqlDateTimeString(String mysqlDateTimeString) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(MYSQL_DATE_TIME_FORMAT, LOCALE);
+        // Assume this function only used to convert backend date to local date
+
+        if (mysqlDateTimeString == null) {
+            return null;
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(MYSQL_DATE_TIME_FORMAT);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         
         Date date = null;
         
@@ -132,7 +140,7 @@ public class DateUtils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        
+
         return date;
     }
 }

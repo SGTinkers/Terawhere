@@ -3,6 +3,8 @@ package tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.UserDatum;
+
 public class OfferDatum {
 
     @SerializedName("id")
@@ -63,7 +65,7 @@ public class OfferDatum {
 
     @SerializedName("remarks")
     @Expose
-    public Object remarks;
+    public String remarks;
 
     @SerializedName("status")
     @Expose
@@ -79,7 +81,7 @@ public class OfferDatum {
 
     @SerializedName("vehicle_desc")
     @Expose
-    public Object vehicleDesc;
+    public String vehicleDesc;
 
     @SerializedName("vehicle_model")
     @Expose
@@ -105,10 +107,7 @@ public class OfferDatum {
     @Expose
     public Integer seatsBooked;
 
-
-    @SerializedName("name")
+    @SerializedName("user")
     @Expose
-    public String driverName;
-
-
+    public UserDatum user;
 }
