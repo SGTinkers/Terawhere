@@ -32,6 +32,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -201,12 +202,18 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     }
                                 });
                                 successDialog.show();
+                            } else {
+                                try {
+                                    TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(CreateOfferActivity.this, response);
+                                } catch (IOException e) {
+                                    onFailure(call, e);
+                                }
                             }
                         }
-    
+
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-                            Log.e(TAG, "onFailure: ", t);
+                            TerawhereBackendServer.ErrorDatum.ToastUnknownError(CreateOfferActivity.this, t);
                         }
                     });
                 } else if (isEditOffer) {

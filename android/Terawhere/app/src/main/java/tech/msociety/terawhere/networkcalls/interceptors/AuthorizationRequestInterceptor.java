@@ -2,8 +2,6 @@ package tech.msociety.terawhere.networkcalls.interceptors;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -43,7 +41,7 @@ public class AuthorizationRequestInterceptor implements Interceptor {
 
         if (handleTokenExpiry && !response.isSuccessful()) {
             try {
-                Error e = new Gson().fromJson(response.body().string(), Error.class);
+                TerawhereBackendServer.ErrorDatum e = new Gson().fromJson(response.peekBody(160).string(), TerawhereBackendServer.ErrorDatum.class);
                 if (e != null && e.getError() != null && e.getError().equals("token_expired")) {
                     retrofit2.Response<Void> responseRefreshToken = TerawhereBackendServer.getAuthApiInstance().refreshToken().execute();
                     if (responseRefreshToken.isSuccessful()) {
@@ -64,25 +62,6 @@ public class AuthorizationRequestInterceptor implements Interceptor {
         }
 
         return response;
-    }
-
-    private class Error {
-
-        @SerializedName("error")
-        @Expose
-        String error;
-
-        public String getError() {
-            return error;
-        }
-
-        @Override
-        public String toString() {
-            return "Error{" +
-                    "error='" + error + '\'' +
-                    '}';
-        }
-
     }
 
     public static class TokenInvalidException extends IOException {

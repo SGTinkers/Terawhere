@@ -1,7 +1,17 @@
 package tech.msociety.terawhere.networkcalls.server;
 
+import android.content.Context;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.IOException;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -110,4 +120,44 @@ public class TerawhereBackendServer {
         @PUT("api/v1/offers/{offer}")
         Call<Void> editOffer(@Path("offer") Integer id, @Body OfferRequestBody offerRequestBody);
     }
+
+    public static class ErrorDatum {
+
+        public static void ParseErrorAndToast(Context context, Response response) throws IOException {
+            TerawhereBackendServer.ErrorDatum e = new Gson().fromJson(response.errorBody().string(), TerawhereBackendServer.ErrorDatum.class);
+            if (e.getMessage() != null) {
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        public static void ToastUnknownError(Context context, Throwable t) {
+            Toast.makeText(context, "Unknown error occurred. Please try again later.", Toast.LENGTH_SHORT).show();
+            t.printStackTrace();
+        }
+
+        @SerializedName("error")
+        @Expose
+        String error;
+
+        @SerializedName("message")
+        @Expose
+        String message;
+
+        public String getError() {
+            return error;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        @Override
+        public String toString() {
+            return "ErrorDatum{" +
+                    "error='" + error + '\'' +
+                    ", message='" + message + '\'' +
+                    '}';
+        }
+    }
+
 }

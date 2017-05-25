@@ -17,7 +17,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -159,15 +161,16 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                                     EventBus.getDefault().post(new BookingDeletedEvent(booking));
                                 } else {
                                     try {
-                                        Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
+                                        TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(context, response);
                                     } catch (IOException e) {
-                                        e.printStackTrace();
+                                        onFailure(call, e);
                                     }
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
+                                TerawhereBackendServer.ErrorDatum.ToastUnknownError(context, t);
                             }
                         });
                     }

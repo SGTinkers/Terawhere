@@ -42,9 +42,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.google.maps.android.clustering.ClusterManager;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -431,11 +433,18 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                         });
                         successDialog.show();
+                    } else {
+                        try {
+                            TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(getContext(), response);
+                        } catch (IOException e) {
+                            onFailure(call, e);
+                        }
                     }
                 }
         
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
+                    TerawhereBackendServer.ErrorDatum.ToastUnknownError(getContext(), t);
                 }
             });
         }
