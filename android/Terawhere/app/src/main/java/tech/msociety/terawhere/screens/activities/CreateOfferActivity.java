@@ -172,7 +172,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                 }
     
                 OfferRequestBody offerRequestBody = getOfferRequestBodyFromUi();
-                
+
                 if (isCreateOffer) {
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
