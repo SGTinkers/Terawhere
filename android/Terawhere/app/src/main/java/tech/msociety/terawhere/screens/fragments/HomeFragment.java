@@ -240,7 +240,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     offers.add(clusterMarkerLocation.getOffer());
                 }
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Destinations (" + offers.size() + ")")
+                        .setTitle(offers.size() + " Destinations")
                         .setItems(items.toArray(new String[items.size()]), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Offer offer = offers.get(which);
