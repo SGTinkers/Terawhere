@@ -108,10 +108,8 @@ public class MyBookingsFragment extends BaseFragment {
         TextView textViewEmptyRecyclerView = (TextView) getActivity().findViewById(R.id.text_view_empty_recycler_view_bookings);
     
         if (bookingsAdapter.getItemCount() == 0) {
-            recyclerViewMyOffers.setVisibility(View.GONE);
             textViewEmptyRecyclerView.setVisibility(View.VISIBLE);
         } else {
-            recyclerViewMyOffers.setVisibility(View.VISIBLE);
             textViewEmptyRecyclerView.setVisibility(View.GONE);
         }
     }

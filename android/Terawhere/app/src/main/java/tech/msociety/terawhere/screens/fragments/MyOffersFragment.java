@@ -26,6 +26,7 @@ import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.events.GetOffersHasFinishedEvent;
+import tech.msociety.terawhere.events.OfferDeletedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Offer;
@@ -121,10 +122,8 @@ public class MyOffersFragment extends BaseFragment {
         TextView textViewEmptyRecyclerView = (TextView) getActivity().findViewById(R.id.text_view_empty_recycler_view_offers);
         
         if (offersAdapter.getItemCount() == 0) {
-            recyclerViewMyOffers.setVisibility(View.GONE);
             textViewEmptyRecyclerView.setVisibility(View.VISIBLE);
         } else {
-            recyclerViewMyOffers.setVisibility(View.VISIBLE);
             textViewEmptyRecyclerView.setVisibility(View.GONE);
         }
     }
@@ -132,6 +131,11 @@ public class MyOffersFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
         Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOfferDeletedEvent(OfferDeletedEvent event) {
+        getOffersFromServer();
     }
     
     @Override

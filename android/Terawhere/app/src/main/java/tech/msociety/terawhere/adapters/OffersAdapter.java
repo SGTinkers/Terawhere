@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.events.OfferDeletedEvent;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.BookingInfoActivity;
@@ -203,12 +206,13 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         adbDeleteOffer.setPositiveButton(DELETE, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offers.get(position).getOfferId());
+                final Offer offer = offers.get(position);
+                Call<Void> deleteRequest = TerawhereBackendServer.getApiInstance().deleteOffer(offer.getOfferId());
                 deleteRequest.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
-                            deleteOffer(position);
+                            EventBus.getDefault().post(new OfferDeletedEvent(offer));
                         } else {
                             try {
                                 Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
@@ -242,12 +246,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         AlertDialog deleteOfferAlertDialog = adbDeleteOffer.create();
         deleteOfferAlertDialog.show();
         setDeleteOfferDialogStyle(deleteOfferAlertDialog);
-    }
-
-    private void deleteOffer(int position) {
-        offers.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount());
     }
 
     private void setDeleteOfferDialogStyle(AlertDialog alert) {

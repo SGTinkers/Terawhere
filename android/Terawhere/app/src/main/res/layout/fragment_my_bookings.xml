@@ -24,7 +24,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/no_bookings_available"
-        android:background="#efefef"
         android:visibility="gone"/>
 
 </android.support.design.widget.CoordinatorLayout>
