@@ -32,10 +32,10 @@ import tech.msociety.terawhere.utils.DateUtils;
 public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
     private static final String LESS_DETAILS = "\u2014 LESS DETAILS";
     private static final String MORE_DETAILS = "+ MORE DETAILS";
-    private static final String DELETE_OFFER = "Delete Offer?";
-    private static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER = "Are you sure you want to delete your offer?";
-    private static final String CANCEL = "Cancel";
-    private static final String DELETE = "Delete";
+    private static final String DELETE_OFFER_TITLE = "Confirm Cancel Offer?";
+    private static final String DELETE_OFFER_INFO = "The passengers will be informed of your cancellation";
+    private static final String CANCEL = "Keep";
+    private static final String DELETE = "Confirm";
     private static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
     private static final String CONFIRM = "Confirm";
     private static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
@@ -231,11 +231,11 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     }
 
     private void setAdbDeleteOfferMessage(AlertDialog.Builder adbDeleteOffer) {
-        adbDeleteOffer.setMessage(ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER);
+        adbDeleteOffer.setMessage(DELETE_OFFER_INFO);
     }
 
     private void setAdbDeleteOfferTitle(AlertDialog.Builder adbDeleteOffer) {
-        adbDeleteOffer.setTitle(DELETE_OFFER);
+        adbDeleteOffer.setTitle(DELETE_OFFER_TITLE);
     }
 
     private void setAdbDeleteOfferStyle(AlertDialog.Builder adbDeleteOffer) {
