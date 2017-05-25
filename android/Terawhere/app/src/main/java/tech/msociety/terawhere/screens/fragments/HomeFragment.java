@@ -236,8 +236,10 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 ArrayList<String> items = new ArrayList<>();
                 final ArrayList<Offer> offers = new ArrayList<>();
                 for (ClusterMarkerLocation clusterMarkerLocation : cluster.getItems()) {
-                    items.add(clusterMarkerLocation.getOffer().getEndTerawhereLocation().getName());
-                    offers.add(clusterMarkerLocation.getOffer());
+                    Offer offer = clusterMarkerLocation.getOffer();
+                    String time = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
+                    items.add(time + " to " + offer.getEndTerawhereLocation().getName());
+                    offers.add(offer);
                 }
                 new AlertDialog.Builder(getActivity())
                         .setTitle(offers.size() + " Destinations")
