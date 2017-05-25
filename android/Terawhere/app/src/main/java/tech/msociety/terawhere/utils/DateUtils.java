@@ -12,7 +12,7 @@ public class DateUtils {
     public static final String MYSQL_DATE_FORMAT = "yyyy-MM-dd";
     public static final String MYSQL_TIME_FORMAT = "HH:mm:ss";
     public static final String FRIENDLY_DATE_FORMAT = "dd MMM yyyy";
-    public static final String FRIENDLY_TIME_FORMAT = "KK:mm a";
+    public static final String FRIENDLY_TIME_FORMAT = "HH:mm a";
     public static final String FRIENDLY_DATE_TIME_FORMAT = "dd MMM yyyy, KK:mm:ss a";
     public static final String DAY_OF_MONTH_FORMAT = "dd";
     public static final String MONTH_ABBREVIATED_FORMAT = "MMMM";
