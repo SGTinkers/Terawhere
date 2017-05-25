@@ -243,12 +243,18 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     }
                                 });
                                 successDialog.show();
+                            } else {
+                                try {
+                                    TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(CreateOfferActivity.this, response);
+                                } catch (IOException e) {
+                                    onFailure(call, e);
+                                }
                             }
                         }
     
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-                            Log.e(TAG, "onFailure: ", t);
+                            TerawhereBackendServer.ErrorDatum.ToastUnknownError(CreateOfferActivity.this, t);
                         }
                     });
                 } else {
