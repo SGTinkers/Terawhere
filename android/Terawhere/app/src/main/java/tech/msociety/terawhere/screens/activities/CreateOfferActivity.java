@@ -32,8 +32,6 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -58,19 +56,11 @@ public class CreateOfferActivity extends ToolbarActivity {
     public static final String SELECT_TIME = "Select Time";
     private boolean isEditOffer = false;
     private boolean isCreateOffer = false;
-    private Place selectedStartPlace;
-    private Place selectedEndPlace;
-    private int offerId;
-    private double startLatitude;
-    private double endLatitude;
-    private double startLongitude;
-    private double endLongitude;
-    private String startLocationName;
-    private String endLocationName;
-    private String startLocationAddress;
-    private String endLocationAddress;
-    private double latitude;
-    private double longitude;
+    private Location currentLocation;
+    private Place placeStart;
+    private Place placeEnd;
+    private Offer offer = null;
+    
     private Button buttonCreateOffer;
     private TextInputEditText textInputEditTextVehicleColor;
     private TextInputEditText textInputEditTextEndLocation;
@@ -118,10 +108,8 @@ public class CreateOfferActivity extends ToolbarActivity {
         }
         
         if (isEditOffer) {
-            Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
+            offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
-            
-            offerId = offer.getOfferId();
             buttonCreateOffer.setText(R.string.create_offer_activity_button_text);
         } else if (isCreateOffer) {
             Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
@@ -132,25 +120,19 @@ public class CreateOfferActivity extends ToolbarActivity {
     }
     
     private void unloadOfferIntoUi(Offer offer) {
-        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
-        textInputEditTextRemarks.setText(offer.getRemarks());
-        textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
-        textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
-        textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
-        textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
-        textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
-        startLatitude = offer.getStartTerawhereLocation().getLatitude();
-        endLatitude = offer.getEndTerawhereLocation().getLatitude();
-        startLongitude = offer.getStartTerawhereLocation().getLongitude();
-        endLongitude = offer.getEndTerawhereLocation().getLongitude();
-        startLocationName = offer.getStartTerawhereLocation().getName();
-        endLocationName = offer.getEndTerawhereLocation().getName();
-        startLocationAddress = offer.getStartTerawhereLocation().getAddress();
-        endLocationAddress = offer.getEndTerawhereLocation().getAddress();
-        
-        final Date meetupTime = offer.getMeetupTime();
+        Date meetupTime = offer.getMeetupTime();
         textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
         setMeetUpTimeEditTextListener(meetupTime);
+        
+        textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
+        textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
+        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
+    
+        textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
+        textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
+        textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
+    
+        textInputEditTextRemarks.setText(offer.getRemarks());
     }
     
     private void initViewHandles() {
@@ -181,61 +163,35 @@ public class CreateOfferActivity extends ToolbarActivity {
         });
     
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
+            private OfferRequestBody getOfferRequestBodyFromUi() {
+                return new OfferRequestBody(
+                        textInputEditTextMeetUpTime.getText().toString(),
+                        placeStart.getName().toString(),
+                        placeStart.getAddress().toString(),
+                        placeStart.getLatLng().latitude,
+                        placeStart.getLatLng().longitude,
+                        placeEnd.getName().toString(),
+                        placeEnd.getAddress().toString(),
+                        placeEnd.getLatLng().latitude,
+                        placeEnd.getLatLng().longitude,
+                        Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
+                        textInputEditTextRemarks.getText().toString(),
+                        textInputEditTextVehiclePlateNumber.getText().toString(),
+                        textInputEditTextVehicleColor.getText().toString(),
+                        textInputEditTextVehicleModel.getText().toString()
+                );
+            }
+            
             @Override
             public void onClick(View v) {
                 if (areNotAllFieldsFilled()) {
                     Toast.makeText(CreateOfferActivity.this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+    
+                OfferRequestBody offerRequestBody = getOfferRequestBodyFromUi();
                 
                 if (isCreateOffer) {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String timeString = textInputEditTextMeetUpTime.getText().toString();
-                    
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(timeString);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetupTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
-                    String startName, endName, startAddress, endAddress;
-    
-                    if (selectedStartPlace == null) {
-                        startName = startLocationName;
-                        startAddress = startLocationAddress;
-                    } else {
-                        startName = getPlaceName(selectedStartPlace);
-                        startAddress = getPlaceAddress(selectedStartPlace);
-                    }
-                    if (selectedEndPlace == null) {
-                        endName = endLocationName;
-                        endAddress = endLocationAddress;
-    
-                    } else {
-                        endName = getPlaceName(selectedEndPlace);
-                        endAddress = getPlaceAddress(selectedEndPlace);
-    
-                    }
-    
-                    OfferRequestBody offerRequestBody =
-                            new OfferRequestBody(
-                                    meetupTime,
-                                    startName,
-                                    startAddress,
-                                    getStartLatitude(selectedStartPlace),
-                                    getStartLongitude(selectedStartPlace),
-                                    endName,
-                                    endAddress,
-                                    getEndLatitude(selectedEndPlace),
-                                    getEndLongitude(selectedEndPlace),
-                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                                    textInputEditTextRemarks.getText().toString(),
-                                    textInputEditTextVehiclePlateNumber.getText().toString(),
-                                    textInputEditTextVehicleColor.getText().toString(),
-                                    textInputEditTextVehicleModel.getText().toString());
-                    
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
@@ -268,60 +224,11 @@ public class CreateOfferActivity extends ToolbarActivity {
     
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-        
+                            Log.e(TAG, "onFailure: ", t);
                         }
                     });
                 } else if (isEditOffer) {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String time = textInputEditTextMeetUpTime.getText().toString();
-    
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
-                    
-                    String startName, endName, startAddress, endAddress;
-    
-                    if (selectedStartPlace == null) {
-                        startName = startLocationName;
-                        startAddress = startLocationAddress;
-                    } else {
-                        startName = getPlaceName(selectedStartPlace);
-                        startAddress = getPlaceAddress(selectedStartPlace);
-        
-                    }
-                    if (selectedEndPlace == null) {
-                        endName = endLocationName;
-                        endAddress = endLocationAddress;
-    
-                    } else {
-                        endName = getPlaceName(selectedEndPlace);
-                        endAddress = getPlaceAddress(selectedEndPlace);
-    
-                    }
-    
-                    OfferRequestBody offerRequestBody =
-                            new OfferRequestBody(
-                                    meetUpTime,
-                                    startName,
-                                    startAddress,
-                                    getStartLatitude(selectedStartPlace),
-                                    getStartLongitude(selectedStartPlace),
-                                    endName,
-                                    endAddress,
-                                    getEndLatitude(selectedEndPlace),
-                                    getEndLongitude(selectedEndPlace),
-                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                                    textInputEditTextRemarks.getText().toString(),
-                                    textInputEditTextVehiclePlateNumber.getText().toString(),
-                                    textInputEditTextVehicleColor.getText().toString(),
-                                    textInputEditTextVehicleModel.getText().toString());
-                    
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offerRequestBody);
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offer.getOfferId(), offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
@@ -357,34 +264,6 @@ public class CreateOfferActivity extends ToolbarActivity {
                         }
                     });
                 } else {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String time = textInputEditTextMeetUpTime.getText().toString();
-    
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
-                    OfferRequestBody offerRequestBody =
-                            new OfferRequestBody(
-                                    meetUpTime,
-                                    getPlaceName(selectedStartPlace),
-                                    selectedStartPlace.getAddress().toString(),
-                                    selectedStartPlace.getLatLng().latitude,
-                                    selectedStartPlace.getLatLng().longitude,
-                                    getPlaceName(selectedEndPlace),
-                                    selectedEndPlace.getAddress().toString(),
-                                    selectedEndPlace.getLatLng().latitude,
-                                    selectedEndPlace.getLatLng().longitude,
-                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                                    textInputEditTextRemarks.getText().toString(),
-                                    textInputEditTextVehiclePlateNumber.getText().toString(),
-                                    textInputEditTextVehicleColor.getText().toString(),
-                                    textInputEditTextVehicleModel.getText().toString());
-                    
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
@@ -418,22 +297,12 @@ public class CreateOfferActivity extends ToolbarActivity {
     
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-        
+                            Log.e(TAG, "onFailure: ", t);
                         }
                     });
                 }
-
-//                if (isEditOffer) {
-//                    Calendar calendar = Calendar.getInstance();
-//                    calendar.setTime(DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString()));
-//                    String meetupTime = DateUtils.toString(calendar.getTime(), DateUtils.MYSQL_DATE_TIME_FORMAT);
-//                }
             }
         });
-    }
-    
-    private void temp() {
-        
     }
     
     private void setMeetUpTimeEditTextListener(Date meetupTime) {
@@ -466,13 +335,8 @@ public class CreateOfferActivity extends ToolbarActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
-        
-        Location location = ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        
-        if (location != null) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-        }
+    
+        currentLocation = ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
     
     private boolean areNotAllFieldsFilled() {
@@ -480,8 +344,8 @@ public class CreateOfferActivity extends ToolbarActivity {
     }
     
     private void callStartPlaceAutocompleteActivityIntent() {
-        LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
-        LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
+        LatLng minimumBound = new LatLng(currentLocation.getLatitude() - OFFSET_LATITUDE, currentLocation.getLongitude() - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(currentLocation.getLatitude() + OFFSET_LATITUDE, currentLocation.getLongitude() + OFFSET_LONGITUDE);
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
         try {
             AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
@@ -499,8 +363,8 @@ public class CreateOfferActivity extends ToolbarActivity {
     }
     
     private void callEndPlaceAutocompleteActivityIntent() {
-        LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
-        LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
+        LatLng minimumBound = new LatLng(currentLocation.getLatitude() - OFFSET_LATITUDE, currentLocation.getLongitude() - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(currentLocation.getLatitude() + OFFSET_LATITUDE, currentLocation.getLongitude() + OFFSET_LONGITUDE);
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
         try {
             AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
@@ -531,11 +395,11 @@ public class CreateOfferActivity extends ToolbarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(this, data);
-            selectedStartPlace = place;
+            placeStart = place;
             textInputEditTextStartLocation.setText(getPlaceName(place));
         } else if (requestCode == 2 && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(this, data);
-            selectedEndPlace = place;
+            placeEnd = place;
             textInputEditTextEndLocation.setText(getPlaceName(place));
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -544,41 +408,5 @@ public class CreateOfferActivity extends ToolbarActivity {
     
     private String getPlaceName(Place place) {
         return place == null ? null : place.getName().toString();
-    }
-    
-    private String getPlaceAddress(Place place) {
-        return place == null ? null : place.getAddress().toString();
-    }
-    
-    private double getStartLatitude(Place place) {
-        if (place == null) {
-            return startLatitude;
-        } else {
-            return selectedStartPlace.getLatLng().latitude;
-        }
-    }
-    
-    private double getEndLatitude(Place place) {
-        if (place == null) {
-            return endLatitude;
-        } else {
-            return selectedEndPlace.getLatLng().latitude;
-        }
-    }
-    
-    private double getStartLongitude(Place place) {
-        if (place == null) {
-            return startLongitude;
-        } else {
-            return selectedStartPlace.getLatLng().longitude;
-        }
-    }
-    
-    private double getEndLongitude(Place place) {
-        if (place == null) {
-            return endLongitude;
-        } else {
-            return selectedEndPlace.getLatLng().longitude;
-        }
     }
 }
