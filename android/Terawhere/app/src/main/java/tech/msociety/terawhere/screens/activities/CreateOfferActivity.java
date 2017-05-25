@@ -60,7 +60,7 @@ public class CreateOfferActivity extends ToolbarActivity {
     private boolean isCreateOffer = false;
     private Place selectedStartPlace;
     private Place selectedEndPlace;
-    private int offerId;
+    private Offer offer;
     private double startLatitude;
     private double endLatitude;
     private double startLongitude;
@@ -118,10 +118,8 @@ public class CreateOfferActivity extends ToolbarActivity {
         }
         
         if (isEditOffer) {
-            Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
+            offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
-            
-            offerId = offer.getOfferId();
             buttonCreateOffer.setText(R.string.create_offer_activity_button_text);
         } else if (isCreateOffer) {
             Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
@@ -147,8 +145,8 @@ public class CreateOfferActivity extends ToolbarActivity {
         endLocationName = offer.getEndTerawhereLocation().getName();
         startLocationAddress = offer.getStartTerawhereLocation().getAddress();
         endLocationAddress = offer.getEndTerawhereLocation().getAddress();
-        
-        final Date meetupTime = offer.getMeetupTime();
+    
+        Date meetupTime = offer.getMeetupTime();
         textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
         setMeetUpTimeEditTextListener(meetupTime);
     }
@@ -320,8 +318,8 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     textInputEditTextVehiclePlateNumber.getText().toString(),
                                     textInputEditTextVehicleColor.getText().toString(),
                                     textInputEditTextVehicleModel.getText().toString());
-                    
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offerRequestBody);
+    
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offer.getOfferId(), offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
@@ -422,18 +420,8 @@ public class CreateOfferActivity extends ToolbarActivity {
                         }
                     });
                 }
-
-//                if (isEditOffer) {
-//                    Calendar calendar = Calendar.getInstance();
-//                    calendar.setTime(DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString()));
-//                    String meetupTime = DateUtils.toString(calendar.getTime(), DateUtils.MYSQL_DATE_TIME_FORMAT);
-//                }
             }
         });
-    }
-    
-    private void temp() {
-        
     }
     
     private void setMeetUpTimeEditTextListener(Date meetupTime) {
