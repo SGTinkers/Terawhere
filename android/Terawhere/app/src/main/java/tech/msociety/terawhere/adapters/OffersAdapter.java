@@ -8,8 +8,6 @@ import android.net.Uri;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,27 +24,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.models.Offer;
-import tech.msociety.terawhere.models.TerawhereLocation;
-import tech.msociety.terawhere.models.Vehicle;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.CreateOfferActivity;
 import tech.msociety.terawhere.utils.DateUtils;
 
 public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
-    private static final String DESTINATION = "Destination: ";
-    private static final String MEETING_POINT = "Meeting Point: ";
-    private static final String PICK_UP_TIME = "Pick Up Time: ";
-    private static final String REMARKS = "Remarks: ";
     private static final String LESS_DETAILS = "\u2014 LESS DETAILS";
     private static final String MORE_DETAILS = "+ MORE DETAILS";
-    private static final String START_TERAWHERE_LOCATION = "startTerawhereLocation";
-    private static final String END_TERAWHERE_LOCATION = "endTerawhereLocation";
-    private static final String VEHICLE = "vehicle";
-    private static final String ID = "id";
-    private static final String DRIVER_ID = "driverId";
-    private static final String MEET_UP_TIME = "meetUpTime";
-    private static final String DRIVER_REMARKS = "driverRemarks";
-    private static final String SEATS_AVAILABLE = "seatsAvailable";
     private static final String DELETE_OFFER = "Delete Offer?";
     private static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_OFFER = "Are you sure you want to delete your offer?";
     private static final String CANCEL = "Cancel";
@@ -54,8 +38,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     private static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
     private static final String CONFIRM = "Confirm";
     private static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
-    public static final String SEATS_OFFERED = "Seats Offered: ";
-    public static final String SEATS_LEFT = "Seats Left: ";
     
     private Context context;
     
@@ -143,10 +125,6 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         setDeleteOfferButtonListener(viewHolder, position);
     }
     
-    private Spanned setTextBold(String title, String text) {
-        return Html.fromHtml(title + "<b>" + text + "</b>");
-    }
-    
     private boolean[] isCollapse(ViewHolder viewHolder, Offer offer) {
         return new boolean[]{
                 viewHolder.textViewEndLocationAddress.getVisibility() == View.GONE,
@@ -206,29 +184,9 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         viewHolder.textViewEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TerawhereLocation startTerawhereLocation = new TerawhereLocation(
-                        offer.getStartTerawhereLocation().getName(),
-                        offer.getStartTerawhereLocation().getAddress(),
-                        offer.getStartTerawhereLocation().getLatitude(),
-                        offer.getStartTerawhereLocation().getLongitude(),
-                        offer.getStartTerawhereLocation().getGeohash());
-    
-                TerawhereLocation endTerawhereLocation = new TerawhereLocation(
-                        offer.getEndTerawhereLocation().getName(),
-                        offer.getEndTerawhereLocation().getAddress(),
-                        offer.getEndTerawhereLocation().getLatitude(),
-                        offer.getEndTerawhereLocation().getLongitude(),
-                        offer.getEndTerawhereLocation().getGeohash());
-    
-                Vehicle vehicle = new Vehicle(
-                        offer.getVehicle().getPlateNumber(),
-                        offer.getVehicle().getDescription(),
-                        offer.getVehicle().getModel());
-    
-                Intent intent = new Intent(new Intent(viewGroup.getContext(), CreateOfferActivity.class));
-                intent.putExtra(CreateOfferActivity.INTENT_IS_EDIT, true);
-                intent.putExtra(CreateOfferActivity.INTENT_OFFER, offer);
-                viewGroup.getContext().startActivity(intent);
+                Context context = viewGroup.getContext();
+                Intent intent = CreateOfferActivity.getIntentToStartInEditMode(context, offer);
+                context.startActivity(intent);
             }
         });
     }

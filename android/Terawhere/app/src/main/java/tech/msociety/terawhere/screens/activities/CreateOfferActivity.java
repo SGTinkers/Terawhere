@@ -18,7 +18,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -49,10 +48,10 @@ import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.abstracts.ToolbarActivity;
 import tech.msociety.terawhere.utils.DateUtils;
 
-public class CreateOfferActivity extends ToolbarActivity implements View.OnClickListener {
-    public static final String INTENT_OFFER = "intentOffer";
-    public static final String INTENT_IS_EDIT = "isEdit";
-    public static final String INTENT_IS_CREATE = "isCreate";
+public class CreateOfferActivity extends ToolbarActivity {
+    public static final String INTENT_OFFER = "INTENT_OFFER";
+    public static final String INTENT_IS_EDIT = "INTENT_IS_EDIT";
+    public static final String INTENT_IS_CREATE = "INTENT_IS_CREATE";
     private static final String TOOLBAR_TITLE = "Create Offer";
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
@@ -81,6 +80,26 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     private TextInputEditText textInputEditTextVehicleModel;
     private TextInputEditText textInputEditTextMeetUpTime;
     private TextInputEditText textInputEditTextStartLocation;
+    
+    public static Intent getIntentToStartInCreateMode(Context sourceContext) {
+        Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
+        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
+        return intent;
+    }
+    
+    public static Intent getIntentToStartInCreateModePrepopulated(Context sourceContext, Offer referenceOffer) {
+        Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
+        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
+        intent.putExtra(CreateOfferActivity.INTENT_OFFER, referenceOffer);
+        return intent;
+    }
+    
+    public static Intent getIntentToStartInEditMode(Context sourceContext, Offer offerToBeEdited) {
+        Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
+        intent.putExtra(CreateOfferActivity.INTENT_IS_EDIT, true);
+        intent.putExtra(CreateOfferActivity.INTENT_OFFER, offerToBeEdited);
+        return intent;
+    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,20 +155,285 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     
     private void initViewHandles() {
         buttonCreateOffer = (Button) findViewById(R.id.button_create_offer);
-        textInputEditTextMeetUpTime = (TextInputEditText) findViewById(R.id.edit_text_meet_up_time);
-        textInputEditTextStartLocation = (TextInputEditText) findViewById(R.id.edit_text_start_location);
-        textInputEditTextEndLocation = (TextInputEditText) findViewById(R.id.edit_text_end_location);
-        textInputEditTextSeatsAvailable = (TextInputEditText) findViewById(R.id.edit_text_seats_available);
-        textInputEditTextRemarks = (TextInputEditText) findViewById(R.id.edit_text_remarks);
-        textInputEditTextVehicleModel = (TextInputEditText) findViewById(R.id.edit_text_vehicle_model);
-        textInputEditTextVehiclePlateNumber = (TextInputEditText) findViewById(R.id.edit_text_vehicle_number);
+        textInputEditTextMeetUpTime = (TextInputEditText) findViewById(R.id.text_input_edit_text_meetup_time);
+        textInputEditTextStartLocation = (TextInputEditText) findViewById(R.id.text_input_edit_text_start_location);
+        textInputEditTextEndLocation = (TextInputEditText) findViewById(R.id.text_input_edit_text_end_location);
+        textInputEditTextSeatsAvailable = (TextInputEditText) findViewById(R.id.text_input_edit_text_seats_available);
+        textInputEditTextRemarks = (TextInputEditText) findViewById(R.id.text_input_edit_text_remarks);
+        textInputEditTextVehicleModel = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_model);
+        textInputEditTextVehiclePlateNumber = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_number);
         textInputEditTextVehicleColor = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_color);
     }
     
     private void setClickListeners() {
-        textInputEditTextStartLocation.setOnClickListener(this);
-        textInputEditTextEndLocation.setOnClickListener(this);
-        buttonCreateOffer.setOnClickListener(this);
+        textInputEditTextStartLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callStartPlaceAutocompleteActivityIntent();
+            }
+        });
+    
+        textInputEditTextEndLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callEndPlaceAutocompleteActivityIntent();
+            }
+        });
+    
+        buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (areNotAllFieldsFilled()) {
+                    Toast.makeText(CreateOfferActivity.this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                if (isCreateOffer) {
+                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
+                    String timeString = textInputEditTextMeetUpTime.getText().toString();
+                    
+                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+                    Date date = null;
+                    try {
+                        date = sdf.parse(timeString);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String meetupTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
+                    String startName, endName, startAddress, endAddress;
+    
+                    if (selectedStartPlace == null) {
+                        startName = startLocationName;
+                        startAddress = startLocationAddress;
+                    } else {
+                        startName = getPlaceName(selectedStartPlace);
+                        startAddress = getPlaceAddress(selectedStartPlace);
+                    }
+                    if (selectedEndPlace == null) {
+                        endName = endLocationName;
+                        endAddress = endLocationAddress;
+    
+                    } else {
+                        endName = getPlaceName(selectedEndPlace);
+                        endAddress = getPlaceAddress(selectedEndPlace);
+    
+                    }
+    
+                    OfferRequestBody offerRequestBody =
+                            new OfferRequestBody(
+                                    meetupTime,
+                                    startName,
+                                    startAddress,
+                                    getStartLatitude(selectedStartPlace),
+                                    getStartLongitude(selectedStartPlace),
+                                    endName,
+                                    endAddress,
+                                    getEndLatitude(selectedEndPlace),
+                                    getEndLongitude(selectedEndPlace),
+                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
+                                    textInputEditTextRemarks.getText().toString(),
+                                    textInputEditTextVehiclePlateNumber.getText().toString(),
+                                    textInputEditTextVehicleColor.getText().toString(),
+                                    textInputEditTextVehicleModel.getText().toString());
+                    
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
+                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                successDialog.setContentView(R.layout.dialog_offer_successful);
+                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                successDialog.setCanceledOnTouchOutside(false);
+                                successDialog.setCancelable(false);
+    
+                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
+                                dialogInfo.setText("Your offer has been successfully created");
+                                okButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        successDialog.dismiss();
+    
+                                        Intent resultIntent = new Intent();
+                                        resultIntent.putExtra("FirstTab", 4);
+                                        setResult(RESULT_OK, resultIntent);
+                                        finish();
+                                    }
+                                });
+                                successDialog.show();
+                            }
+                        }
+    
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+        
+                        }
+                    });
+                } else if (isEditOffer) {
+                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
+                    String time = textInputEditTextMeetUpTime.getText().toString();
+    
+                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+                    Date date = null;
+                    try {
+                        date = sdf.parse(time);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
+                    
+                    String startName, endName, startAddress, endAddress;
+    
+                    if (selectedStartPlace == null) {
+                        startName = startLocationName;
+                        startAddress = startLocationAddress;
+                    } else {
+                        startName = getPlaceName(selectedStartPlace);
+                        startAddress = getPlaceAddress(selectedStartPlace);
+        
+                    }
+                    if (selectedEndPlace == null) {
+                        endName = endLocationName;
+                        endAddress = endLocationAddress;
+    
+                    } else {
+                        endName = getPlaceName(selectedEndPlace);
+                        endAddress = getPlaceAddress(selectedEndPlace);
+    
+                    }
+    
+                    OfferRequestBody offerRequestBody =
+                            new OfferRequestBody(
+                                    meetUpTime,
+                                    startName,
+                                    startAddress,
+                                    getStartLatitude(selectedStartPlace),
+                                    getStartLongitude(selectedStartPlace),
+                                    endName,
+                                    endAddress,
+                                    getEndLatitude(selectedEndPlace),
+                                    getEndLongitude(selectedEndPlace),
+                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
+                                    textInputEditTextRemarks.getText().toString(),
+                                    textInputEditTextVehiclePlateNumber.getText().toString(),
+                                    textInputEditTextVehicleColor.getText().toString(),
+                                    textInputEditTextVehicleModel.getText().toString());
+                    
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offerRequestBody);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                Log.i("EDIT_MESSAGE", ": " + response.message());
+                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
+                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                successDialog.setContentView(R.layout.dialog_offer_successful);
+                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                successDialog.setCanceledOnTouchOutside(false);
+                                successDialog.setCancelable(false);
+                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
+                                dialogInfo.setText("Your offer has been successfully updated");
+                                okButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        successDialog.dismiss();
+    
+                                        Intent resultIntent = new Intent();
+                                        resultIntent.putExtra("FirstTab", 4);
+                                        setResult(RESULT_OK, resultIntent);
+                                        finish();
+                                    }
+                                });
+                                successDialog.show();
+                            }
+                        }
+    
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Log.e(TAG, "onFailure: ", t);
+                        }
+                    });
+                } else {
+                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
+                    String time = textInputEditTextMeetUpTime.getText().toString();
+    
+                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+                    Date date = null;
+                    try {
+                        date = sdf.parse(time);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
+                    OfferRequestBody offerRequestBody =
+                            new OfferRequestBody(
+                                    meetUpTime,
+                                    getPlaceName(selectedStartPlace),
+                                    selectedStartPlace.getAddress().toString(),
+                                    selectedStartPlace.getLatLng().latitude,
+                                    selectedStartPlace.getLatLng().longitude,
+                                    getPlaceName(selectedEndPlace),
+                                    selectedEndPlace.getAddress().toString(),
+                                    selectedEndPlace.getLatLng().latitude,
+                                    selectedEndPlace.getLatLng().longitude,
+                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
+                                    textInputEditTextRemarks.getText().toString(),
+                                    textInputEditTextVehiclePlateNumber.getText().toString(),
+                                    textInputEditTextVehicleColor.getText().toString(),
+                                    textInputEditTextVehicleModel.getText().toString());
+                    
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+    
+                            if (response.isSuccessful()) {
+                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
+                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                successDialog.setContentView(R.layout.dialog_offer_successful);
+                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                successDialog.setCanceledOnTouchOutside(false);
+                                successDialog.setCancelable(false);
+        
+                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
+                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
+                                dialogInfo.setText("Your offer has been successfully created");
+                                okButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        successDialog.dismiss();
+    
+                                        Intent resultIntent = new Intent();
+                                        resultIntent.putExtra("FirstTab", 4);
+                                        setResult(RESULT_OK, resultIntent);
+                                        finish();
+                                    }
+                                });
+                                successDialog.show();
+                            }
+                        }
+    
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+        
+                        }
+                    });
+                }
+
+//                if (isEditOffer) {
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.setTime(DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString()));
+//                    String meetupTime = DateUtils.toString(calendar.getTime(), DateUtils.MYSQL_DATE_TIME_FORMAT);
+//                }
+            }
+        });
+    }
+    
+    private void temp() {
+        
     }
     
     private void setMeetUpTimeEditTextListener(Date meetupTime) {
@@ -188,250 +472,6 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
         if (location != null) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
-        }
-    }
-    
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.linearLayout) {
-            if (view != null) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        }
-        
-        if (view.getId() == R.id.edit_text_start_location || view.getId() == R.id.text_input_layout_start_location) {
-            callStartPlaceAutocompleteActivityIntent();
-        } else if (view.getId() == R.id.edit_text_end_location || view.getId() == R.id.text_input_layout_end_location) {
-            callEndPlaceAutocompleteActivityIntent();
-        } else if (view.getId() == R.id.button_create_offer) {
-            if (areNotAllFieldsFilled() || !textInputEditTextVehiclePlateNumber.getText().toString().matches("^[a-zA-Z0-9]*$")) {
-                Toast.makeText(CreateOfferActivity.this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
-            } else {
-                if (isCreateOffer) {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String timeString = textInputEditTextMeetUpTime.getText().toString();
-                    
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(timeString);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetupTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
-                    String startName, endName, startAddress, endAddress;
-    
-                    if (selectedStartPlace == null) {
-                        startName = startLocationName;
-                        startAddress = startLocationAddress;
-                    } else {
-                        startName = getPlaceName(selectedStartPlace);
-                        startAddress = getPlaceAddress(selectedStartPlace);
-                    }
-                    if (selectedEndPlace == null) {
-                        endName = endLocationName;
-                        endAddress = endLocationAddress;
-    
-                    } else {
-                        endName = getPlaceName(selectedEndPlace);
-                        endAddress = getPlaceAddress(selectedEndPlace);
-    
-                    }
-    
-                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetupTime,
-                            startName,
-                            startAddress,
-                            getStartLatitude(selectedStartPlace),
-                            getStartLongitude(selectedStartPlace),
-                            endName,
-                            endAddress,
-                            getEndLatitude(selectedEndPlace),
-                            getEndLongitude(selectedEndPlace),
-                            Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                            textInputEditTextRemarks.getText().toString(),
-                            textInputEditTextVehiclePlateNumber.getText().toString(),
-                            textInputEditTextVehicleColor.getText().toString(),
-                            textInputEditTextVehicleModel.getText().toString());
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
-                    call.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if (response.isSuccessful()) {
-                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
-                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                successDialog.setContentView(R.layout.dialog_offer_successful);
-                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                successDialog.setCanceledOnTouchOutside(false);
-                                successDialog.setCancelable(false);
-    
-                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
-                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
-                                dialogInfo.setText("Your offer has been successfully created");
-                                okButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        successDialog.dismiss();
-    
-                                        Intent resultIntent = new Intent();
-                                        resultIntent.putExtra("FirstTab", 4);
-                                        setResult(RESULT_OK, resultIntent);
-                                        finish();
-                                    }
-                                });
-                                successDialog.show();
-                            }
-                        }
-    
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-        
-                        }
-                    });
-    
-                } else if (isEditOffer) {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String time = textInputEditTextMeetUpTime.getText().toString();
-    
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
-                    
-                    String startName, endName, startAddress, endAddress;
-    
-                    if (selectedStartPlace == null) {
-                        startName = startLocationName;
-                        startAddress = startLocationAddress;
-                    } else {
-                        startName = getPlaceName(selectedStartPlace);
-                        startAddress = getPlaceAddress(selectedStartPlace);
-        
-                    }
-                    if (selectedEndPlace == null) {
-                        endName = endLocationName;
-                        endAddress = endLocationAddress;
-    
-                    } else {
-                        endName = getPlaceName(selectedEndPlace);
-                        endAddress = getPlaceAddress(selectedEndPlace);
-    
-                    }
-    
-                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime,
-                            startName,
-                            startAddress,
-                            getStartLatitude(selectedStartPlace),
-                            getStartLongitude(selectedStartPlace),
-                            endName,
-                            endAddress,
-                            getEndLatitude(selectedEndPlace),
-                            getEndLongitude(selectedEndPlace),
-                            Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                            textInputEditTextRemarks.getText().toString(),
-                            textInputEditTextVehiclePlateNumber.getText().toString(),
-                            textInputEditTextVehicleColor.getText().toString(),
-                            textInputEditTextVehicleModel.getText().toString());
-    
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offerRequestBody);
-                    call.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-    
-                            if (response.isSuccessful()) {
-                                Log.i("EDIT_MESSAGE", ": " + response.message());
-                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
-                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                successDialog.setContentView(R.layout.dialog_offer_successful);
-                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                successDialog.setCanceledOnTouchOutside(false);
-                                successDialog.setCancelable(false);
-                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
-                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
-                                dialogInfo.setText("Your offer has been successfully updated");
-        
-                                okButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        successDialog.dismiss();
-    
-                                        Intent resultIntent = new Intent();
-                                        resultIntent.putExtra("FirstTab", 4);
-                                        setResult(RESULT_OK, resultIntent);
-                                        finish();
-                                    }
-                                });
-                                successDialog.show();
-        
-                            }
-                        }
-    
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Log.e(TAG, "onFailure: ", t);
-                        }
-                    });
-                } else {
-                    String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
-                    String time = textInputEditTextMeetUpTime.getText().toString();
-    
-                    final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                    Date date = null;
-                    try {
-                        date = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    String meetUpTime = dateString + " " + DateUtils.toString(date, DateUtils.MYSQL_TIME_FORMAT);
-                    OfferRequestBody offerRequestBody = new OfferRequestBody(meetUpTime, getPlaceName(selectedStartPlace),
-                            selectedStartPlace.getAddress().toString(), selectedStartPlace.getLatLng().latitude,
-                            selectedStartPlace.getLatLng().longitude, getPlaceName(selectedEndPlace), selectedEndPlace.getAddress().toString(),
-                            selectedEndPlace.getLatLng().latitude, selectedEndPlace.getLatLng().longitude, Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                            textInputEditTextRemarks.getText().toString(), textInputEditTextVehiclePlateNumber.getText().toString(),
-                            textInputEditTextVehicleColor.getText().toString(), textInputEditTextVehicleModel.getText().toString());
-    
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
-                    call.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-    
-                            if (response.isSuccessful()) {
-                                final Dialog successDialog = new Dialog(CreateOfferActivity.this);
-                                successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                successDialog.setContentView(R.layout.dialog_offer_successful);
-                                successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                successDialog.setCanceledOnTouchOutside(false);
-                                successDialog.setCancelable(false);
-        
-                                Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
-                                TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
-                                dialogInfo.setText("Your offer has been successfully created");
-                                okButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        successDialog.dismiss();
-    
-                                        Intent resultIntent = new Intent();
-                                        resultIntent.putExtra("FirstTab", 4);
-                                        setResult(RESULT_OK, resultIntent);
-                                        finish();
-                                    }
-                                });
-                                successDialog.show();
-                            }
-                        }
-    
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-        
-                        }
-                    });
-                }
-            }
         }
     }
     
@@ -503,19 +543,11 @@ public class CreateOfferActivity extends ToolbarActivity implements View.OnClick
     }
     
     private String getPlaceName(Place place) {
-        String name = null;
-        if (place != null) {
-            name = place.getName().toString();
-        }
-        return name;
+        return place == null ? null : place.getName().toString();
     }
     
     private String getPlaceAddress(Place place) {
-        String address = null;
-        if (place != null) {
-            address = place.getAddress().toString();
-        }
-        return address;
+        return place == null ? null : place.getAddress().toString();
     }
     
     private double getStartLatitude(Place place) {

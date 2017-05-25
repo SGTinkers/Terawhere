@@ -93,9 +93,17 @@ public class DateUtils {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
         return simpleDateFormat.format(date);
     }
-
-    public static Date fromFriendlyTimeString(String timeString) throws ParseException {
-        return friendlyTimeFormatter.parse(timeString);
+    
+    public static Date fromFriendlyTimeString(String timeString) {
+        Date date = null;
+        
+        try {
+            date = friendlyTimeFormatter.parse(timeString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
+        return date;
     }
 
     public static String toFriendlyDateTimeString(Date date) {
