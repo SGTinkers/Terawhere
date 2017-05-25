@@ -32,6 +32,8 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -54,6 +56,7 @@ public class CreateOfferActivity extends ToolbarActivity {
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
     public static final String SELECT_TIME = "Select Time";
+    public static final String DELIMITER = " ";
     private boolean isEditOffer = false;
     private boolean isCreateOffer = false;
     private Location currentLocation;
@@ -73,7 +76,7 @@ public class CreateOfferActivity extends ToolbarActivity {
     
     public static Intent getIntentToStartInCreateMode(Context sourceContext) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
-        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
+        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, false);
         return intent;
     }
     
@@ -100,7 +103,7 @@ public class CreateOfferActivity extends ToolbarActivity {
         trackCurrentLocation();
         initViewHandles();
         setClickListeners();
-    
+        
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT);
@@ -154,14 +157,14 @@ public class CreateOfferActivity extends ToolbarActivity {
                 callStartPlaceAutocompleteActivityIntent();
             }
         });
-    
+        
         textInputEditTextEndLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callEndPlaceAutocompleteActivityIntent();
             }
         });
-    
+        
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
             private OfferRequestBody getOfferRequestBodyFromUi() {
                 return new OfferRequestBody(
@@ -185,7 +188,7 @@ public class CreateOfferActivity extends ToolbarActivity {
             @Override
             public void onClick(View v) {
                 if (areNotAllFieldsFilled()) {
-                    Toast.makeText(CreateOfferActivity.this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateOfferActivity.this, R.string.message_required_fields, Toast.LENGTH_SHORT).show();
                     return;
                 }
     
@@ -257,7 +260,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.show();
                             }
                         }
-    
+            
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             Log.e(TAG, "onFailure: ", t);
