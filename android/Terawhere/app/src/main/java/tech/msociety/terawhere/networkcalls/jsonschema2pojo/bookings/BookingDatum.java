@@ -33,7 +33,7 @@ public class BookingDatum {
     @SerializedName("offer")
     @Expose
     public OfferDatum offer;
-
+    
     @SerializedName("user")
     @Expose
     public UserDatum user;

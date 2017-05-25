@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardUseCompatPadding="true">
+                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="16dp"
+                                    card_view:cardCornerRadius="4dp"
+                                    card_view:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:id="@+id/relative_layout_item"
@@ -25,7 +25,7 @@
             android:layout_toEndOf="@+id/text_view_day"
             android:layout_alignTop="@+id/text_view_end_location_name_label"
             android:layout_above="@+id/text_view_view_more"
-            android:background="#979797" />
+            android:background="#979797"/>
 
         <ImageView
             android:id="@+id/text_view_day"
@@ -40,7 +40,7 @@
             android:textColor="#000000"
             android:textSize="48sp"
             android:src="@drawable/pin_location"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
 
         <TextView
@@ -52,7 +52,7 @@
             android:text="Passenger Name"
             android:textColor="#7e7b7b"
             android:textSize="10sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
         <TextView
             android:id="@+id/text_view_passenger_name"
@@ -64,7 +64,7 @@
             android:text="Moses"
             android:textColor="#000000"
             android:textSize="13sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
 
         <TextView
@@ -78,7 +78,7 @@
             android:text="Seats Booked"
             android:textColor="#7e7b7b"
             android:textSize="10sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
         <TextView
             android:id="@+id/text_view_seats_booked"
@@ -90,7 +90,7 @@
             android:text="2"
             android:textColor="#000000"
             android:textSize="13sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
 
     </RelativeLayout>

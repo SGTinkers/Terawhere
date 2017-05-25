@@ -55,7 +55,7 @@ public class BookingFactory {
             booking = new Booking(bookingDatum.id, bookingDatum.userId, bookingDatum.user.name, bookingDatum.user.dp, bookingDatum.user.email, bookingDatum.pax, bookingBackendTimestamp, offer);
 */
             booking = new Booking(bookingDatum.id, bookingDatum.userId, bookingDatum.pax, bookingBackendTimestamp, offer);
-
+    
             bookings.add(booking);
         }
 

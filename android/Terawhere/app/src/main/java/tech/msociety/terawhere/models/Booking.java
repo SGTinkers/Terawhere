@@ -1,7 +1,7 @@
 package tech.msociety.terawhere.models;
 
 public class Booking {
-
+    
     public Booking(Integer bookingId, String userId, String userName, String userDp, String userEmail, Integer seatsBooked, BackendTimestamp bookingBackendTimestamp, Offer offer) {
         this.bookingId = bookingId;
         this.userId = userId;
@@ -15,8 +15,7 @@ public class Booking {
 
     private Integer bookingId;
     private String userId;
-
-
+    
     private String userName;
     private String userDp;
     private String userEmail;
@@ -31,17 +30,17 @@ public class Booking {
         this.seatsBooked = pax;
         this.bookingBackendTimestamp = bookingBackendTimestamp;
         this.offer = offer;
-
+    
     }
-
+    
     public String getUserName() {
         return userName;
     }
-
+    
     public String getUserDp() {
         return userDp;
     }
-
+    
     public String getUserEmail() {
         return userEmail;
     }

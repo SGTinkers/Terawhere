@@ -26,9 +26,9 @@ import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
  */
 
 public class BookingInfoActivity extends Activity {
-
+    
     private BookingsInfoAdapter bookingsInfoAdapter;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,20 +37,17 @@ public class BookingInfoActivity extends Activity {
         Integer offerId = getIntent().getExtras().getInt("offerId");
         getBookingsFromServer(offerId);
     }
-
-
+    
     private void initRecyclerView() {
-
-
+        
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view_bookings_info);
-
-
+        
         bookingsInfoAdapter = new BookingsInfoAdapter(getApplicationContext());
         recyclerView.setAdapter(bookingsInfoAdapter);
     }
-
+    
     private void getBookingsFromServer(Integer offerId) {
-
+        
         Call<GetBookingsResponse> callGetBookings = TerawhereBackendServer.getApiInstance().getAllBookingsByOffer(offerId);
         callGetBookings.enqueue(new Callback<GetBookingsResponse>() {
             @Override
@@ -60,18 +57,17 @@ public class BookingInfoActivity extends Activity {
                     List<Booking> bookings = BookingFactory.createFromResponse(getBookingsResponse);
                     Log.i("BOOKING_SIZE", ":" + bookings.size());
                     bookingsInfoAdapter.setBookingsInfo(bookings);
-
+    
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
                 }
             }
-
+    
             @Override
             public void onFailure(Call<GetBookingsResponse> call, Throwable t) {
                 EventBus.getDefault().post(new ResponseNotSuccessfulEvent(t));
             }
         });
     }
-
-
+    
 }

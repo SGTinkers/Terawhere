@@ -13,7 +13,7 @@ public class UserDatum {
     @SerializedName("email")
     @Expose
     public String email;
-
+    
     @SerializedName("dp")
     @Expose
     public String dp;

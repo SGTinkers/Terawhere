@@ -32,8 +32,6 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -52,11 +50,12 @@ public class CreateOfferActivity extends ToolbarActivity {
     public static final String INTENT_OFFER = "INTENT_OFFER";
     public static final String INTENT_IS_EDIT = "INTENT_IS_EDIT";
     public static final String INTENT_IS_CREATE = "INTENT_IS_CREATE";
+    public static final int REQUEST_CODE_GET_START_PLACE = 1;
+    public static final int REQUEST_CODE_GET_END_PLACE = 2;
     private static final String TOOLBAR_TITLE = "Create Offer";
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
     public static final String SELECT_TIME = "Select Time";
-    public static final String DELIMITER = " ";
     private boolean isEditOffer = false;
     private boolean isCreateOffer = false;
     private Location currentLocation;
@@ -167,8 +166,12 @@ public class CreateOfferActivity extends ToolbarActivity {
         
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
             private OfferRequestBody getOfferRequestBodyFromUi() {
+                if (placeStart == null || placeEnd == null) return null;
+    
+                Date dateMeetup = DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString());
+                
                 return new OfferRequestBody(
-                        textInputEditTextMeetUpTime.getText().toString(),
+                        DateUtils.toString(dateMeetup, DateUtils.MYSQL_DATE_TIME_FORMAT),
                         placeStart.getName().toString(),
                         placeStart.getAddress().toString(),
                         placeStart.getLatLng().latitude,
@@ -193,6 +196,11 @@ public class CreateOfferActivity extends ToolbarActivity {
                 }
     
                 OfferRequestBody offerRequestBody = getOfferRequestBodyFromUi();
+                if (offerRequestBody == null) {
+                    Toast.makeText(CreateOfferActivity.this, "Either placeStart or placeEnd is null", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.d(TAG, "offerRequestBody: " + offerRequestBody.toString());
                 
                 if (isCreateOffer) {
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
@@ -260,7 +268,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.show();
                             }
                         }
-            
+    
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             Log.e(TAG, "onFailure: ", t);
@@ -359,7 +367,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                     .setFilter(autocompleteFilter)
                     .setBoundsBias(placePickerMapBounds)
                     .build(this);
-            startActivityForResult(intent, 1);
+            startActivityForResult(intent, REQUEST_CODE_GET_START_PLACE);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             Log.e(TAG, "callStartPlaceAutocompleteActivityIntent: ", e);
         }
@@ -377,7 +385,7 @@ public class CreateOfferActivity extends ToolbarActivity {
             Intent intent =
                     new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).setFilter(autocompleteFilter).setBoundsBias(placePickerMapBounds)
                             .build(this);
-            startActivityForResult(intent, 2);
+            startActivityForResult(intent, REQUEST_CODE_GET_END_PLACE);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             Log.e(TAG, "callEndPlaceAutocompleteActivityIntent: ", e);
         }
@@ -396,20 +404,14 @@ public class CreateOfferActivity extends ToolbarActivity {
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            Place place = PlacePicker.getPlace(this, data);
-            placeStart = place;
-            textInputEditTextStartLocation.setText(getPlaceName(place));
-        } else if (requestCode == 2 && resultCode == RESULT_OK) {
-            Place place = PlacePicker.getPlace(this, data);
-            placeEnd = place;
-            textInputEditTextEndLocation.setText(getPlaceName(place));
+        if (requestCode == REQUEST_CODE_GET_START_PLACE && resultCode == RESULT_OK) {
+            placeStart = PlacePicker.getPlace(this, data);
+            textInputEditTextStartLocation.setText(placeStart.getName());
+        } else if (requestCode == REQUEST_CODE_GET_END_PLACE && resultCode == RESULT_OK) {
+            placeEnd = PlacePicker.getPlace(this, data);
+            textInputEditTextEndLocation.setText(placeStart.getName());
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-    
-    private String getPlaceName(Place place) {
-        return place == null ? null : place.getName().toString();
     }
 }
