@@ -26,11 +26,11 @@ public class OfferFactory {
             } else {
                 vehicle = new Vehicle(offersDatum.vehicleNumber, offersDatum.vehicleDesc.toString(), offersDatum.vehicleModel);
             }
-            Date dateCreated = DateUtils.fromMysqlDateTimeString(offersDatum.createdAt);
-            Date dateUpdated = DateUtils.fromMysqlDateTimeString(offersDatum.updatedAt);
+            Date dateCreated = DateUtils.mysqlDateTimeStringToDate(offersDatum.createdAt);
+            Date dateUpdated = DateUtils.mysqlDateTimeStringToDate(offersDatum.updatedAt);
 //            Date dateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
             BackendTimestamp backendTimestamp = new BackendTimestamp(dateCreated, dateUpdated, null);
-            Date meetupTime = DateUtils.fromMysqlDateTimeString(offersDatum.meetupTime);
+            Date meetupTime = DateUtils.mysqlDateTimeStringToDate(offersDatum.meetupTime);
 
             if (offersDatum.remarks == null) {
                 offer = new Offer(offersDatum.id, offersDatum.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, offersDatum.vacancy, backendTimestamp, "", offersDatum.seatsRemaining, offersDatum.seatsBooked, offersDatum.driverName);

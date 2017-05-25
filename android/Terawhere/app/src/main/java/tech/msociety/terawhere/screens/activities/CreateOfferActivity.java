@@ -168,10 +168,11 @@ public class CreateOfferActivity extends ToolbarActivity {
             private OfferRequestBody getOfferRequestBodyFromUi() {
                 if (placeStart == null || placeEnd == null) return null;
     
-                Date dateMeetup = DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString());
+                Date dateWithTimeComponent = DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString());
+                Date dateComplete = DateUtils.getDateFromDates(new Date(), dateWithTimeComponent);
                 
                 return new OfferRequestBody(
-                        DateUtils.toString(dateMeetup, DateUtils.MYSQL_DATE_TIME_FORMAT),
+                        DateUtils.dateToString(dateComplete, DateUtils.MYSQL_DATE_TIME_FORMAT),
                         placeStart.getName().toString(),
                         placeStart.getAddress().toString(),
                         placeStart.getLatLng().latitude,
@@ -190,7 +191,7 @@ public class CreateOfferActivity extends ToolbarActivity {
             
             @Override
             public void onClick(View v) {
-                if (areNotAllFieldsFilled()) {
+                if (!isFormFilled()) {
                     Toast.makeText(CreateOfferActivity.this, R.string.message_required_fields, Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -320,8 +321,8 @@ public class CreateOfferActivity extends ToolbarActivity {
         if (meetupTime == null) {
             meetupTime = new Date();
         }
-        
-        final Calendar calendar = DateUtils.toCalendar(meetupTime);
+    
+        final Calendar calendar = DateUtils.dateToCalendar(meetupTime);
         
         textInputEditTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,8 +351,8 @@ public class CreateOfferActivity extends ToolbarActivity {
         currentLocation = ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
     
-    private boolean areNotAllFieldsFilled() {
-        return (textInputEditTextStartLocation.getText().toString().matches("") || textInputEditTextEndLocation.getText().toString().matches("") || textInputEditTextSeatsAvailable.getText().toString().matches("") || textInputEditTextVehicleColor.getText().toString().matches("") || textInputEditTextVehiclePlateNumber.getText().toString().matches(""));
+    private boolean isFormFilled() {
+        return !(textInputEditTextStartLocation.getText().toString().matches("") || textInputEditTextEndLocation.getText().toString().matches("") || textInputEditTextSeatsAvailable.getText().toString().matches("") || textInputEditTextVehicleColor.getText().toString().matches("") || textInputEditTextVehiclePlateNumber.getText().toString().matches(""));
     }
     
     private void callStartPlaceAutocompleteActivityIntent() {

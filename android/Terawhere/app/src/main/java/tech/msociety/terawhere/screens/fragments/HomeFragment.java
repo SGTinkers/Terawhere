@@ -317,8 +317,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         dialogStartingLocation.setText(setTextBold("Meeting Point: ", offer.getStartTerawhereLocation().getAddress()));
         dialogDestination.setText(setTextBold("Destination: ", offer.getEndTerawhereLocation().getAddress()));
         String meetUpTime = DateUtils.toFriendlyTimeString(offer.getMeetupTime());
-        String day = DateUtils.toString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
-        String month = DateUtils.toString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
+        String day = DateUtils.dateToString(offer.getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
+        String month = DateUtils.dateToString(offer.getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
         if (!meetUpTime.matches("")) {
             dialogTimestamp.setText(setTextBold("Pick Up Time: ", meetUpTime));
         }

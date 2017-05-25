@@ -32,19 +32,19 @@ public class BookingFactory {
             } else {
                 vehicle = new Vehicle(bookingDatum.offer.vehicleNumber, bookingDatum.offer.vehicleDesc.toString(), bookingDatum.offer.vehicleModel);
             }
-
-            Date offerDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.offer.createdAt);
-            Date offerDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.offer.updatedAt);
+    
+            Date offerDateCreated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.offer.createdAt);
+            Date offerDateUpdated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.offer.updatedAt);
             //            Date offerDateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
 
             BackendTimestamp offerBackendTimestamp = new BackendTimestamp(offerDateCreated, offerDateUpdated, null);
-
-            Date bookingDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.createdAt);
-            Date bookingDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.updatedAt);
+    
+            Date bookingDateCreated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.createdAt);
+            Date bookingDateUpdated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.updatedAt);
             //            Date bookingDateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
             BackendTimestamp bookingBackendTimestamp = new BackendTimestamp(bookingDateCreated, bookingDateUpdated, null);
-
-            Date meetupTime = DateUtils.fromMysqlDateTimeString(bookingDatum.offer.meetupTime);
+    
+            Date meetupTime = DateUtils.mysqlDateTimeStringToDate(bookingDatum.offer.meetupTime);
 
             if (bookingDatum.offer.remarks == null) {
                 offer = new Offer(bookingDatum.offer.id, bookingDatum.offer.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, bookingDatum.offer.vacancy, offerBackendTimestamp, "");
