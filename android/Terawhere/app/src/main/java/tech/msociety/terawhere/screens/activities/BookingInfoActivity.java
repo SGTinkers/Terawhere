@@ -3,6 +3,8 @@ package tech.msociety.terawhere.screens.activities;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,14 +31,22 @@ public class BookingInfoActivity extends ToolbarActivity {
 
     private RecyclerView.Adapter adapter;
 
+    private TextView textViewEmptyRecyclerViewBookingInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_info);
         initToolbar(TOOLBAR_TITLE, true);
 
+        initTextViewEmptyRecyclerViewBookingInfo();
+
         Integer offerId = getIntent().getExtras().getInt(INTENT_OFFER_ID);
         getBookingsFromServer(offerId);
+    }
+
+    private void initTextViewEmptyRecyclerViewBookingInfo() {
+        textViewEmptyRecyclerViewBookingInfo = (TextView) findViewById(R.id.text_view_empty_recycler_view_booking_info);
     }
 
     private void initRecyclerView() {
@@ -59,8 +69,13 @@ public class BookingInfoActivity extends ToolbarActivity {
                     GetBookingsResponse getBookingsResponse = response.body();
                     List<Booking> bookings = BookingFactory.createFromResponseBookingInfo(getBookingsResponse);
 
-                    ((BookingsInfoAdapter) adapter).setBookingsInfo(bookings);
-                    adapter.notifyDataSetChanged();
+                    if (bookings.isEmpty()) {
+                        textViewEmptyRecyclerViewBookingInfo.setVisibility(View.VISIBLE);
+                    } else {
+                        textViewEmptyRecyclerViewBookingInfo.setVisibility(View.GONE);
+                        ((BookingsInfoAdapter) adapter).setBookingsInfo(bookings);
+                        adapter.notifyDataSetChanged();
+                    }
 
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));

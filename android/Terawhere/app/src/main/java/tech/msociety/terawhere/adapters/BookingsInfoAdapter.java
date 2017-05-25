@@ -34,6 +34,7 @@ public class BookingsInfoAdapter extends RecyclerView.Adapter<BookingsInfoAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+
         Booking booking = bookings.get(position);
         viewHolder.textViewPassengerName.setText(booking.getUserName());
         viewHolder.textViewSeatsBookedInfo.setText(Integer.toString(booking.getSeatsBooked()));
@@ -45,7 +46,7 @@ public class BookingsInfoAdapter extends RecyclerView.Adapter<BookingsInfoAdapte
 
     @Override
     public int getItemCount() {
-        return bookings.size();
+        return bookings == null ? 0 : bookings.size();
     }
 
     public void setBookingsInfo(List<Booking> bookings) {
