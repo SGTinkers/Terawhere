@@ -7,6 +7,16 @@ import java.util.Date;
 
 public class Offer implements Parcelable {
 
+    public static int STATUS_CANCELLED = 0;
+
+    public static int STATUS_PENDING = 1;
+
+    public static int STATUS_ONGOING = 2;
+
+    public static int STATUS_COMPLETED = 3;
+
+    public static int STATUS_EXPIRED = 4;
+
     private Integer offerId;
 
     private String offererId;
@@ -155,6 +165,13 @@ public class Offer implements Parcelable {
         this.status = status;
     }
 
+    public boolean isPast() {
+        if (getMeetupTime().before(new Date())) {
+            return true;
+        }
+
+        return false;
+    }
 
     @Override
     public int describeContents() {

@@ -105,7 +105,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             viewHolder.textViewCancel.setVisibility(View.GONE);
         } else {
             // Neither
-            viewHolder.textViewBookingPast.setVisibility(View.GONE);
+            viewHolder.textViewBookingPast.setVisibility(View.INVISIBLE);
             viewHolder.textViewCancel.setVisibility(View.VISIBLE);
         }
 

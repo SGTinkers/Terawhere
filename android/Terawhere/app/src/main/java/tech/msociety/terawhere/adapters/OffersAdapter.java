@@ -88,6 +88,17 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         }
         viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " " + offer.getVehicle().getModel() + " [" + offer.getVehicle().getPlateNumber() + "]");
 
+        // Hide action buttons if offer has passed
+        if (offer.isPast()) {
+            viewHolder.textViewEdit.setVisibility(View.GONE);
+            viewHolder.textViewCancel.setVisibility(View.GONE);
+            viewHolder.textViewOfferPast.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.textViewEdit.setVisibility(View.VISIBLE);
+            viewHolder.textViewCancel.setVisibility(View.VISIBLE);
+            viewHolder.textViewOfferPast.setVisibility(View.INVISIBLE);
+        }
+
         final boolean[] shouldExpand = isCollapse(viewHolder, offer);
 
         setOfferItemRelativeLayoutListener(viewHolder, shouldExpand);
@@ -290,6 +301,8 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         private TextView textViewEdit;
         private TextView textViewCancel;
 
+        private TextView textViewOfferPast;
+
         private RelativeLayout relativeLayoutItem;
 
         private ViewHolder(View view) {
@@ -311,6 +324,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
             textViewEdit = (TextView) view.findViewById(R.id.text_view_edit);
             textViewVehicleLabel = (TextView) view.findViewById(R.id.text_view_vehicle_label);
             textViewVehicle = (TextView) view.findViewById(R.id.text_view_vehicle);
+            textViewOfferPast = (TextView) view.findViewById(R.id.text_view_offer_past);
         }
     }
 }
