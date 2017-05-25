@@ -472,16 +472,4 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             });
         }
     }
-    
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (location != null) {
-                loadMarkers();
-            }
-    
-        }
-        
-    }
 }
