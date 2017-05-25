@@ -496,8 +496,10 @@ public class CreateOfferActivity extends ToolbarActivity {
         } else if (place.getPlaceTypes() == null) {
         } else if (place.getPlaceTypes().contains(Place.TYPE_BUS_STATION)) {
             return "Bus Stop @ " + name;
-        } else if (place.getPlaceTypes().contains(Place.TYPE_TRAIN_STATION)) {
+        } else if (place.getPlaceTypes().contains(Place.TYPE_SUBWAY_STATION)) {
             return "MRT Station @ " + name;
+        } else if (place.getPlaceTypes().contains(Place.TYPE_TRAIN_STATION)) {
+            return "Train Station @ " + name;
         } else if (place.getPlaceTypes().contains(Place.TYPE_TAXI_STAND)) {
             return "Taxi Stand @ " + name;
         } else if (place.getPlaceTypes().contains(Place.TYPE_PARKING)) {
