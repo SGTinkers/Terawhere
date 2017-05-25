@@ -100,7 +100,6 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         final boolean[] shouldExpand = isCollapse(viewHolder, booking);
 
         // set listeners for collapse/expand offer details
-        setOfferItemRelativeLayoutListener(viewHolder, shouldExpand);
         setDetailsTextViewListener(viewHolder, shouldExpand);
 
         // set listeners for directions
@@ -182,15 +181,6 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                 viewHolder.imageViewDriverAvatar.getVisibility() == View.GONE,
                 viewHolder.textViewDriver.getVisibility() == View.GONE,
         };
-    }
-
-    private void setOfferItemRelativeLayoutListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {
-        viewHolder.relativeLayoutItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleExpand(viewHolder, shouldExpand);
-            }
-        });
     }
 
     private void setDetailsTextViewListener(final ViewHolder viewHolder, final boolean[] shouldExpand) {

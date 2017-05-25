@@ -271,6 +271,9 @@
             android:gravity="center_vertical"
             android:fontFamily="sans-serif-light"
             android:text="+ MORE DETAILS"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:background="?attr/selectableItemBackground"
             android:textColor="#7e7b7b"
             android:textSize="13sp"
             android:textStyle="normal" />
