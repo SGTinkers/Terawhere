@@ -44,8 +44,7 @@
 
         <activity
             android:name=".screens.activities.RequestLocationServicesActivity"
-            android:launchMode="singleTask"
-            android:noHistory="true"/>
+            android:launchMode="singleTask" />
 
         <activity
             android:name=".screens.activities.NoNetworkActivity"

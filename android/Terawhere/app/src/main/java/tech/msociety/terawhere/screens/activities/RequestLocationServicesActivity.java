@@ -45,6 +45,7 @@ public class RequestLocationServicesActivity extends BaseActivity {
                     // permission was granted, yay!
                     Intent i = new Intent(this, MainActivity.class);
                     startActivity(i);
+                    finish();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
