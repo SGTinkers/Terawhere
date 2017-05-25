@@ -50,13 +50,11 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import tech.msociety.terawhere.AndroidSdkChecker;
 import tech.msociety.terawhere.R;
-import tech.msociety.terawhere.TerawhereApplication;
-import tech.msociety.terawhere.TerawherePermissionChecker;
 import tech.msociety.terawhere.adapters.OfferInfoViewAdapter;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.globals.AppPrefs;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.maps.ClusterMarkerLocation;
 import tech.msociety.terawhere.maps.ClusterRenderer;
 import tech.msociety.terawhere.models.Offer;
@@ -66,7 +64,9 @@ import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResp
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.setlocation.LocationRequestBody;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.fragments.abstracts.BaseFragment;
+import tech.msociety.terawhere.utils.AndroidSdkCheckerUtils;
 import tech.msociety.terawhere.utils.DateUtils;
+import tech.msociety.terawhere.utils.TerawherePermissionCheckerUtils;
 
 public class HomeFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     
@@ -103,8 +103,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         trackCurrentLocation();
         // Faruq: Shouldn't need this as in the BaseActivity we already have a guard for requireLocationServices
         // It is here to pass Android IDE inspection
-        if (AndroidSdkChecker.isMarshmallow()) {
-            TerawherePermissionChecker.checkPermission(getActivity());
+        if (AndroidSdkCheckerUtils.isMarshmallow()) {
+            TerawherePermissionCheckerUtils.checkPermission(getActivity());
         }
         
         buildGoogleApiClient();
@@ -147,8 +147,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        
-        if (AndroidSdkChecker.isMarshmallow()) {
+    
+        if (AndroidSdkCheckerUtils.isMarshmallow()) {
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 googleMap.setMyLocationEnabled(true);
             }

@@ -1,4 +1,4 @@
-package tech.msociety.terawhere;
+package tech.msociety.terawhere.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -6,7 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-public class TerawherePermissionChecker {
+public class TerawherePermissionCheckerUtils {
     public static int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     public static void checkPermission(Activity activity) {

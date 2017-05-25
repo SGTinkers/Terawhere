@@ -1,4 +1,4 @@
-package tech.msociety.terawhere;
+package tech.msociety.terawhere.globals;
 
 import android.app.Application;
 import android.content.Context;
@@ -17,7 +17,6 @@ import retrofit2.Response;
 import tech.msociety.terawhere.events.LoginEvent;
 import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.events.TokenInvalidEvent;
-import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;

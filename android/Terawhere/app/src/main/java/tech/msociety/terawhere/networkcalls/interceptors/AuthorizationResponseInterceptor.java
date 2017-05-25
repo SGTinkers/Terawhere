@@ -1,4 +1,4 @@
-package tech.msociety.terawhere.networkcalls.intereptors;
+package tech.msociety.terawhere.networkcalls.interceptors;
 
 import android.util.Log;
 
