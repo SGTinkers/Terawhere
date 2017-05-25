@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,10 +39,10 @@ import tech.msociety.terawhere.utils.DateUtils;
 public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHolder> {
     private static final String LESS_DETAILS = "\u2014 LESS DETAILS";
     private static final String MORE_DETAILS = "+ MORE DETAILS";
-    public static final String DELETE_BOOKING = "Delete Booking?";
-    private static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_BOOKING = "Are you sure you want to delete your booking?";
+    public static final String CANCEL_BOOKING_TITLE = "Confirm Cancel Booking?";
+    private static final String CANCEL_BOOKING_INFO = "The driver will be informed of your cancellation.";
     public static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
-    private static final String CANCEL = "Cancel";
+    private static final String CANCEL = "Keep";
     private static final String CONFIRM = "Confirm";
     public static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
 
@@ -146,10 +144,10 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             public void onClick(View v) {
                 final AlertDialog.Builder deleteConfirmationDialog = new AlertDialog.Builder(viewGroup.getContext());
 
-                deleteConfirmationDialog.setTitle(DELETE_BOOKING);
-                deleteConfirmationDialog.setMessage(ARE_YOU_SURE_YOU_WANT_TO_DELETE_YOUR_BOOKING);
-                deleteConfirmationDialog.setNegativeButton("Cancel", null); // dismisses by default
-                deleteConfirmationDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                deleteConfirmationDialog.setTitle(CANCEL_BOOKING_TITLE);
+                deleteConfirmationDialog.setMessage(CANCEL_BOOKING_INFO);
+                deleteConfirmationDialog.setNegativeButton(CANCEL, null); // dismisses by default
+                deleteConfirmationDialog.setPositiveButton(CONFIRM, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final Booking booking = bookings.get(position);
@@ -243,10 +241,8 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
     private void createAlertDialog(AlertDialog alert) {
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
         nbutton.setTextColor(Color.BLACK);
-        nbutton.setText(CANCEL);
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
         pbutton.setTextColor(Color.parseColor(TERAWHERE_PRIMARY_COLOR));
-        pbutton.setText(CONFIRM);
     }
 
     @Override
