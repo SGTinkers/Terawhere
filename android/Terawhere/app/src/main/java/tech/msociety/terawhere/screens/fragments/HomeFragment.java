@@ -410,7 +410,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     if (response.isSuccessful()) {
                         final Dialog successDialog = new Dialog(getActivity());
                         successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        successDialog.setContentView(R.layout.dialog_offer_successful);
+                        successDialog.setContentView(R.layout.dialog_booking_successful);
                         successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         successDialog.setCanceledOnTouchOutside(false);
                         successDialog.setCancelable(false);

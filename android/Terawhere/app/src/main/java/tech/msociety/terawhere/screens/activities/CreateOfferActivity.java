@@ -256,7 +256,6 @@ public class CreateOfferActivity extends ToolbarActivity {
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
-    
                             if (response.isSuccessful()) {
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
                                 successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
