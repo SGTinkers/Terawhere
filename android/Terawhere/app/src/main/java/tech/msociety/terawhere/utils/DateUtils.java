@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 public class DateUtils {
     public static final String MYSQL_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -18,116 +17,61 @@ public class DateUtils {
     public static final String DAY_OF_MONTH_FORMAT = "dd";
     public static final String MONTH_ABBREVIATED_FORMAT = "MMMM";
     public static final Locale LOCALE = Locale.UK;
+    public static final TimeZone TIMEZONE_SINGAPORE = TimeZone.getTimeZone("Asia/Singapore");
+    public static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
     
-    private static final SimpleDateFormat friendlyDateFormatter = new SimpleDateFormat(FRIENDLY_DATE_FORMAT, LOCALE);
-    private static final SimpleDateFormat friendlyTimeFormatter = new SimpleDateFormat(FRIENDLY_TIME_FORMAT, LOCALE);
-    private static final SimpleDateFormat friendlyDateTimeFormatter = new SimpleDateFormat(FRIENDLY_DATE_TIME_FORMAT, LOCALE);
-
     private static SimpleDateFormat getLocalizedFormatter(SimpleDateFormat simpleDateFormat) {
         simpleDateFormat = (SimpleDateFormat) simpleDateFormat.clone();
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
         return simpleDateFormat;
     }
-
-    public static Date twentyFourHoursBefore(Date date) {
-        Calendar calendar = toCalendar(date);
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        return calendar.getTime();
+    
+    public static String dateToString(Date date, String pattern) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+        return simpleDateFormat.format(date);
     }
-
-    public static Date twentyFourHoursAfter(Date date) {
-        Calendar calendar = toCalendar(date);
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        return calendar.getTime();
+    
+    public static String dateToString(Date date, String pattern, TimeZone timeZone) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
+        simpleDateFormat.setTimeZone(timeZone);
+        return simpleDateFormat.format(date);
     }
-
-    public static Date nextWeek(Date date) {
-        Calendar calendar = toCalendar(date);
-        calendar.add(Calendar.DAY_OF_YEAR, 7);
-        return calendar.getTime();
-    }
-
-    public static int numberOfDays(Date startDateTime, Date endDateTime) throws ParseException {
-        Date start = fromFriendlyDateString(toFriendlyDateString(startDateTime));
-        Date end = fromFriendlyDateString(toFriendlyDateString(endDateTime));
-
-        long duration = start.getTime() - end.getTime();
-
-        return (int) TimeUnit.DAYS.convert(duration, TimeUnit.MILLISECONDS);
-    }
-
-    public static String nextFriendlyDateString(String date) throws ParseException {
-        Calendar calendar = toCalendar(fromFriendlyDateString(date));
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        return toFriendlyDateString(calendar.getTime());
-    }
-
-    public static Date now() {
-        return Calendar.getInstance().getTime();
-    }
-
-    public static Date dateBetween(Date lower, Date upper) {
-        return null;
-//        return (new Faker()).date().between(lower, upper);
-    }
-
-    public static Calendar toCalendar(Date date) {
+    
+    public static Calendar dateToCalendar(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;
     }
-
-    public static String toFriendlyDateString(Date date) {
-        return friendlyDateFormatter.format(date);
-    }
-
-    public static Date fromFriendlyDateString(String dateString) throws ParseException {
-        return friendlyDateFormatter.parse(dateString);
-    }
-
-    public static String toFriendlyTimeString(Date date) {
-        return getLocalizedFormatter(friendlyTimeFormatter).format(date);
-    }
     
-    public static String toString(Date date, String pattern) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, LOCALE);
-        return simpleDateFormat.format(date);
+    public static String toFriendlyTimeString(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FRIENDLY_TIME_FORMAT, LOCALE);
+        return getLocalizedFormatter(simpleDateFormat).format(date);
     }
     
     public static Date fromFriendlyTimeString(String timeString) {
         Date date = null;
+    
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FRIENDLY_TIME_FORMAT, LOCALE);
         
         try {
-            date = friendlyTimeFormatter.parse(timeString);
+            date = simpleDateFormat.parse(timeString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         
         return date;
     }
-
-    public static String toFriendlyDateTimeString(Date date) {
-        return getLocalizedFormatter(friendlyDateTimeFormatter).format(date);
-    }
-
-//    public static Date fromFriendlyDateTimeString(String timeString) {
-//        try {
-//            return friendlyDateTimeFormatter.parse(timeString);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    public static boolean dateIsInThePast(Date date) {
-        return (date.getTime() < (new Date()).getTime());
-    }
     
-    public static Date fromMysqlDateTimeString(String mysqlDateTimeString) {
+    public static Date mysqlDateTimeStringToDate(String mysqlDateTimeString) {
+        // Assume this function only used to convert backend date to local date
+    
         if (mysqlDateTimeString == null) {
             return null;
         }
-        
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(MYSQL_DATE_TIME_FORMAT, LOCALE);
+    
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(MYSQL_DATE_TIME_FORMAT);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         
         Date date = null;
         
@@ -136,7 +80,28 @@ public class DateUtils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        
+    
         return date;
+    }
+    
+    public static Date getDateFromDates(Date dateWithDateComponent, Date dateWithTimeComponent) {
+        Calendar calendarWithDateComponent = Calendar.getInstance();
+        calendarWithDateComponent.setTime(dateWithDateComponent);
+        
+        Calendar calendarWithTimeComponent = Calendar.getInstance();
+        calendarWithTimeComponent.setTime(dateWithTimeComponent);
+        
+        Calendar calendar = Calendar.getInstance();
+        
+        calendar.set(Calendar.YEAR, calendarWithDateComponent.get(Calendar.YEAR));
+        calendar.set(Calendar.MONTH, calendarWithDateComponent.get(Calendar.MONTH));
+        calendar.set(Calendar.DATE, calendarWithDateComponent.get(Calendar.DATE));
+        
+        calendar.set(Calendar.HOUR_OF_DAY, calendarWithTimeComponent.get(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendarWithTimeComponent.get(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendarWithTimeComponent.get(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendarWithTimeComponent.get(Calendar.MILLISECOND));
+        
+        return calendar.getTime();
     }
 }

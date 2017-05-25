@@ -68,8 +68,8 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         Booking booking = bookings.get(position);
 
         String meetUpTime = DateUtils.toFriendlyTimeString(booking.getOffer().getMeetupTime());
-        String day = DateUtils.toString(booking.getOffer().getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
-        String month = DateUtils.toString(booking.getOffer().getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
+        String day = DateUtils.dateToString(booking.getOffer().getMeetupTime(), DateUtils.DAY_OF_MONTH_FORMAT);
+        String month = DateUtils.dateToString(booking.getOffer().getMeetupTime(), DateUtils.MONTH_ABBREVIATED_FORMAT);
 
         // Set the value of the text
         final Offer offer = booking.getOffer();

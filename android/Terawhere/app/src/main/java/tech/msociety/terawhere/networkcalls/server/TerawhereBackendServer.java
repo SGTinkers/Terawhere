@@ -11,13 +11,13 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import tech.msociety.terawhere.TerawhereApplication;
 import tech.msociety.terawhere.globals.Constants;
-import tech.msociety.terawhere.networkcalls.intereptors.AuthorizationRequestInterceptor;
-import tech.msociety.terawhere.networkcalls.intereptors.AuthorizationResponseInterceptor;
-import tech.msociety.terawhere.networkcalls.intereptors.ConnectivityInterceptor;
-import tech.msociety.terawhere.networkcalls.intereptors.DefaultInterceptor;
-import tech.msociety.terawhere.networkcalls.intereptors.LoggingInterceptor;
+import tech.msociety.terawhere.globals.TerawhereApplication;
+import tech.msociety.terawhere.networkcalls.interceptors.AuthorizationRequestInterceptor;
+import tech.msociety.terawhere.networkcalls.interceptors.AuthorizationResponseInterceptor;
+import tech.msociety.terawhere.networkcalls.interceptors.ConnectivityInterceptor;
+import tech.msociety.terawhere.networkcalls.interceptors.DefaultInterceptor;
+import tech.msociety.terawhere.networkcalls.interceptors.LoggingInterceptor;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.BookingRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUserRequestBody;
@@ -84,7 +84,7 @@ public class TerawhereBackendServer {
 
         @GET("api/v1/users/me/offers")
         Call<GetOffersResponse> getOffers();
-
+    
         @GET("api/v1/offers/{id}/bookings")
         Call<GetBookingsResponse> getAllBookingsByOffer(@Path("id") Integer id);
 

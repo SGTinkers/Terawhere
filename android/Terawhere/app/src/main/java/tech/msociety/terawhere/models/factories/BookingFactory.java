@@ -16,17 +16,17 @@ public class BookingFactory {
         List<Booking> bookings = new ArrayList<>();
         Booking booking;
         for (BookingDatum bookingDatum : getBookingsResponse.data) {
-            Date bookingDateCreated = DateUtils.fromMysqlDateTimeString(bookingDatum.createdAt);
-            Date bookingDateUpdated = DateUtils.fromMysqlDateTimeString(bookingDatum.updatedAt);
+            Date bookingDateCreated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.createdAt);
+            Date bookingDateUpdated = DateUtils.mysqlDateTimeStringToDate(bookingDatum.updatedAt);
             //            Date bookingDateDeleted = DateUtils.fromMysqlDateTimeString(offersDatum.getDeletedAt());
             BackendTimestamp bookingBackendTimestamp = new BackendTimestamp(bookingDateCreated, bookingDateUpdated, null);
-
+    
             Offer offer = OfferFactory.createFromDatum(bookingDatum.offer);
 
             booking = new Booking(bookingDatum.id, bookingDatum.userId, bookingDatum.pax, bookingBackendTimestamp, offer);
             bookings.add(booking);
         }
-
+    
         return bookings;
     }
 

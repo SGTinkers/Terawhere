@@ -1,11 +1,10 @@
-package tech.msociety.terawhere.networkcalls.intereptors;
+package tech.msociety.terawhere.networkcalls.interceptors;
 
 import java.io.IOException;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import tech.msociety.terawhere.globals.Constants;
 
 public class DefaultInterceptor implements Interceptor {
 

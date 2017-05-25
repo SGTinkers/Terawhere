@@ -50,26 +50,19 @@ public class CreateOfferActivity extends ToolbarActivity {
     public static final String INTENT_OFFER = "INTENT_OFFER";
     public static final String INTENT_IS_EDIT = "INTENT_IS_EDIT";
     public static final String INTENT_IS_CREATE = "INTENT_IS_CREATE";
+    public static final int REQUEST_CODE_GET_START_PLACE = 1;
+    public static final int REQUEST_CODE_GET_END_PLACE = 2;
     private static final String TOOLBAR_TITLE = "Create Offer";
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
     public static final String SELECT_TIME = "Select Time";
-    public static final String DELIMITER = " ";
     private boolean isEditOffer = false;
     private boolean isCreateOffer = false;
-    private Place selectedStartPlace;
-    private Place selectedEndPlace;
-    private int offerId;
-    private double startLatitude;
-    private double endLatitude;
-    private double startLongitude;
-    private double endLongitude;
-    private String startLocationName;
-    private String endLocationName;
-    private String startLocationAddress;
-    private String endLocationAddress;
-    private double latitude;
-    private double longitude;
+    private Location currentLocation;
+    private Place placeStart;
+    private Place placeEnd;
+    private Offer offer = null;
+    
     private Button buttonCreateOffer;
     private TextInputEditText textInputEditTextVehicleColor;
     private TextInputEditText textInputEditTextEndLocation;
@@ -79,79 +72,70 @@ public class CreateOfferActivity extends ToolbarActivity {
     private TextInputEditText textInputEditTextVehicleModel;
     private TextInputEditText textInputEditTextMeetUpTime;
     private TextInputEditText textInputEditTextStartLocation;
-
+    
     public static Intent getIntentToStartInCreateMode(Context sourceContext) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, false);
         return intent;
     }
-
+    
     public static Intent getIntentToStartInCreateModePrepopulated(Context sourceContext, Offer referenceOffer) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
         intent.putExtra(CreateOfferActivity.INTENT_OFFER, referenceOffer);
         return intent;
     }
-
+    
     public static Intent getIntentToStartInEditMode(Context sourceContext, Offer offerToBeEdited) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_EDIT, true);
         intent.putExtra(CreateOfferActivity.INTENT_OFFER, offerToBeEdited);
         return intent;
     }
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
-
-        initToolbar(TOOLBAR_TITLE, true);
+    
         trackCurrentLocation();
+        initToolbar(TOOLBAR_TITLE, true);
         initViewHandles();
+        initTimePickerDialog(null);
         setClickListeners();
-
+        
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
-            isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT);
-            isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE);
+            isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT, false);
+            isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE, false);
         }
-
+        
         if (isEditOffer) {
-            Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
+            offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
-
-            offerId = offer.getOfferId();
             buttonCreateOffer.setText(R.string.create_offer_activity_button_text);
         } else if (isCreateOffer) {
-            Offer offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
+            offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
-        } else {
-            setMeetUpTimeEditTextListener(null);
         }
     }
-
+    
     private void unloadOfferIntoUi(Offer offer) {
-        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
-        textInputEditTextRemarks.setText(offer.getRemarks());
-        textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
-        textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
-        textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
+        Date meetupTime = offer.getMeetupTime();
+        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
+        initTimePickerDialog(meetupTime);
+    
         textInputEditTextStartLocation.setText(offer.getStartTerawhereLocation().getName());
         textInputEditTextEndLocation.setText(offer.getEndTerawhereLocation().getName());
-        startLatitude = offer.getStartTerawhereLocation().getLatitude();
-        endLatitude = offer.getEndTerawhereLocation().getLatitude();
-        startLongitude = offer.getStartTerawhereLocation().getLongitude();
-        endLongitude = offer.getEndTerawhereLocation().getLongitude();
-        startLocationName = offer.getStartTerawhereLocation().getName();
-        endLocationName = offer.getEndTerawhereLocation().getName();
-        startLocationAddress = offer.getStartTerawhereLocation().getAddress();
-        endLocationAddress = offer.getEndTerawhereLocation().getAddress();
-
-        final Date meetupTime = offer.getMeetupTime();
-        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
-        setMeetUpTimeEditTextListener(meetupTime);
+        textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
+        
+        textInputEditTextVehiclePlateNumber.setText(offer.getVehicle().getPlateNumber());
+        textInputEditTextVehicleModel.setText(offer.getVehicle().getModel());
+        textInputEditTextVehicleColor.setText(offer.getVehicle().getDescription());
+    
+        textInputEditTextRemarks.setText(offer.getRemarks());
     }
-
+    
     private void initViewHandles() {
         buttonCreateOffer = (Button) findViewById(R.id.button_create_offer);
         textInputEditTextMeetUpTime = (TextInputEditText) findViewById(R.id.text_input_edit_text_meetup_time);
@@ -163,7 +147,7 @@ public class CreateOfferActivity extends ToolbarActivity {
         textInputEditTextVehiclePlateNumber = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_number);
         textInputEditTextVehicleColor = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_color);
     }
-
+    
     private void setClickListeners() {
         textInputEditTextStartLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,63 +155,25 @@ public class CreateOfferActivity extends ToolbarActivity {
                 callStartPlaceAutocompleteActivityIntent();
             }
         });
-
+        
         textInputEditTextEndLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callEndPlaceAutocompleteActivityIntent();
             }
         });
-
+        
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (areNotAllFieldsFilled()) {
+                if (!isFormFilled()) {
                     Toast.makeText(CreateOfferActivity.this, R.string.message_required_fields, Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+    
+                OfferRequestBody offerRequestBody = getOfferRequestBodyFromUi();
+                
                 if (isCreateOffer) {
-                    String timeString = textInputEditTextMeetUpTime.getText().toString();
-                    Date timeDate = DateUtils.fromFriendlyTimeString(timeString);
-
-                    String meetupTime = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT) + DELIMITER + DateUtils.toString(timeDate, DateUtils.MYSQL_TIME_FORMAT);
-                    String startName, endName, startAddress, endAddress;
-
-                    if (selectedStartPlace == null) {
-                        startName = startLocationName;
-                        startAddress = startLocationAddress;
-                    } else {
-                        startName = getPlaceName(selectedStartPlace);
-                        startAddress = getPlaceAddress(selectedStartPlace);
-                    }
-                    if (selectedEndPlace == null) {
-                        endName = endLocationName;
-                        endAddress = endLocationAddress;
-
-                    } else {
-                        endName = getPlaceName(selectedEndPlace);
-                        endAddress = getPlaceAddress(selectedEndPlace);
-
-                    }
-
-                    OfferRequestBody offerRequestBody =
-                            new OfferRequestBody(
-                                    meetupTime,
-                                    startName,
-                                    startAddress,
-                                    getStartLatitude(selectedStartPlace),
-                                    getStartLongitude(selectedStartPlace),
-                                    endName,
-                                    endAddress,
-                                    getEndLatitude(selectedEndPlace),
-                                    getEndLongitude(selectedEndPlace),
-                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                                    textInputEditTextRemarks.getText().toString(),
-                                    textInputEditTextVehiclePlateNumber.getText().toString(),
-                                    textInputEditTextVehicleColor.getText().toString(),
-                                    textInputEditTextVehicleModel.getText().toString());
-
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
@@ -239,7 +185,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 successDialog.setCanceledOnTouchOutside(false);
                                 successDialog.setCancelable(false);
-
+    
                                 Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
                                 TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
                                 dialogInfo.setText("Your offer has been successfully created");
@@ -247,7 +193,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     @Override
                                     public void onClick(View v) {
                                         successDialog.dismiss();
-
+    
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
@@ -257,61 +203,18 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.show();
                             }
                         }
-
+    
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-
+                            Log.e(TAG, "onFailure: ", t);
                         }
                     });
                 } else if (isEditOffer) {
-                    String timeString = textInputEditTextMeetUpTime.getText().toString();
-                    Date timeDate = DateUtils.fromFriendlyTimeString(timeString);
-
-                    String meetupTime = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT) + DELIMITER + DateUtils.toString(timeDate, DateUtils.MYSQL_TIME_FORMAT);
-
-                    String startName, endName, startAddress, endAddress;
-
-                    if (selectedStartPlace == null) {
-                        startName = startLocationName;
-                        startAddress = startLocationAddress;
-                    } else {
-                        startName = getPlaceName(selectedStartPlace);
-                        startAddress = getPlaceAddress(selectedStartPlace);
-
-                    }
-                    if (selectedEndPlace == null) {
-                        endName = endLocationName;
-                        endAddress = endLocationAddress;
-
-                    } else {
-                        endName = getPlaceName(selectedEndPlace);
-                        endAddress = getPlaceAddress(selectedEndPlace);
-
-                    }
-
-                    OfferRequestBody offerRequestBody =
-                            new OfferRequestBody(
-                                    meetupTime,
-                                    startName,
-                                    startAddress,
-                                    getStartLatitude(selectedStartPlace),
-                                    getStartLongitude(selectedStartPlace),
-                                    endName,
-                                    endAddress,
-                                    getEndLatitude(selectedEndPlace),
-                                    getEndLongitude(selectedEndPlace),
-                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                                    textInputEditTextRemarks.getText().toString(),
-                                    textInputEditTextVehiclePlateNumber.getText().toString(),
-                                    textInputEditTextVehicleColor.getText().toString(),
-                                    textInputEditTextVehicleModel.getText().toString());
-
-                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offerId, offerRequestBody);
+                    Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offer.getOfferId(), offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.isSuccessful()) {
-                                Log.i("EDIT_MESSAGE", ": " + response.message());
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
                                 successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 successDialog.setContentView(R.layout.dialog_offer_successful);
@@ -325,7 +228,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     @Override
                                     public void onClick(View v) {
                                         successDialog.dismiss();
-
+    
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
@@ -335,40 +238,18 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.show();
                             }
                         }
-
+    
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             Log.e(TAG, "onFailure: ", t);
                         }
                     });
                 } else {
-                    String timeString = textInputEditTextMeetUpTime.getText().toString();
-                    Date timeDate = DateUtils.fromFriendlyTimeString(timeString);
-
-                    String meetupTime = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT) + DELIMITER + DateUtils.toString(timeDate, DateUtils.MYSQL_TIME_FORMAT);
-
-                    OfferRequestBody offerRequestBody =
-                            new OfferRequestBody(
-                                    meetupTime,
-                                    getPlaceName(selectedStartPlace),
-                                    selectedStartPlace.getAddress().toString(),
-                                    selectedStartPlace.getLatLng().latitude,
-                                    selectedStartPlace.getLatLng().longitude,
-                                    getPlaceName(selectedEndPlace),
-                                    selectedEndPlace.getAddress().toString(),
-                                    selectedEndPlace.getLatLng().latitude,
-                                    selectedEndPlace.getLatLng().longitude,
-                                    Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
-                                    textInputEditTextRemarks.getText().toString(),
-                                    textInputEditTextVehiclePlateNumber.getText().toString(),
-                                    textInputEditTextVehicleColor.getText().toString(),
-                                    textInputEditTextVehicleModel.getText().toString());
-
                     Call<Void> call = TerawhereBackendServer.getApiInstance().createOffer(offerRequestBody);
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
-
+    
                             if (response.isSuccessful()) {
                                 final Dialog successDialog = new Dialog(CreateOfferActivity.this);
                                 successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -376,7 +257,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 successDialog.setCanceledOnTouchOutside(false);
                                 successDialog.setCancelable(false);
-
+        
                                 Button okButton = (Button) successDialog.findViewById(R.id.button_ok);
                                 TextView dialogInfo = (TextView) successDialog.findViewById(R.id.text_view_successfully_created);
                                 dialogInfo.setText("Your offer has been successfully created");
@@ -384,7 +265,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     @Override
                                     public void onClick(View v) {
                                         successDialog.dismiss();
-
+    
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
@@ -394,34 +275,65 @@ public class CreateOfferActivity extends ToolbarActivity {
                                 successDialog.show();
                             }
                         }
-
+    
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-
+                            Log.e(TAG, "onFailure: ", t);
                         }
                     });
                 }
-
-//                if (isEditOffer) {
-//                    Calendar calendar = Calendar.getInstance();
-//                    calendar.setTime(DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString()));
-//                    String meetupTime = DateUtils.toString(calendar.getTime(), DateUtils.MYSQL_DATE_TIME_FORMAT);
-//                }
+            }
+    
+            private OfferRequestBody getOfferRequestBodyFromUi() {
+                String startName;
+                String startAddress;
+                double startLatitude;
+                double startLongitude;
+                String endName;
+                String endAddress;
+                double endLatitude;
+                double endLongitude;
+        
+                startName = placeStart != null ? placeStart.getName().toString() : offer.getStartTerawhereLocation().getName();
+                startAddress = placeStart != null ? placeStart.getAddress().toString() : offer.getStartTerawhereLocation().getAddress();
+                startLatitude = placeStart != null ? placeStart.getLatLng().latitude : offer.getStartTerawhereLocation().getLatitude();
+                startLongitude = placeStart != null ? placeStart.getLatLng().longitude : offer.getStartTerawhereLocation().getLongitude();
+        
+                endName = placeEnd != null ? placeEnd.getName().toString() : offer.getEndTerawhereLocation().getName();
+                endAddress = placeEnd != null ? placeEnd.getAddress().toString() : offer.getEndTerawhereLocation().getAddress();
+                endLatitude = placeEnd != null ? placeEnd.getLatLng().latitude : offer.getEndTerawhereLocation().getLatitude();
+                endLongitude = placeEnd != null ? placeEnd.getLatLng().longitude : offer.getEndTerawhereLocation().getLongitude();
+        
+                Date dateWithTimeComponent = DateUtils.fromFriendlyTimeString(textInputEditTextMeetUpTime.getText().toString());
+                Date dateComplete = DateUtils.getDateFromDates(new Date(), dateWithTimeComponent);
+        
+                return new OfferRequestBody(
+                        DateUtils.dateToString(dateComplete, DateUtils.MYSQL_DATE_TIME_FORMAT, DateUtils.TIMEZONE_UTC),
+                        startName,
+                        startAddress,
+                        startLatitude,
+                        startLongitude,
+                        endName,
+                        endAddress,
+                        endLatitude,
+                        endLongitude,
+                        Integer.parseInt(textInputEditTextSeatsAvailable.getText().toString()),
+                        textInputEditTextRemarks.getText().toString(),
+                        textInputEditTextVehiclePlateNumber.getText().toString(),
+                        textInputEditTextVehicleColor.getText().toString(),
+                        textInputEditTextVehicleModel.getText().toString()
+                );
             }
         });
     }
-
-    private void temp() {
-
-    }
-
-    private void setMeetUpTimeEditTextListener(Date meetupTime) {
+    
+    private void initTimePickerDialog(Date meetupTime) {
         if (meetupTime == null) {
             meetupTime = new Date();
         }
-
-        final Calendar calendar = DateUtils.toCalendar(meetupTime);
-
+        
+        final Calendar calendar = DateUtils.dateToCalendar(meetupTime);
+        
         textInputEditTextMeetUpTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -440,27 +352,22 @@ public class CreateOfferActivity extends ToolbarActivity {
             }
         });
     }
-
+    
     private void trackCurrentLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
-
-        Location location = ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-        if (location != null) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-        }
+    
+        currentLocation = ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
-
-    private boolean areNotAllFieldsFilled() {
-        return (textInputEditTextStartLocation.getText().toString().matches("") || textInputEditTextEndLocation.getText().toString().matches("") || textInputEditTextSeatsAvailable.getText().toString().matches("") || textInputEditTextVehicleColor.getText().toString().matches("") || textInputEditTextVehiclePlateNumber.getText().toString().matches(""));
+    
+    private boolean isFormFilled() {
+        return !(textInputEditTextStartLocation.getText().toString().matches("") || textInputEditTextEndLocation.getText().toString().matches("") || textInputEditTextSeatsAvailable.getText().toString().matches("") || textInputEditTextVehicleColor.getText().toString().matches("") || textInputEditTextVehiclePlateNumber.getText().toString().matches(""));
     }
-
+    
     private void callStartPlaceAutocompleteActivityIntent() {
-        LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
-        LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
+        LatLng minimumBound = new LatLng(currentLocation.getLatitude() - OFFSET_LATITUDE, currentLocation.getLongitude() - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(currentLocation.getLatitude() + OFFSET_LATITUDE, currentLocation.getLongitude() + OFFSET_LONGITUDE);
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
         try {
             AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
@@ -471,15 +378,15 @@ public class CreateOfferActivity extends ToolbarActivity {
                     .setFilter(autocompleteFilter)
                     .setBoundsBias(placePickerMapBounds)
                     .build(this);
-            startActivityForResult(intent, 1);
+            startActivityForResult(intent, REQUEST_CODE_GET_START_PLACE);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             Log.e(TAG, "callStartPlaceAutocompleteActivityIntent: ", e);
         }
     }
-
+    
     private void callEndPlaceAutocompleteActivityIntent() {
-        LatLng minimumBound = new LatLng(latitude - OFFSET_LATITUDE, longitude - OFFSET_LONGITUDE);
-        LatLng maximumBound = new LatLng(latitude + OFFSET_LATITUDE, longitude + OFFSET_LONGITUDE);
+        LatLng minimumBound = new LatLng(currentLocation.getLatitude() - OFFSET_LATITUDE, currentLocation.getLongitude() - OFFSET_LONGITUDE);
+        LatLng maximumBound = new LatLng(currentLocation.getLatitude() + OFFSET_LATITUDE, currentLocation.getLongitude() + OFFSET_LONGITUDE);
         LatLngBounds placePickerMapBounds = new LatLngBounds(minimumBound, maximumBound);
         try {
             AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
@@ -489,12 +396,12 @@ public class CreateOfferActivity extends ToolbarActivity {
             Intent intent =
                     new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).setFilter(autocompleteFilter).setBoundsBias(placePickerMapBounds)
                             .build(this);
-            startActivityForResult(intent, 2);
+            startActivityForResult(intent, REQUEST_CODE_GET_END_PLACE);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             Log.e(TAG, "callEndPlaceAutocompleteActivityIntent: ", e);
         }
     }
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -505,59 +412,17 @@ public class CreateOfferActivity extends ToolbarActivity {
                 break;
         }
     }
-
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            Place place = PlacePicker.getPlace(this, data);
-            selectedStartPlace = place;
-            textInputEditTextStartLocation.setText(getPlaceName(place));
-        } else if (requestCode == 2 && resultCode == RESULT_OK) {
-            Place place = PlacePicker.getPlace(this, data);
-            selectedEndPlace = place;
-            textInputEditTextEndLocation.setText(getPlaceName(place));
+        if (requestCode == REQUEST_CODE_GET_START_PLACE && resultCode == RESULT_OK) {
+            placeStart = PlacePicker.getPlace(this, data);
+            textInputEditTextStartLocation.setText(placeStart.getName());
+        } else if (requestCode == REQUEST_CODE_GET_END_PLACE && resultCode == RESULT_OK) {
+            placeEnd = PlacePicker.getPlace(this, data);
+            textInputEditTextEndLocation.setText(placeEnd.getName());
         } else {
             super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private String getPlaceName(Place place) {
-        return place == null ? null : place.getName().toString();
-    }
-
-    private String getPlaceAddress(Place place) {
-        return place == null ? null : place.getAddress().toString();
-    }
-
-    private double getStartLatitude(Place place) {
-        if (place == null) {
-            return startLatitude;
-        } else {
-            return selectedStartPlace.getLatLng().latitude;
-        }
-    }
-
-    private double getEndLatitude(Place place) {
-        if (place == null) {
-            return endLatitude;
-        } else {
-            return selectedEndPlace.getLatLng().latitude;
-        }
-    }
-
-    private double getStartLongitude(Place place) {
-        if (place == null) {
-            return startLongitude;
-        } else {
-            return selectedStartPlace.getLatLng().longitude;
-        }
-    }
-
-    private double getEndLongitude(Place place) {
-        if (place == null) {
-            return endLongitude;
-        } else {
-            return selectedEndPlace.getLatLng().longitude;
         }
     }
 }
