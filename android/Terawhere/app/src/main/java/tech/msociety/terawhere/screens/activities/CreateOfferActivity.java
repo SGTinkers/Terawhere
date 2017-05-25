@@ -56,6 +56,7 @@ public class CreateOfferActivity extends ToolbarActivity {
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
     public static final String SELECT_TIME = "Select Time";
+    public static final String DELIMITER = " ";
     private boolean isEditOffer = false;
     private boolean isCreateOffer = false;
     private Place selectedStartPlace;
@@ -80,43 +81,43 @@ public class CreateOfferActivity extends ToolbarActivity {
     private TextInputEditText textInputEditTextVehicleModel;
     private TextInputEditText textInputEditTextMeetUpTime;
     private TextInputEditText textInputEditTextStartLocation;
-    
+
     public static Intent getIntentToStartInCreateMode(Context sourceContext) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
-        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
+        intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, false);
         return intent;
     }
-    
+
     public static Intent getIntentToStartInCreateModePrepopulated(Context sourceContext, Offer referenceOffer) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_CREATE, true);
         intent.putExtra(CreateOfferActivity.INTENT_OFFER, referenceOffer);
         return intent;
     }
-    
+
     public static Intent getIntentToStartInEditMode(Context sourceContext, Offer offerToBeEdited) {
         Intent intent = new Intent(sourceContext, CreateOfferActivity.class);
         intent.putExtra(CreateOfferActivity.INTENT_IS_EDIT, true);
         intent.putExtra(CreateOfferActivity.INTENT_OFFER, offerToBeEdited);
         return intent;
     }
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
-        
+
         initToolbar(TOOLBAR_TITLE, true);
         trackCurrentLocation();
         initViewHandles();
         setClickListeners();
-    
+
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             isEditOffer = intent.getExtras().getBoolean(INTENT_IS_EDIT);
             isCreateOffer = intent.getExtras().getBoolean(INTENT_IS_CREATE);
         }
-        
+
         if (isEditOffer) {
             offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
@@ -128,7 +129,7 @@ public class CreateOfferActivity extends ToolbarActivity {
             setMeetUpTimeEditTextListener(null);
         }
     }
-    
+
     private void unloadOfferIntoUi(Offer offer) {
         textInputEditTextSeatsAvailable.setText(String.format(Locale.getDefault(), "%d", offer.getVacancy()));
         textInputEditTextRemarks.setText(offer.getRemarks());
@@ -150,7 +151,7 @@ public class CreateOfferActivity extends ToolbarActivity {
         textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(meetupTime));
         setMeetUpTimeEditTextListener(meetupTime);
     }
-    
+
     private void initViewHandles() {
         buttonCreateOffer = (Button) findViewById(R.id.button_create_offer);
         textInputEditTextMeetUpTime = (TextInputEditText) findViewById(R.id.text_input_edit_text_meetup_time);
@@ -162,7 +163,7 @@ public class CreateOfferActivity extends ToolbarActivity {
         textInputEditTextVehiclePlateNumber = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_number);
         textInputEditTextVehicleColor = (TextInputEditText) findViewById(R.id.text_input_edit_text_vehicle_color);
     }
-    
+
     private void setClickListeners() {
         textInputEditTextStartLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,22 +171,22 @@ public class CreateOfferActivity extends ToolbarActivity {
                 callStartPlaceAutocompleteActivityIntent();
             }
         });
-    
+
         textInputEditTextEndLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callEndPlaceAutocompleteActivityIntent();
             }
         });
-    
+
         buttonCreateOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (areNotAllFieldsFilled()) {
-                    Toast.makeText(CreateOfferActivity.this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateOfferActivity.this, R.string.message_required_fields, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 if (isCreateOffer) {
                     String dateString = DateUtils.toString(new Date(), DateUtils.MYSQL_DATE_FORMAT);
                     String timeString = textInputEditTextMeetUpTime.getText().toString();
@@ -320,6 +321,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     textInputEditTextVehicleModel.getText().toString());
     
                     Call<Void> call = TerawhereBackendServer.getApiInstance().editOffer(offer.getOfferId(), offerRequestBody);
+
                     call.enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {

@@ -28,7 +28,7 @@ public class Offer implements Parcelable {
         this.startTerawhereLocation = startTerawhereLocation;
         this.endTerawhereLocation = endTerawhereLocation;
         this.vehicle = vehicle;
-        this.vacancy = vacancy;
+        this.vacancy = vacancy != null ? vacancy : 0;
         this.backendTimestamp = backendTimestamp;
         this.remarks = remarks != null ? remarks : "";
         this.seatsRemaining = seatsRemaining != null ? seatsRemaining : 0;
@@ -107,7 +107,7 @@ public class Offer implements Parcelable {
     }
 
     public Integer getVacancy() {
-        return vacancy;
+        return vacancy == null ? 0 : vacancy;
     }
 
     public BackendTimestamp getBackendTimestamp() {

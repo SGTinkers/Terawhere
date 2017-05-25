@@ -51,7 +51,11 @@ public class BookingFactory {
             } else {
                 offer = new Offer(bookingDatum.offer.id, bookingDatum.offer.userId, meetupTime, startTerawhereLocation, endTerawhereLocation, vehicle, bookingDatum.offer.vacancy, offerBackendTimestamp, bookingDatum.offer.remarks.toString());
             }
+/*
+            booking = new Booking(bookingDatum.id, bookingDatum.userId, bookingDatum.user.name, bookingDatum.user.dp, bookingDatum.user.email, bookingDatum.pax, bookingBackendTimestamp, offer);
+*/
             booking = new Booking(bookingDatum.id, bookingDatum.userId, bookingDatum.pax, bookingBackendTimestamp, offer);
+
             bookings.add(booking);
         }
 

@@ -110,8 +110,12 @@ public class DateUtils {
         return getLocalizedFormatter(friendlyDateTimeFormatter).format(date);
     }
 
-//    public static Date fromFriendlyDateTimeString(String timeString) throws ParseException {
-//        return friendlyDateTimeFormatter.parse(timeString);
+//    public static Date fromFriendlyDateTimeString(String timeString) {
+//        try {
+//            return friendlyDateTimeFormatter.parse(timeString);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 //    }
 
     public static boolean dateIsInThePast(Date date) {

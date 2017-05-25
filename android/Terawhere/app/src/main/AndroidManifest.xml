@@ -63,6 +63,7 @@
                 android:value="tech.msociety.terawhere.screens.activities.MainActivity"/>
         </activity>
 
+
         <!-- Required Activities by 3rd Party Libs -->
         <activity
             android:name="com.facebook.FacebookActivity"
