@@ -57,13 +57,11 @@ public class MainActivity extends BaseActivity {
         }
 
         if (item.getItemId() == R.id.action_info) {
-
-            /*onDialogInfoPressed();*/
-
-            final AlertDialog.Builder adbDeleteOffer = new AlertDialog.Builder(getApplicationContext());
-            createAdbAppInfo(adbDeleteOffer);
+            final AlertDialog.Builder adbInfoDialog = new AlertDialog.Builder(this);
+            createAdbAppInfo(adbInfoDialog);
+            AlertDialog alertDialogInfo = adbInfoDialog.create();
+            alertDialogInfo.show();
             return true;
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -98,40 +96,6 @@ public class MainActivity extends BaseActivity {
 
     private void setAdbInfoTitle(AlertDialog.Builder adbAppInfo) {
         adbAppInfo.setTitle("Terawhere");
-    }
-
-    public void onDialogInfoPressed() {
-
-
-        /*final Dialog infoButtonDialog = new Dialog(context);
-        infoButtonDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        infoButtonDialog.setContentView(R.layout.dialog_info_button);
-        infoButtonDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        infoButtonDialog.setCanceledOnTouchOutside(false);
-
-        Button okButton = (Button) infoButtonDialog.findViewById(R.id.button_ok);
-        Button cancelButton = (Button) infoButtonDialog.findViewById(R.id.button_cancel);
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Uri uri = Uri.parse("https://terawhere.com/#features"); // missing 'http://' will cause crashed
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                infoButtonDialog.dismiss();
-            }
-        });
-        infoButtonDialog.show();*/
-
-
     }
 
     private void initializeToolbar() {
