@@ -20,6 +20,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.events.LogoutEvent;
+import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.screens.activities.abstracts.BaseActivity;
 import tech.msociety.terawhere.screens.fragments.HomeFragment;
 import tech.msociety.terawhere.screens.fragments.MyBookingsFragment;
@@ -144,6 +145,12 @@ public class MainActivity extends BaseActivity {
             }
         });
         viewPager.setCurrentItem(1);
+    }
+
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        EventBus.getDefault().post(new PushNotificationReceivedEvent());
     }
 
     /**
