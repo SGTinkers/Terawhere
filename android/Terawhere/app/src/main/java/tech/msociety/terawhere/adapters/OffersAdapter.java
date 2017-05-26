@@ -36,7 +36,7 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
     private static final String LESS_DETAILS = "\u2014 LESS DETAILS";
     private static final String MORE_DETAILS = "+ MORE DETAILS";
     private static final String DELETE_OFFER_TITLE = "Confirm Cancel Offer?";
-    private static final String DELETE_OFFER_INFO = "The passengers will be informed of your cancellation";
+    private static final String DELETE_OFFER_INFO = "The passengers will be informed of your cancellation.";
     private static final String CANCEL = "Keep";
     private static final String DELETE = "Confirm";
     private static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";

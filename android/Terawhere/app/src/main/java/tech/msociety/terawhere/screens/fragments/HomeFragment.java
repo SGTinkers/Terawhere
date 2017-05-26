@@ -141,9 +141,6 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         }
         
         this.location = ((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        Log.i("LAT:", ":" + location.getLatitude());
-        Log.i("LON:", ":" + location.getLongitude());
-        
     }
     
     private void initializeSupportMapFragment() {

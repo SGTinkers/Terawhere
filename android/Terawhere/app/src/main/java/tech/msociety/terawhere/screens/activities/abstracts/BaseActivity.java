@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -65,11 +66,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         // Set the color of Terawhere title on Recent Apps
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_terawhere_logo);
         ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, getResources().getColor(R.color.colorPrimaryDark));
-        setTaskDescription(taskDesc);
-    
+            setTaskDescription(taskDesc);
+        }
+
         if (requireNetwork) {
             if (!NetworkUtils.hasConnectivity(this)) {
                 startActivity(new Intent(this, NoNetworkActivity.class));
