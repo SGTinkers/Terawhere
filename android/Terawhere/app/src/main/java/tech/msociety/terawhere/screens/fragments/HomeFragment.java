@@ -226,7 +226,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh) {
             Toast.makeText(getContext(), "Refreshing...", Toast.LENGTH_SHORT).show();
-            loadMarkers();
+            if (firstLoadInit) {
+                loadMarkers();
+            }
         }
         
         return super.onOptionsItemSelected(item);
@@ -489,17 +491,23 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBookingCreatedEvent(BookingCreatedEvent event) {
-        loadMarkers();
+        if (firstLoadInit) {
+            loadMarkers();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onOfferCreatedEvent(OfferCreatedEvent event) {
-        loadMarkers();
+        if (firstLoadInit) {
+            loadMarkers();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPushNotificationReceivedEvent(PushNotificationReceivedEvent event) {
-        loadMarkers();
+        if (firstLoadInit) {
+            loadMarkers();
+        }
     }
 
     @Override
