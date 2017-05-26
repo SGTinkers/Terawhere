@@ -27,6 +27,7 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.events.GetOffersHasFinishedEvent;
 import tech.msociety.terawhere.events.OfferDeletedEvent;
+import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Offer;
@@ -141,7 +142,12 @@ public class MyOffersFragment extends BaseFragment {
     public void onOfferDeletedEvent(OfferDeletedEvent event) {
         getOffersFromServer();
     }
-    
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPushNotificationReceivedEvent(PushNotificationReceivedEvent event) {
+        getOffersFromServer();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         getOffersFromServer();

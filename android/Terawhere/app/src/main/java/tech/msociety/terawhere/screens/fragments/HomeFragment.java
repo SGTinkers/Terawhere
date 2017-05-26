@@ -64,6 +64,7 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.OfferInfoViewAdapter;
 import tech.msociety.terawhere.events.BookingCreatedEvent;
 import tech.msociety.terawhere.events.OfferCreatedEvent;
+import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.globals.TerawhereApplication;
@@ -489,6 +490,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onOfferCreatedEvent(OfferCreatedEvent event) {
+        loadMarkers();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPushNotificationReceivedEvent(PushNotificationReceivedEvent event) {
         loadMarkers();
     }
 }

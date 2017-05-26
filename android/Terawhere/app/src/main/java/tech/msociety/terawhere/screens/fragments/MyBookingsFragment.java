@@ -25,6 +25,7 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.BookingsAdapter;
 import tech.msociety.terawhere.events.BookingDeletedEvent;
 import tech.msociety.terawhere.events.GetBookingsHasFinishedEvent;
+import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
 import tech.msociety.terawhere.models.Booking;
@@ -125,6 +126,11 @@ public class MyBookingsFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBookingDeletedEvent(BookingDeletedEvent event) {
+        getBookingsFromServer();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPushNotificationReceivedEvent(PushNotificationReceivedEvent event) {
         getBookingsFromServer();
     }
 

@@ -10,7 +10,10 @@ import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.greenrobot.eventbus.EventBus;
+
 import tech.msociety.terawhere.R;
+import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.screens.activities.MainActivity;
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
@@ -31,6 +34,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 .setContentIntent(resultPendingIntent);
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(remoteMessage.hashCode(), builder.build());
+
+        EventBus.getDefault().post(new PushNotificationReceivedEvent());
     }
 
 }
