@@ -32,6 +32,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 .setContentText(remoteMessage.getNotification().getBody())
                 .setColor(getResources().getColor(R.color.colorPrimary))
                 .setSound(sound != null && !sound.isEmpty() && !sound.equals("default") ? Uri.parse(sound) : Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setAutoCancel(true)
                 .setContentIntent(resultPendingIntent);
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(remoteMessage.hashCode(), builder.build());
