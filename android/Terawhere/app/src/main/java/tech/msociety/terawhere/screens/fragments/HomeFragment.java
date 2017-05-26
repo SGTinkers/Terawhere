@@ -95,6 +95,8 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
 
     private GoogleMap googleMap;
 
+    private boolean isVisibleToUser;
+
     @Override
     protected boolean needsEventBus() {
         return true;
@@ -302,10 +304,12 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     // Update cluster (needed for refresh)
                     clusterManager.cluster();
 
-                    if (offers.size() > 0) {
-                        Toast.makeText(getActivity(), offers.size() + " rides available.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "No rides available.", Toast.LENGTH_SHORT).show();
+                    if (isVisibleToUser) {
+                        if (offers.size() > 0) {
+                            Toast.makeText(getActivity(), offers.size() + " rides available.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "No rides available.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     onFailure(call, new NetworkCallFailedException("Response not successful."));
@@ -496,5 +500,11 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPushNotificationReceivedEvent(PushNotificationReceivedEvent event) {
         loadMarkers();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        this.isVisibleToUser = isVisibleToUser;
     }
 }
