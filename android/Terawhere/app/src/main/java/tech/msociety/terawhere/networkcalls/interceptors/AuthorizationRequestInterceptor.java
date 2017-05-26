@@ -48,6 +48,7 @@ public class AuthorizationRequestInterceptor implements Interceptor {
                         EventBus.getDefault().post(new LoginEvent());
                         return intercept(chain);
                     } else {
+                        EventBus.getDefault().post(new TokenInvalidEvent());
                         throw new TokenInvalidException();
                     }
                 } else if (e != null && e.getError() != null && e.getError().equals("token_invalid")) {
