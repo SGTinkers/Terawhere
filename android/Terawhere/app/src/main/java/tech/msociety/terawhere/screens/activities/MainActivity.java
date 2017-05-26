@@ -72,28 +72,36 @@ public class MainActivity extends BaseActivity {
     private void createAdbAppInfo(AlertDialog.Builder adbAppInfo) {
         setAdbInfoTitle(adbAppInfo);
         setAdbadbAppInfoMessage(adbAppInfo);
-        setAdbadbAppInfoCancelButton(adbAppInfo);
-        setAdbadbAppInfoConfirmButton(adbAppInfo);
+        setAdbadbAppInfoButtons(adbAppInfo);
     }
 
 
-    private void setAdbadbAppInfoConfirmButton(AlertDialog.Builder adbAppInfo) {
+    private void setAdbadbAppInfoButtons(AlertDialog.Builder adbAppInfo) {
         adbAppInfo.setPositiveButton("Learn More", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Uri uri = Uri.parse("https://terawhere.com/#features"); // missing 'http://' will cause crashed
+                Uri uri = Uri.parse("https://terawhere.com"); // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
         });
-    }
-
-    private void setAdbadbAppInfoCancelButton(AlertDialog.Builder adbAppInfo) {
-        adbAppInfo.setNegativeButton("Cancel", null);
+        adbAppInfo.setNegativeButton("Help", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("*/*");
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"developers@msociety.tech"});
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Support/Feedback for Terawhere");
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        });
+        adbAppInfo.setNeutralButton("Cancel", null);
     }
 
     private void setAdbadbAppInfoMessage(AlertDialog.Builder adbAppInfo) {
-        adbAppInfo.setMessage("Learn more about Terawhere at www.terawhere.com");
+        adbAppInfo.setMessage("Version " + getResources().getString(R.string.version_string) + ".\n\nDeveloped with \uD83D\uDC99 by MSociety in Sunny Singapore.");
     }
 
     private void setAdbInfoTitle(AlertDialog.Builder adbAppInfo) {
