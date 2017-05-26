@@ -1,6 +1,7 @@
 package tech.msociety.terawhere.networkcalls.interceptors;
 
 import android.support.annotation.Nullable;
+import android.support.compat.BuildConfig;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -28,6 +29,11 @@ public class LoggingInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
+        // Skip the logging if RELEASE build
+        if (!BuildConfig.DEBUG) {
+            return chain.proceed(chain.request());
+        }
+
         Request request = chain.request();
         String method = request.method();
         String requestBody = getRequestBodyAsString(request);
