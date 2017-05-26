@@ -260,6 +260,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                                         Intent resultIntent = new Intent();
                                         resultIntent.putExtra("FirstTab", 4);
                                         setResult(RESULT_OK, resultIntent);
+                                        EventBus.getDefault().post(new OfferCreatedEvent());
                                         finish();
                                     }
                                 });
