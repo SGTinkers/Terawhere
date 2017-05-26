@@ -26,6 +26,7 @@ import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.OffersAdapter;
 import tech.msociety.terawhere.events.GetOffersHasFinishedEvent;
+import tech.msociety.terawhere.events.OfferCreatedEvent;
 import tech.msociety.terawhere.events.OfferDeletedEvent;
 import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
@@ -136,6 +137,11 @@ public class MyOffersFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void responseNotSuccessfulEvent(ResponseNotSuccessfulEvent event) throws Throwable {
         Log.e(TAG, "failed to fetch my offers via network call", event.getThrowable());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOfferCreatedEvent(OfferCreatedEvent event) {
+        getOffersFromServer();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
