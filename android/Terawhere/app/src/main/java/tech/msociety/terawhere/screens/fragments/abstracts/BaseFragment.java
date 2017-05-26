@@ -1,7 +1,6 @@
 package tech.msociety.terawhere.screens.fragments.abstracts;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,7 @@ public abstract class BaseFragment extends Fragment {
     protected final String TAG = this.getClass().getSimpleName();
     protected boolean needsProgressDialog = false;
     protected ProgressDialog progressDialog = null;
-
+    
     protected boolean needsEventBus() {
         return false;
     }

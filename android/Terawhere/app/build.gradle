@@ -80,8 +80,11 @@ dependencies {
     compile 'jp.wasabeef:picasso-transformations:2.1.2'
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 
-//    Automated testing stuff
+    // Automated testing stuff
     testCompile 'junit:junit:4.12'
+
+    // AppIntro library
+    compile 'com.github.apl-devs:appintro:v4.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
