@@ -98,6 +98,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".screens.activities.OnboardingActivity"
+            android:label="@string/onboarding_activity"/>
+
         <!-- Required Services by 3rd Party Libs -->
         <service
             android:name=".services.FirebaseMessagingService">

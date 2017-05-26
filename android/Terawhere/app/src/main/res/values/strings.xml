@@ -78,5 +78,6 @@
     <string name="create_offer_activity_button_text">Edit Offer</string>
     <string name="message_required_fields">Please fill in all required fields!</string>
     <string name="no_passengers_yet">You have no passengers yet.</string>
+    <string name="onboarding_activity">Terawhere Onboarding</string>
 
 </resources>
