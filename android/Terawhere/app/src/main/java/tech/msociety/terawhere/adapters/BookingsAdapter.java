@@ -6,10 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,8 +41,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
     private static final String MORE_DETAILS = "+ MORE DETAILS";
     public static final String CANCEL_BOOKING_TITLE = "Confirm Cancel Booking?";
     private static final String CANCEL_BOOKING_INFO = "The driver will be informed of your cancellation.";
-    public static final String LOG_ERROR_DELETE_MESSAGE = "ERROR_DELETE_MESSAGE";
-    private static final String CANCEL = "Keep";
+    private static final String KEEP = "Keep";
     private static final String CONFIRM = "Confirm";
     public static final String TERAWHERE_PRIMARY_COLOR = "#54d8bd";
 
@@ -87,7 +84,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
         if (offer.getRemarks() != null && !offer.getRemarks().isEmpty()) {
             viewHolder.textViewRemarks.setText(offer.getRemarks());
         }
-        viewHolder.textViewVehicle.setText(offer.getVehicle().getDescription() + " " + offer.getVehicle().getModel() + " [" + offer.getVehicle().getPlateNumber() + "]");
+        viewHolder.textViewVehicle.setText(getFullVehicleDescription(offer));
         Picasso.with(context)
                 .load(offer.getOffererDp())
                 .transform(new CropCircleTransformation())
@@ -148,7 +145,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
 
                 deleteConfirmationDialog.setTitle(CANCEL_BOOKING_TITLE);
                 deleteConfirmationDialog.setMessage(CANCEL_BOOKING_INFO);
-                deleteConfirmationDialog.setNegativeButton(CANCEL, null); // dismisses by default
+                deleteConfirmationDialog.setNegativeButton(KEEP, null); // dismisses by default
                 deleteConfirmationDialog.setPositiveButton(CONFIRM, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -183,6 +180,11 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             }
         });
 
+    }
+
+    @NonNull
+    private String getFullVehicleDescription(Offer offer) {
+        return offer.getVehicle().getDescription() + " " + offer.getVehicle().getModel() + " [" + offer.getVehicle().getPlateNumber() + "]";
     }
 
     private boolean[] isCollapse(ViewHolder viewHolder, Booking booking) {
