@@ -13,6 +13,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.firebase.crash.FirebaseCrash;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -69,6 +70,7 @@ public class FacebookLoginActivity extends BaseActivity {
                     @Override
                     public void onFailure(Call<FacebookUserRequestBody> call, Throwable t) {
                         // TODO: Handle error more elegantly
+                        FirebaseCrash.report(t);
                         t.printStackTrace();
                         Toast.makeText(FacebookLoginActivity.this, R.string.error_login_fail, Toast.LENGTH_SHORT).show();
                         loginButton.setEnabled(true);
@@ -85,6 +87,7 @@ public class FacebookLoginActivity extends BaseActivity {
             @Override
             public void onError(FacebookException error) {
                 Log.d("FacebookLoginActivity", "Error");
+                FirebaseCrash.report(error);
                 error.printStackTrace();
                 Toast.makeText(FacebookLoginActivity.this, R.string.error_login_fail_fb, Toast.LENGTH_SHORT).show();
                 loginButton.setEnabled(true);
@@ -94,7 +97,7 @@ public class FacebookLoginActivity extends BaseActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(FacebookLoginActivity.this, Arrays.asList("email", "public_profile"));
+                LoginManager.getInstance().logInWithReadPermissions(FacebookLoginActivity.this, Arrays.asList("email", "public_profile", "user_friends"));
                 loginButton.setEnabled(false);
             }
         });
