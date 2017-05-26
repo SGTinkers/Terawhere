@@ -31,7 +31,7 @@
             android:resource="@color/colorPrimary"/>
 
         <!-- Our Activities -->
-        <activity android:name=".screens.activities.MainActivity">
+        <activity android:name=".screens.activities.MainActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
