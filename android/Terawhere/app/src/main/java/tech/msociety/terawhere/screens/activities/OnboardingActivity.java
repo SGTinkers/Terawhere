@@ -27,8 +27,8 @@ public class OnboardingActivity extends AppIntro {
         
         addSlide(AppIntro2Fragment.newInstance("Terawhere Is Free", "Offer rides as amal jariyah. \nNo fees. Just pahala.", R.drawable.terawhere_landing_page_logo_small, ContextCompat.getColor(this, R.color.colorPrimary)));
         addSlide(AppIntro2Fragment.newInstance("Rides Around You", "The map shows rides around you. \nZoom out to see more rides.", R.drawable.onboarding_find_rides_nearby, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance("Finding Rides", "Available rides show as pins on the map. \nClick on a pin to find out more.", R.drawable.onboarding_find_rides_on_map, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance("Offering Rides", "To offer rides, click on the round plus button on the bottom right.", R.drawable.onboarding_offer_ride, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance("Finding Rides", "Available rides show as pins on the map. \nTap on a pin to find out more.", R.drawable.onboarding_find_rides_on_map, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance("Offering Rides", "To offer rides, tap on the round plus button on the bottom right.", R.drawable.onboarding_offer_ride, ContextCompat.getColor(this, R.color.colorPrimary)));
         
         setBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         setSeparatorColor(ContextCompat.getColor(this, R.color.white));
