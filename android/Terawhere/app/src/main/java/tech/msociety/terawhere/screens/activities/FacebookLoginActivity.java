@@ -1,6 +1,7 @@
 package tech.msociety.terawhere.screens.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -95,6 +96,15 @@ public class FacebookLoginActivity extends BaseActivity {
             public void onClick(View v) {
                 LoginManager.getInstance().logInWithReadPermissions(FacebookLoginActivity.this, Arrays.asList("email", "public_profile"));
                 loginButton.setEnabled(false);
+            }
+        });
+
+        findViewById(R.id.text_view_terms_and_conditions).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://terawhere.com/terms.pdf"));
+                startActivity(intent);
             }
         });
     }
