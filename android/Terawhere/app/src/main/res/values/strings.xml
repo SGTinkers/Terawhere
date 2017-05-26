@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Terawhere</string>
-    <string name="version_string">1.0-beta</string>
+    <string name="version_string">1.0-beta1</string>
     <string name="title_activity_create_offer">Create Offer</string>
     <string name="facebook_app_id">290133594776141</string>
     <string name="fb_login_protocol_scheme">fb290133594776141</string>
