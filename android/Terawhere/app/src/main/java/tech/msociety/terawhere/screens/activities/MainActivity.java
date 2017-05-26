@@ -98,11 +98,11 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        adbAppInfo.setNeutralButton("Cancel", null);
+        adbAppInfo.setNeutralButton("Close", null);
     }
 
     private void setAdbadbAppInfoMessage(AlertDialog.Builder adbAppInfo) {
-        adbAppInfo.setMessage("Version " + getResources().getString(R.string.version_string) + ".\n\nDeveloped with \uD83D\uDC99 by MSociety in Sunny Singapore.");
+        adbAppInfo.setMessage("Version " + getResources().getString(R.string.version_name) + ".\n\nDeveloped with \uD83D\uDC99 by MSociety in Sunny Singapore.");
     }
 
     private void setAdbInfoTitle(AlertDialog.Builder adbAppInfo) {
