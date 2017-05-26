@@ -2,17 +2,22 @@ package tech.msociety.terawhere.screens.activities.abstracts;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,28 +41,32 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected boolean requireNetwork = true;
     
     protected boolean registerEventBus = true;
+
+    private LocationManager locationManager;
+
+    private BroadcastReceiver locationServiceReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            isLocationServicesCheckFailed();
+        }
+    };
     
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);;
     
         if (registerEventBus) {
             EventBus.getDefault().register(this);
         }
         
-        if (requireAuth && Constants.getBearerToken() == null) {
-            Intent i = new Intent(this, FacebookLoginActivity.class);
-            startActivity(i);
-            finish();
+        if (isAuthCheckFailed()) {
             return;
         }
     
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (requireLocationServices && permissionCheck == PackageManager.PERMISSION_DENIED) {
-            Intent i = new Intent(this, RequestLocationServicesActivity.class);
-            startActivity(i);
-            finish();
+        if (isLocationServicesCheckFailed()) {
             return;
         }
     }
@@ -65,6 +74,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (requireLocationServices) {
+            registerReceiver(locationServiceReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         // Set the color of Terawhere title on Recent Apps
@@ -78,6 +91,23 @@ public abstract class BaseActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NoNetworkActivity.class));
             }
         }
+
+        if (isAuthCheckFailed()) {
+            return;
+        }
+
+        if (isLocationServicesCheckFailed()) {
+            return;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (requireLocationServices) {
+            unregisterReceiver(locationServiceReceiver);
+        }
     }
     
     @Override
@@ -87,6 +117,32 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (registerEventBus) {
             EventBus.getDefault().unregister(this);
         }
+    }
+
+    private boolean isAuthCheckFailed() {
+        if (requireAuth && Constants.getBearerToken() == null) {
+            Intent i = new Intent(this, FacebookLoginActivity.class);
+            startActivity(i);
+            finish();
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isLocationServicesCheckFailed() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean locationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (requireLocationServices
+                && (permissionCheck == PackageManager.PERMISSION_DENIED || !locationEnabled)) {
+            Intent i = new Intent(this, RequestLocationServicesActivity.class);
+            startActivity(i);
+            finish();
+            return true;
+        }
+
+        return false;
     }
     
     @Subscribe(threadMode = ThreadMode.MAIN)

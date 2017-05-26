@@ -19,7 +19,8 @@
 
     <string name="error_login_fail">Error while trying to login. Please try again later.</string>
     <string name="error_login_fail_fb">Error while trying to login with Facebook. Please try again later.</string>
-    <string name="error_need_location_services">Grant location services permission to proceed.</string>
+    <string name="error_need_location_services_permission">Grant location services permission to proceed.</string>
+    <string name="error_need_location_services">Turn on your location services in device settings to proceed.</string>
 
     <string-array name="mosques_array">
         <item>Yusuf Ishak</item>

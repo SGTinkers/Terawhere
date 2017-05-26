@@ -42,7 +42,10 @@
             android:layout_height="52dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginTop="46dp" />
+            android:layout_marginTop="46dp"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:text="PROCEED" />
 
     </LinearLayout>
 

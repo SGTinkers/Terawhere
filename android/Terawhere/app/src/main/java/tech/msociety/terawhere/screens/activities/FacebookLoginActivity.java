@@ -36,10 +36,13 @@ public class FacebookLoginActivity extends BaseActivity {
     private CallbackManager callbackManager;
     private ImageButton loginButton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    {
         requireAuth = false;
         requireLocationServices = false;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_login);
 
