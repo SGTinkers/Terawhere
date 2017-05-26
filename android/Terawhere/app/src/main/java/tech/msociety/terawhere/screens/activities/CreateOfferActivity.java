@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -57,7 +58,8 @@ public class CreateOfferActivity extends ToolbarActivity {
     public static final String INTENT_IS_CREATE = "INTENT_IS_CREATE";
     public static final int REQUEST_CODE_GET_START_PLACE = 1;
     public static final int REQUEST_CODE_GET_END_PLACE = 2;
-    private static final String TOOLBAR_TITLE = "Create Offer";
+    private static final String TOOLBAR_TITLE_CREATE_OFFER = "Create Offer";
+    private static final String TOOLBAR_TITLE_EDIT_OFFER = "Edit Offer";
     public static final double OFFSET_LATITUDE = 0.000225;
     public static final double OFFSET_LONGITUDE = 0.0043705;
     public static final String SELECT_TIME = "Select Time";
@@ -104,7 +106,6 @@ public class CreateOfferActivity extends ToolbarActivity {
         setContentView(R.layout.activity_create_offer);
 
         trackCurrentLocation();
-        initToolbar(TOOLBAR_TITLE, true);
         initViewHandles();
         initTimePickerDialog(null);
         setClickListeners();
@@ -119,9 +120,14 @@ public class CreateOfferActivity extends ToolbarActivity {
             offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
             buttonCreateOffer.setText(R.string.create_offer_activity_button_text);
+            initToolbar(TOOLBAR_TITLE_EDIT_OFFER, true);
+
         } else if (isCreateOffer) {
             offer = intent.getParcelableExtra(CreateOfferActivity.INTENT_OFFER);
             unloadOfferIntoUi(offer);
+            initToolbar(TOOLBAR_TITLE_CREATE_OFFER, true);
+        } else {
+            initToolbar(TOOLBAR_TITLE_CREATE_OFFER, true);
         }
     }
 
@@ -526,5 +532,15 @@ public class CreateOfferActivity extends ToolbarActivity {
         }
 
         return place.getName();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
