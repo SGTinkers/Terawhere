@@ -392,7 +392,12 @@ public class CreateOfferActivity extends ToolbarActivity {
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         calendar.set(Calendar.MINUTE, minute);
-                        textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(calendar.getTime()));
+
+                        if (calendar.getTime().before(new Date())) {
+                            Toast.makeText(CreateOfferActivity.this, "Cannot select time that is in the past.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            textInputEditTextMeetUpTime.setText(DateUtils.toFriendlyTimeString(calendar.getTime()));
+                        }
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
                 timePickerDialog.setTitle(SELECT_TIME);
