@@ -10,7 +10,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -52,9 +51,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import retrofit2.Call;
@@ -301,7 +298,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     // Zoom in after markers loaded
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
     
                     // Update cluster (needed for refresh)
                     clusterManager.cluster();
