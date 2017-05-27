@@ -16,7 +16,6 @@
         android:id="@+id/action_onboarding"
         android:icon="@drawable/info_button"
         android:title="Tutorial"
-        compat:showAsAction="ifRoom"
         android:orderInCategory="997"/>
 
 </menu>

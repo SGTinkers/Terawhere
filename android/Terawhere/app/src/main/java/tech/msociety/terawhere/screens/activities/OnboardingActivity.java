@@ -25,10 +25,12 @@ public class OnboardingActivity extends AppIntro {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        addSlide(AppIntro2Fragment.newInstance("Terawhere Is Free", "Offer rides as amal jariyah. \nNo fees. Just pahala.", R.drawable.terawhere_landing_page_logo_small, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntro2Fragment.newInstance("Rides Around You", "The map shows rides around you. \nZoom out to see more rides.", R.drawable.onboarding_find_rides_nearby, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance("Finding Rides", "Available rides show as pins on the map. \nTap on a pin to find out more.", R.drawable.onboarding_find_rides_on_map, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance("Offering Rides", "To offer rides, tap on the round plus button on the bottom right.", R.drawable.onboarding_offer_ride, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntro2Fragment.newInstance("Terawhere Is Free!", "Offer free rides to Terawih\nEase their travel.", R.drawable.terawhere_landing_page_logo_small, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntro2Fragment.newInstance("Find Rides Around You", "The map shows you the ride offers around you.\nZoom out to view more.", R.drawable.onboarding_find_rides_nearby, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance("View Ride Info", "The pins on the map indicates the rides.\nTap on it for ride details.", R.drawable.onboarding_ride_details, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance("Book The Ride", "Indicate the number of seats you need and book your free ride!", R.drawable.onboarding_book, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance("Offering Rides", "Under the \"Offer a Ride\" tab, tap on the + button on the bottom right.", R.drawable.onboarding_offer_ride, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance("Wait for Bookings", "We’ll notify you of any bookings made by others.", R.drawable.onboarding_offer_created, ContextCompat.getColor(this, R.color.colorPrimary)));
         
         setBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         setSeparatorColor(ContextCompat.getColor(this, R.color.white));
