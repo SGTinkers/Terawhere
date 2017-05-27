@@ -43,4 +43,15 @@
         android:textColor="#434343"
         android:textSize="14sp" />
 
+    <TextView
+        android:id="@+id/textViewTapToBook"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:fontFamily="sans-serif"
+        android:text="Tap here to book ride"
+        android:textColor="#0066cc"
+        android:textSize="14sp" />
+
 </LinearLayout>
