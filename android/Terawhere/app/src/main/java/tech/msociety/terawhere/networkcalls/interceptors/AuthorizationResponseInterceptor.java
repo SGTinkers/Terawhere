@@ -8,6 +8,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import tech.msociety.terawhere.globals.Constants;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 
 public class AuthorizationResponseInterceptor implements Interceptor {
 
@@ -22,8 +23,8 @@ public class AuthorizationResponseInterceptor implements Interceptor {
         if (response.header("Authorization") != null && !response.header("Authorization").isEmpty()) {
             String authorization = response.header("Authorization");
             String[] authorizationSplit = authorization.split(" ");
-            Constants.setBearerToken(authorizationSplit[1]);
-            Log.d(AuthorizationResponseInterceptor.class.getName(), "Bearer token updated: " + Constants.getBearerToken());
+            TerawhereApplication.setBearerToken(authorizationSplit[1]);
+            Log.d(AuthorizationResponseInterceptor.class.getName(), "Bearer token updated: " + TerawhereApplication.getBearerToken());
         }
 
         return response;

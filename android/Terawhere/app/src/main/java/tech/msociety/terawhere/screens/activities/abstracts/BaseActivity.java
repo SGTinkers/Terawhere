@@ -26,6 +26,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.events.LogoutEvent;
 import tech.msociety.terawhere.globals.Constants;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
 import tech.msociety.terawhere.screens.activities.NoNetworkActivity;
 import tech.msociety.terawhere.screens.activities.RequestLocationServicesActivity;
@@ -120,7 +121,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private boolean isAuthCheckFailed() {
-        if (requireAuth && Constants.getBearerToken() == null) {
+        if (requireAuth && TerawhereApplication.getBearerToken() == null) {
             Intent i = new Intent(this, FacebookLoginActivity.class);
             startActivity(i);
             finish();

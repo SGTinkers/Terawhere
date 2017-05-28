@@ -120,7 +120,7 @@
         <!-- Required Providers by 3rd Party Libs -->
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider${applicationId}"
             android:exported="true"/>
 
         <!-- Uses-Library -->

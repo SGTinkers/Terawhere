@@ -13,6 +13,7 @@ import okhttp3.Response;
 import tech.msociety.terawhere.events.LoginEvent;
 import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.globals.Constants;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 
 public class AuthorizationRequestInterceptor implements Interceptor {
@@ -31,9 +32,9 @@ public class AuthorizationRequestInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        if (Constants.getBearerToken() != null) {
+        if (TerawhereApplication.getBearerToken() != null) {
             request = request.newBuilder()
-                    .addHeader("Authorization", "Bearer " + Constants.getBearerToken())
+                    .addHeader("Authorization", "Bearer " + TerawhereApplication.getBearerToken())
                     .build();
         }
 

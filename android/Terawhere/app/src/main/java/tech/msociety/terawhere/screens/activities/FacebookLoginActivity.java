@@ -46,7 +46,7 @@ public class FacebookLoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_login);
 
-        if (Constants.getBearerToken() != null) {
+        if (TerawhereApplication.getBearerToken() != null) {
             finish();
             return;
         }
@@ -64,7 +64,7 @@ public class FacebookLoginActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<FacebookUserRequestBody> call, Response<FacebookUserRequestBody> response) {
                         Log.d("FacebookLoginActivity", "Server Token: " + response.body().getToken());
-                        Constants.setBearerToken(response.body().getToken());
+                        TerawhereApplication.setBearerToken(response.body().getToken());
 
                         EventBus.getDefault().post(new LoginEvent());
                         getUserDetails();

@@ -26,9 +26,24 @@ public class TerawhereApplication extends Application {
 
     public static Context ApplicationContext;
 
+    private static String bearerToken;
+
     public TerawhereApplication() {
         super();
         ApplicationContext = this;
+    }
+
+    public static String getBearerToken() {
+        if (bearerToken == null) {
+            bearerToken = AppPrefs.with(ApplicationContext).getBearerToken();
+        }
+
+        return bearerToken;
+    }
+
+    public static void setBearerToken(String token) {
+        AppPrefs.with(ApplicationContext).setBearerToken(token);
+        bearerToken = token;
     }
 
     @Override
@@ -40,7 +55,7 @@ public class TerawhereApplication extends Application {
     }
 
     private void registerPushTokensWithBackend() {
-        if (Constants.getBearerToken() != null) {
+        if (getBearerToken() != null) {
             final String token = FirebaseInstanceId.getInstance().getToken();
             if (token != null) {
                 TerawhereBackendServer.getApiInstance().storeDeviceToken(new DeviceTokenRequestBody(token, "android")).enqueue(new Callback<StoreDeviceToken>() {
@@ -71,7 +86,7 @@ public class TerawhereApplication extends Application {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogoutEvent(LogoutEvent event) {
-        Constants.setBearerToken(null);
+        setBearerToken(null);
         Intent i = new Intent(this, FacebookLoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
