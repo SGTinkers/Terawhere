@@ -298,7 +298,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                     // Zoom in after markers loaded
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(11));
     
                     // Update cluster (needed for refresh)
                     clusterManager.cluster();
