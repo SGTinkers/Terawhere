@@ -48,6 +48,13 @@ public class MainActivity extends BaseActivity {
 
         ((TerawhereApplication) getApplication()).trackEvent("Launched Main Screen");
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((TerawhereApplication) getApplication()).trackEvent("Resume Main Screen");
+    }
     
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
