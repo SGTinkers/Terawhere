@@ -19,4 +19,8 @@ public class UserDatum {
     @SerializedName("dp")
     @Expose
     public String dp;
+
+    @SerializedName("gender")
+    @Expose
+    public String gender;
 }

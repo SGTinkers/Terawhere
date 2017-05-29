@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +30,8 @@ public class TerawhereApplication extends Application {
     public static Context ApplicationContext;
 
     private static String bearerToken;
+
+    private MixpanelAPI mixpanel;
 
     public TerawhereApplication() {
         super();
@@ -50,6 +55,8 @@ public class TerawhereApplication extends Application {
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
+
+        mixpanel = MixpanelAPI.getInstance(this, Constants.MIXPANEL_TOKEN);
 
         registerPushTokensWithBackend();
     }
@@ -77,6 +84,22 @@ public class TerawhereApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
         EventBus.getDefault().unregister(this);
+    }
+
+    public void trackEvent(String event) {
+        try {
+            JSONObject props = new JSONObject();
+            if (getBearerToken() != null) {
+                props.put("Logged In", false);
+            } else {
+                props.put("User Id", AppPrefs.with(this).getUserId());
+                props.put("User Name", AppPrefs.with(this).getUserName());
+                props.put("Gender", AppPrefs.with(this).getUserName());
+            }
+            mixpanel.track(event, props);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

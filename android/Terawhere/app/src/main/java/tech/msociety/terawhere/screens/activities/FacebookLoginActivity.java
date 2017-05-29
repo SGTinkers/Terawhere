@@ -131,6 +131,9 @@ public class FacebookLoginActivity extends BaseActivity {
                     AppPrefs.with(TerawhereApplication.ApplicationContext).setUserId(getUserDetailsResponse.user.id);
                     AppPrefs.with(TerawhereApplication.ApplicationContext).setUserName(getUserDetailsResponse.user.name);
                     AppPrefs.with(TerawhereApplication.ApplicationContext).setUserEmail(getUserDetailsResponse.user.email);
+                    AppPrefs.with(TerawhereApplication.ApplicationContext).setUserGender(getUserDetailsResponse.user.gender);
+
+                    ((TerawhereApplication) getApplication()).trackEvent("User logged in");
                     
                     goToMainActivity();
                 } else {

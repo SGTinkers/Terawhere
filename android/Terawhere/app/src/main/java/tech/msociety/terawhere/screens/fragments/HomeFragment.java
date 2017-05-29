@@ -222,6 +222,7 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh) {
+            ((TerawhereApplication) getContext().getApplicationContext()).trackEvent("Map View Refresh Button Clicked");
             Toast.makeText(getContext(), "Refreshing...", Toast.LENGTH_SHORT).show();
             if (firstLoadInit) {
                 loadMarkers();

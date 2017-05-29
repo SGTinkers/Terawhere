@@ -8,5 +8,6 @@ public interface AppPrefsConfigurator {
     String userId = null;
     String userName = null;
     String userEmail = null;
+    String userGender = null;
     boolean onboardingToBeShown = true;
 }

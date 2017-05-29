@@ -46,6 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.events.OfferCreatedEvent;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferRequestBody;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -129,6 +130,8 @@ public class CreateOfferActivity extends ToolbarActivity {
         } else {
             initToolbar(TOOLBAR_TITLE_CREATE_OFFER, true);
         }
+
+        ((TerawhereApplication) getApplication()).trackEvent("Launched Create Offer Screen");
     }
 
     private void unloadOfferIntoUi(Offer offer) {
@@ -194,6 +197,7 @@ public class CreateOfferActivity extends ToolbarActivity {
             @Override
             public void onClick(View v) {
                 if (!isFormFilled()) {
+                    ((TerawhereApplication) getApplication()).trackEvent("Submitted Offer without filling all fields");
                     Toast.makeText(CreateOfferActivity.this, R.string.message_required_fields, Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -229,9 +233,11 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     }
                                 });
                                 successDialog.show();
+                                ((TerawhereApplication) getApplication()).trackEvent("Submit Offer successful");
                             } else {
                                 try {
                                     TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(CreateOfferActivity.this, response);
+                                    ((TerawhereApplication) getApplication()).trackEvent("Submit Offer encountered error");
                                 } catch (IOException e) {
                                     onFailure(call, e);
                                 }
@@ -241,6 +247,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             TerawhereBackendServer.ErrorDatum.ToastUnknownError(CreateOfferActivity.this, t);
+                            ((TerawhereApplication) getApplication()).trackEvent("Submit Offer encountered error");
                         }
                     });
                 } else if (isEditOffer) {
@@ -271,9 +278,11 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     }
                                 });
                                 successDialog.show();
+                                ((TerawhereApplication) getApplication()).trackEvent("Submit Offer successful");
                             } else {
                                 try {
                                     TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(CreateOfferActivity.this, response);
+                                    ((TerawhereApplication) getApplication()).trackEvent("Submit Offer encountered error");
                                 } catch (IOException e) {
                                     onFailure(call, e);
                                 }
@@ -283,6 +292,7 @@ public class CreateOfferActivity extends ToolbarActivity {
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             TerawhereBackendServer.ErrorDatum.ToastUnknownError(CreateOfferActivity.this, t);
+                            ((TerawhereApplication) getApplication()).trackEvent("Submit Offer encountered error");
                         }
                     });
                 } else {
@@ -313,12 +323,14 @@ public class CreateOfferActivity extends ToolbarActivity {
                                     }
                                 });
                                 successDialog.show();
+                                ((TerawhereApplication) getApplication()).trackEvent("Submit Offer successful");
                             }
                         }
 
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             Log.e(TAG, "onFailure: ", t);
+                            ((TerawhereApplication) getApplication()).trackEvent("Submit Offer encountered error");
                         }
                     });
                 }

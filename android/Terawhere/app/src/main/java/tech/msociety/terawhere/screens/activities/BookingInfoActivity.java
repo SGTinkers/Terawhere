@@ -17,6 +17,7 @@ import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.adapters.BookingsInfoAdapter;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.models.factories.BookingFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
@@ -43,6 +44,8 @@ public class BookingInfoActivity extends ToolbarActivity {
 
         Integer offerId = getIntent().getExtras().getInt(INTENT_OFFER_ID);
         getBookingsFromServer(offerId);
+
+        ((TerawhereApplication) getApplication()).trackEvent("Launched Offer Bookings Screen");
     }
 
     private void initTextViewEmptyRecyclerViewBookingInfo() {

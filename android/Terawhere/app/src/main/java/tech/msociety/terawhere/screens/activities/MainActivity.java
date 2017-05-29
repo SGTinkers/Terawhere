@@ -45,6 +45,8 @@ public class MainActivity extends BaseActivity {
         initToolbar();
         initTabLayout();
         initPagerView();
+
+        ((TerawhereApplication) getApplication()).trackEvent("Launched Main Screen");
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,11 +94,13 @@ public class MainActivity extends BaseActivity {
             
             AlertDialog alertDialogInfo = dialogBuilder.create();
             alertDialogInfo.show();
+            ((TerawhereApplication) getApplication()).trackEvent("Launched Info Dialog");
             return true;
         }
         
         if (item.getItemId() == R.id.action_onboarding) {
             OnboardingActivity.start(this);
+            ((TerawhereApplication) getApplication()).trackEvent("Relaunched Onboarding Screen");
             return true;
         }
         

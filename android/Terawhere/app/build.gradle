@@ -82,6 +82,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     // AppIntro library
     compile 'com.github.apl-devs:appintro:v4.2.0'
+    // Mixpanel for tracking
+    compile "com.mixpanel.android:mixpanel-android:5.+"
 }
 
 apply plugin: 'com.google.gms.google-services'
