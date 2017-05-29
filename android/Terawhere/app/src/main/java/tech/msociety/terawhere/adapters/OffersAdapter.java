@@ -149,9 +149,19 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         viewHolder.relativeLayoutItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Offer offer = offers.get(viewHolder.getAdapterPosition());
+                try {
+                    JSONObject props = new JSONObject();
+                    props.put("offer_id", offer.getOfferId());
+                    props.put("destination", offer.getEndTerawhereLocation().getName());
+                    ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Launched Offer Passengers", props);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 Context context = viewGroup.getContext();
                 Intent intent = new Intent(context, BookingInfoActivity.class);
-                intent.putExtra(BookingInfoActivity.INTENT_OFFER_ID, offers.get(viewHolder.getAdapterPosition()).getOfferId());
+                intent.putExtra(BookingInfoActivity.INTENT_OFFER_ID, offer.getOfferId());
                 context.startActivity(intent);
             }
         });
