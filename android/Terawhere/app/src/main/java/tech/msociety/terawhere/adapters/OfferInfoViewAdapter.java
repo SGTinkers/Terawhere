@@ -8,6 +8,9 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.globals.AppPrefs;
 import tech.msociety.terawhere.globals.TerawhereApplication;
@@ -57,7 +60,16 @@ public class OfferInfoViewAdapter implements GoogleMap.InfoWindowAdapter {
         }
 
         seatsAvailableTextView.setText(Html.fromHtml("<font color='" + color + "'>" + offer.getSeatsRemaining() + "</font> seat" + (offer.getSeatsRemaining() > 1 ? "s" : "") + " left"));
-        
+
+        try {
+            JSONObject props = new JSONObject();
+            props.put("offer_id", offer.getOfferId());
+            props.put("destination", offer.getEndTerawhereLocation().getName());
+            ((TerawhereApplication) popup.getContext().getApplicationContext()).getMixpanel().track("Pin Clicked", props);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return popup;
     }
 }

@@ -21,6 +21,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,6 +33,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.events.BookingDeletedEvent;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
@@ -156,9 +159,25 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {
                                     EventBus.getDefault().post(new BookingDeletedEvent(booking));
+                                    try {
+                                        JSONObject props = new JSONObject();
+                                        props.put("offer_id", booking.getOffer().getOfferId());
+                                        props.put("destination", booking.getOffer().getEndTerawhereLocation().getName());
+                                        ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Booking Cancelled", props);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 } else {
                                     try {
                                         TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(context, response);
+                                        try {
+                                            JSONObject props = new JSONObject();
+                                            props.put("offer_id", booking.getOffer().getOfferId());
+                                            props.put("destination", booking.getOffer().getEndTerawhereLocation().getName());
+                                            ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Booking Cancellation Failed", props);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
                                     } catch (IOException e) {
                                         onFailure(call, e);
                                     }
@@ -168,6 +187,14 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
                                 TerawhereBackendServer.ErrorDatum.ToastUnknownError(context, t);
+                                try {
+                                    JSONObject props = new JSONObject();
+                                    props.put("offer_id", booking.getOffer().getOfferId());
+                                    props.put("destination", booking.getOffer().getEndTerawhereLocation().getName());
+                                    ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Booking Cancellation Failed", props);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
                     }

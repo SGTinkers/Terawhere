@@ -28,6 +28,7 @@ import tech.msociety.terawhere.events.GetBookingsHasFinishedEvent;
 import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.models.Booking;
 import tech.msociety.terawhere.models.factories.BookingFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
@@ -139,4 +140,11 @@ public class MyBookingsFragment extends BaseFragment {
         getBookingsFromServer();
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && isResumed()) {
+            ((TerawhereApplication) getActivity().getApplication()).trackEvent("Launch Bookings Tab");
+        }
+    }
 }

@@ -17,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +28,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.events.OfferDeletedEvent;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
 import tech.msociety.terawhere.screens.activities.BookingInfoActivity;
@@ -188,6 +191,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
         viewHolder.textViewEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    JSONObject props = new JSONObject();
+                    props.put("offer_id", offer.getOfferId());
+                    props.put("destination", offer.getEndTerawhereLocation().getName());
+                    ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Launched Edit Offer", props);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Context context = viewGroup.getContext();
                 Intent intent = CreateOfferActivity.getIntentToStartInEditMode(context, offer);
                 context.startActivity(intent);
@@ -224,10 +235,26 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             EventBus.getDefault().post(new OfferDeletedEvent(offer));
+                            try {
+                                JSONObject props = new JSONObject();
+                                props.put("offer_id", offer.getOfferId());
+                                props.put("destination", offer.getEndTerawhereLocation().getName());
+                                ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Offer Cancelled", props);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             try {
                                 Log.i(LOG_ERROR_DELETE_MESSAGE, ": " + response.errorBody().string());
                             } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                JSONObject props = new JSONObject();
+                                props.put("offer_id", offer.getOfferId());
+                                props.put("destination", offer.getEndTerawhereLocation().getName());
+                                ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Offer Cancellation Failed", props);
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -235,6 +262,14 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
+                        try {
+                            JSONObject props = new JSONObject();
+                            props.put("offer_id", offer.getOfferId());
+                            props.put("destination", offer.getEndTerawhereLocation().getName());
+                            ((TerawhereApplication) context.getApplicationContext()).getMixpanel().track("Offer Cancellation Failed", props);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }

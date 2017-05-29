@@ -48,6 +48,8 @@ import com.squareup.picasso.Picasso;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -425,6 +427,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
         AlertDialog alert = builder.create();
         alert.show();
         decorateAlertDialog(alert);
+
+        try {
+            JSONObject props = new JSONObject();
+            props.put("offer_id", offer.getOfferId());
+            props.put("destination", offer.getEndTerawhereLocation().getName());
+            ((TerawhereApplication) getContext().getApplicationContext()).getMixpanel().track("Launched Booking Dialog", props);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void decorateAlertDialog(AlertDialog alertDialog) {
@@ -439,6 +450,15 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
             Toast.makeText(getContext(), "Please enter number of seats", Toast.LENGTH_SHORT).show();
         } else {
             int offerId = offer.getOfferId();
+
+            try {
+                JSONObject props = new JSONObject();
+                props.put("offer_id", offer.getOfferId());
+                props.put("destination", offer.getEndTerawhereLocation().getName());
+                ((TerawhereApplication) getContext().getApplicationContext()).getMixpanel().track("Book Button Clicked", props);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
     
             createBookingApi(new BookingRequestBody(offerId)).enqueue(new Callback<Void>() {
                 @Override
@@ -470,9 +490,26 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                             }
                         });
                         successDialog.show();
+
+                        try {
+                            JSONObject props = new JSONObject();
+                            props.put("offer_id", offer.getOfferId());
+                            props.put("destination", offer.getEndTerawhereLocation().getName());
+                            ((TerawhereApplication) getContext().getApplicationContext()).getMixpanel().track("Booking Successful", props);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         try {
                             TerawhereBackendServer.ErrorDatum.ParseErrorAndToast(getContext(), response);
+                            try {
+                                JSONObject props = new JSONObject();
+                                props.put("offer_id", offer.getOfferId());
+                                props.put("destination", offer.getEndTerawhereLocation().getName());
+                                ((TerawhereApplication) getContext().getApplicationContext()).getMixpanel().track("Booking Failed", props);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         } catch (IOException e) {
                             onFailure(call, e);
                         }
@@ -482,6 +519,14 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
                     TerawhereBackendServer.ErrorDatum.ToastUnknownError(getContext(), t);
+                    try {
+                        JSONObject props = new JSONObject();
+                        props.put("offer_id", offer.getOfferId());
+                        props.put("destination", offer.getEndTerawhereLocation().getName());
+                        ((TerawhereApplication) getContext().getApplicationContext()).getMixpanel().track("Booking Failed", props);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -512,5 +557,9 @@ public class HomeFragment extends BaseFragment implements OnMapReadyCallback, Go
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
+
+        if (isVisibleToUser && isResumed()) {
+            ((TerawhereApplication) getActivity().getApplication()).trackEvent("Launch Map Tab");
+        }
     }
 }

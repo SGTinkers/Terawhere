@@ -31,6 +31,7 @@ import tech.msociety.terawhere.events.OfferDeletedEvent;
 import tech.msociety.terawhere.events.PushNotificationReceivedEvent;
 import tech.msociety.terawhere.events.ResponseNotSuccessfulEvent;
 import tech.msociety.terawhere.exceptions.NetworkCallFailedException;
+import tech.msociety.terawhere.globals.TerawhereApplication;
 import tech.msociety.terawhere.models.Offer;
 import tech.msociety.terawhere.models.factories.OfferFactory;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
@@ -164,6 +165,7 @@ public class MyOffersFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && isResumed()) {
             onResume();
+            ((TerawhereApplication) getActivity().getApplication()).trackEvent("Launch Offers Tab");
         }
     }
 }
