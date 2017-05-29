@@ -16,6 +16,8 @@ import com.facebook.login.LoginResult;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -134,6 +136,18 @@ public class FacebookLoginActivity extends BaseActivity {
                     AppPrefs.with(TerawhereApplication.ApplicationContext).setUserGender(getUserDetailsResponse.user.gender);
 
                     ((TerawhereApplication) getApplication()).trackEvent("User logged in");
+
+                    try {
+                        JSONObject props = new JSONObject();
+                        props.put("$name", getUserDetailsResponse.user.name);
+                        props.put("Name", getUserDetailsResponse.user.name);
+                        props.put("Gender", getUserDetailsResponse.user.gender);
+                        ((TerawhereApplication) getApplication()).getMixpanel().identify(getUserDetailsResponse.user.id);
+                        ((TerawhereApplication) getApplication()).getMixpanel().getPeople().identify(getUserDetailsResponse.user.id);
+                        ((TerawhereApplication) getApplication()).getMixpanel().getPeople().set(props);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     
                     goToMainActivity();
                 } else {

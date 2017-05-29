@@ -86,6 +86,10 @@ public class TerawhereApplication extends Application {
         EventBus.getDefault().unregister(this);
     }
 
+    public MixpanelAPI getMixpanel() {
+        return mixpanel;
+    }
+
     public void trackEvent(String event) {
         try {
             JSONObject props = new JSONObject();
@@ -93,8 +97,10 @@ public class TerawhereApplication extends Application {
                 props.put("Logged In", false);
             } else {
                 props.put("User Id", AppPrefs.with(this).getUserId());
-                props.put("User Name", AppPrefs.with(this).getUserName());
-                props.put("Gender", AppPrefs.with(this).getUserName());
+                props.put("Name", AppPrefs.with(this).getUserName());
+                props.put("$name", AppPrefs.with(this).getUserName());
+                props.put("Gender", AppPrefs.with(this).getUserGender());
+                mixpanel.identify(AppPrefs.with(this).getUserId());
             }
             mixpanel.track(event, props);
         } catch (JSONException e) {
