@@ -21,6 +21,22 @@
         {
           "client_id": "145760395523-8ik1f4bd815e5jr289ki6rlsgcmiq4n4.apps.googleusercontent.com",
           "client_type": 3
+        },
+        {
+          "client_id": "145760395523-719og0l62nss5m880ijp0tv98bl327dn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tech.msociety.terawhere",
+            "certificate_hash": "efb9cc4e6357d55b836c761d74f477328bc7f2f4"
+          }
+        },
+        {
+          "client_id": "145760395523-4b7g1024f102lfq0sq8jurripdvg56t3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tech.msociety.terawhere",
+            "certificate_hash": "e83add9a5e7d0e26a570068941997d43220822ac"
+          }
         }
       ],
       "api_key": [

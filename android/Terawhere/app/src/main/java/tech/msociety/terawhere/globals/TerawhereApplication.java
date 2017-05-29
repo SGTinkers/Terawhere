@@ -23,7 +23,7 @@ import tech.msociety.terawhere.events.TokenInvalidEvent;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.DeviceTokenRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.storedevicetoken.StoreDeviceToken;
 import tech.msociety.terawhere.networkcalls.server.TerawhereBackendServer;
-import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
+import tech.msociety.terawhere.screens.activities.LoginActivity;
 
 public class TerawhereApplication extends Application {
 
@@ -117,7 +117,7 @@ public class TerawhereApplication extends Application {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogoutEvent(LogoutEvent event) {
         setBearerToken(null);
-        Intent i = new Intent(this, FacebookLoginActivity.class);
+        Intent i = new Intent(this, LoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }

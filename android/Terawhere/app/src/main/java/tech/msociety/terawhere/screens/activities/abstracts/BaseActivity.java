@@ -10,14 +10,12 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,9 +23,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import tech.msociety.terawhere.R;
 import tech.msociety.terawhere.events.LogoutEvent;
-import tech.msociety.terawhere.globals.Constants;
 import tech.msociety.terawhere.globals.TerawhereApplication;
-import tech.msociety.terawhere.screens.activities.FacebookLoginActivity;
+import tech.msociety.terawhere.screens.activities.LoginActivity;
 import tech.msociety.terawhere.screens.activities.NoNetworkActivity;
 import tech.msociety.terawhere.screens.activities.RequestLocationServicesActivity;
 import tech.msociety.terawhere.utils.NetworkUtils;
@@ -122,7 +119,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private boolean isAuthCheckFailed() {
         if (requireAuth && TerawhereApplication.getBearerToken() == null) {
-            Intent i = new Intent(this, FacebookLoginActivity.class);
+            Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
             finish();
             return true;

@@ -30,7 +30,7 @@ import tech.msociety.terawhere.networkcalls.interceptors.DefaultInterceptor;
 import tech.msociety.terawhere.networkcalls.interceptors.LoggingInterceptor;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.BookingRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.bookings.GetBookingsResponse;
-import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.FacebookUserRequestBody;
+import tech.msociety.terawhere.networkcalls.jsonschema2pojo.createuser.AuthRequestBody;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.getuser.GetUserDetailsResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.GetOffersResponse;
 import tech.msociety.terawhere.networkcalls.jsonschema2pojo.offers.OfferRequestBody;
@@ -81,7 +81,7 @@ public class TerawhereBackendServer {
 
     public interface Api {
         @POST("api/v1/auth")
-        Call<FacebookUserRequestBody> createUser(@Body FacebookUserRequestBody facebookUserRequestBody);
+        Call<AuthRequestBody> createUser(@Body AuthRequestBody authRequestBody);
 
         @GET("api/v1/auth/refresh")
         Call<Void> refreshToken();
@@ -127,6 +127,8 @@ public class TerawhereBackendServer {
             TerawhereBackendServer.ErrorDatum e = new Gson().fromJson(response.errorBody().string(), TerawhereBackendServer.ErrorDatum.class);
             if (e.getMessage() != null) {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            } else {
+                throw new IOException("HTTP Error " + response.code());
             }
         }
 

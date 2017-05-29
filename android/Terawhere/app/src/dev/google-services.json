@@ -21,6 +21,14 @@
         {
           "client_id": "145760395523-8ik1f4bd815e5jr289ki6rlsgcmiq4n4.apps.googleusercontent.com",
           "client_type": 3
+        },
+        {
+          "client_id": "145760395523-gh98fruc0arrt2i557qaccjgbm8di17f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tech.msociety.terawhere.dev",
+            "certificate_hash": "6be18c8bd7c5bfe4fb0c0ff81a02fdca12f94203"
+          }
         }
       ],
       "api_key": [

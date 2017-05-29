@@ -10,7 +10,7 @@
              android:paddingRight="@dimen/activity_horizontal_margin"
              android:paddingTop="@dimen/activity_vertical_margin"
              android:gravity="center"
-             tools:context=".screens.activities.FacebookLoginActivity">
+             tools:context=".screens.activities.LoginActivity">
 
     <RelativeLayout android:layout_width="match_parent"
                     android:layout_height="match_parent">
@@ -19,10 +19,8 @@
             android:id="@+id/image_view_terawhere_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_marginTop="142dp"
+            android:layout_marginTop="120dp"
             android:contentDescription="@string/accessibility_terawhere_logo"
-
             android:src="@drawable/logo"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
@@ -37,11 +35,7 @@
             android:layout_below="@id/image_view_terawhere_logo"
             android:text="Welcome to Terawhere"
             android:layout_marginTop="15dp"
-
-            android:layout_centerInParent="true"
-
-
-            />
+            android:layout_centerInParent="true" />
 
         <TextView
             android:id="@+id/text_view_tagline"
@@ -50,7 +44,6 @@
             android:layout_below="@id/text_view_welcome_message"
             android:layout_marginTop="26dp"
             android:gravity="center_horizontal"
-
             android:text="@string/terawhere_tagline"
             android:textColor="@color/white"/>
 
@@ -65,15 +58,22 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginTop="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackgroundBorderless" />
 
-            />
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/button_google_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_facebook_login"
+            android:layout_gravity="center_vertical"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="12dp" />
 
         <TextView
             android:id="@+id/text_view_terms_and_conditions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/button_facebook_login"
+            android:layout_below="@+id/button_google_login"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginTop="36dp"
             android:gravity="center_horizontal"

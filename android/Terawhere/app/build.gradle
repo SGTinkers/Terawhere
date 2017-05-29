@@ -52,6 +52,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:10.2.4'
     compile 'com.google.android.gms:play-services-places:10.2.4'
     compile 'com.google.android.gms:play-services-maps:10.2.4'
+    compile 'com.google.android.gms:play-services-auth:10.2.4'
     compile 'com.google.maps.android:android-maps-utils:0.4.4'
     // Facebook stuff
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
