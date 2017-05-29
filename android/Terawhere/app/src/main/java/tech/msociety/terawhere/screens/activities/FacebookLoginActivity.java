@@ -148,6 +148,8 @@ public class FacebookLoginActivity extends BaseActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                    ((TerawhereApplication) getApplication()).registerPushTokensWithBackend();
                     
                     goToMainActivity();
                 } else {

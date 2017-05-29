@@ -61,7 +61,7 @@ public class TerawhereApplication extends Application {
         registerPushTokensWithBackend();
     }
 
-    private void registerPushTokensWithBackend() {
+    public void registerPushTokensWithBackend() {
         if (getBearerToken() != null) {
             final String token = FirebaseInstanceId.getInstance().getToken();
             if (token != null) {
@@ -69,6 +69,7 @@ public class TerawhereApplication extends Application {
                     @Override
                     public void onResponse(Call<StoreDeviceToken> call, Response<StoreDeviceToken> response) {
                         Log.d(TerawhereApplication.class.getSimpleName(), "Submitted push token to server: " + token);
+                        mixpanel.getPeople().initPushHandling("145760395523");
                     }
 
                     @Override
