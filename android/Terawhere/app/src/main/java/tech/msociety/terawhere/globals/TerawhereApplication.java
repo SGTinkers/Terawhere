@@ -69,7 +69,7 @@ public class TerawhereApplication extends Application {
                     @Override
                     public void onResponse(Call<StoreDeviceToken> call, Response<StoreDeviceToken> response) {
                         Log.d(TerawhereApplication.class.getSimpleName(), "Submitted push token to server: " + token);
-                        mixpanel.getPeople().initPushHandling("145760395523");
+                        mixpanel.getPeople().setPushRegistrationId(token);
                     }
 
                     @Override
